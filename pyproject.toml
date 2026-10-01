@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tiebreak-core"
+version = "0.1.0"
+description = "Standalone chess tie-break calculation library (extracted behavior-preserving from chess-manager)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "20kevit" }]
+
+[project.urls]
+Repository = "https://github.com/20kevit/tiebreak-core"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
