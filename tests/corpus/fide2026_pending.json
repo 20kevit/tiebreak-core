@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "FIDE2026-ART16-TAXONOMY",
+      "ruleset": "fide-2026",
+      "status": "PENDING",
+      "source": "FIDE Handbook C.07 (effective 1 Mar 2026), Article 16: five unplayed-round categories (16.2.1 pairing-allocated/full-point byes; 16.2.2 forfeit wins; 16.2.3 requested byes followed by a non-VUR round; 16.2.4 forfeit losses; 16.2.5 trailing requested byes) + VUR concept (16.1) + virtual-opponent draws-forth (16.4) + cut exception (16.5)",
+      "source_grade": "PRIMARY",
+      "article": "C.07 §16",
+      "notes": "Shell only. Requires the unplayed-game input taxonomy (new GameKind fields) before expectations can be encoded. The legacy single-sentinel (-1) model cannot express these categories."
+    },
+    {
+      "id": "FIDE2026-DE-MINITABLE",
+      "ruleset": "fide-2026",
+      "status": "PENDING",
+      "source": "FIDE Handbook C.07 (effective 1 Mar 2026), §6 Direct Encounter: mini-standings over tied participants who met, reapplied to subsets until resolved",
+      "source_grade": "PRIMARY",
+      "article": "C.07 §6 DE",
+      "notes": "Shell only. Requires the group-context ranking architecture (criterion -> group context -> derived subset -> recursive calculation). Legacy standings-level DE stub (0.0) is unrelated."
+    },
+    {
+      "id": "FIDE-MEDIAN2",
+      "ruleset": "fide-2026",
+      "status": "PENDING",
+      "source": "FIDE Handbook C.07 pre-2023 §4.3 ('Buchholz reduced by the two highest and two lowest scores'); retained as Median Buchholz 2 in later editions (§14)",
+      "source_grade": "PRIMARY",
+      "article": "C.07 §14 BH-M2",
+      "notes": "Definition verified; implementation pending as an additive criterion. Fully-played-event expectations can be hand-computed once implemented."
+    },
+    {
+      "id": "FIDE-SB-CUT-VARIANTS",
+      "ruleset": "fide-2026",
+      "status": "PENDING",
+      "source": "FIDE Handbook C.07 §9.1 + §14 modifiers (SB-C1/SB-C2); cut-exception interaction per §16.5",
+      "source_grade": "SECONDARY",
+      "article": "C.07 §9.1 + §14 (SB cut modifiers)",
+      "notes": "Shell only. SECONDARY grade: cut-variant semantics confirmed via @echecs/sonneborn-berger docs and chesspairings.org guide, but full Handbook article text for the cut exception was not machine-retrieved in this mission. Do not implement from secondary sources alone."
+    }
+  ]
+}
