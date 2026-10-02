@@ -43,6 +43,31 @@ caller (see ADAPTER_CHESS_MANAGER.md).
 version strings; historical reproducibility is guaranteed by pinning the
 version with stored results.
 
+## Strict path (additive, Phase 0)
+
+```python
+from tiebreak_core import (
+    calculate_strict, calculate_all_strict,
+    rank_standings_strict, order_ids_strict,
+    UnknownCriterionError, UnsupportedRulesetError,
+    InvalidGameRecordError, InvalidPlayerDataError, RegistryError,
+    frozen_registry, register_criterion, is_known,
+)
+```
+
+Same values/order as legacy for valid inputs under
+`ruleset="legacy-0.1.0"` (delegation, proven by
+`tests/test_strict.py`). Differences from legacy, all fail-fast:
+
+- unknown criterion → `UnknownCriterionError` (legacy: silent `0.0`)
+- `ruleset="fide-2026"` (or anything unsupported) →
+  `UnsupportedRulesetError` (`fide-2026` is reserved, not implemented)
+- score not in {0, 0.5, 1}, color not in {"white", "black"},
+  round_number < 0, rating < 0, points < 0/non-finite, mapping key !=
+  `player_id` → `InvalidGameRecordError` / `InvalidPlayerDataError`
+- `frozen_registry()` → immutable snapshot (`TypeError` on write)
+- `register_criterion()` refuses built-in ids (`RegistryError`)
+
 ## Adding a new tie-break
 
 1. Add pure function `(player, all_players) -> float` in `calculators.py`.

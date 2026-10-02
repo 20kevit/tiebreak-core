@@ -2,7 +2,7 @@
 
 ```bash
 pip install -e .            # zero runtime deps
-python -m pytest tests -q   # 40 tests: units + goldens + live old-vs-new + ranking + determinism
+python -m pytest tests -q   # 81 tests: units + goldens + live old-vs-new + ranking + determinism + strict + frozen-legacy
 ```
 
 - Golden capture: `tests/data_goldens.json` (from original

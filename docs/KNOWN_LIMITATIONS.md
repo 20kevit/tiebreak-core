@@ -8,7 +8,12 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
    Cut-1 exception. NOT FIXED (needs new rules version).
 2. Koya on Swiss — CURRENT: applied to Swiss with threshold
    `current_round / 2`. LIMITATION: FIDE §9.2 specifies round-robin.
-   NOT FIXED.
+   NOT FIXED. Phase 0 finding: chess-manager passes
+   `tournament.current_round` (rounds played so far) where the
+   calculator semantically expects total rounds. Same position yields
+   e.g. Koya 2.5 at current_round=2 vs 0.0 at total_rounds=5 (values
+   converge once current_round == total_rounds; mid-tournament display
+   only). Correction deferred to the future `fide-2026` path.
 3. Direct Encounter stub — CURRENT: `calculate_all(..., "direct_encounter")`
    returns `0.0`; `direct_encounter()` is a single-game lookup needing an
    explicit opponent. LIMITATION: not a FIDE §6 mini-league. NOT FIXED.
@@ -29,3 +34,11 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
 9. Rounding-before-ranking — CURRENT: ranking sorts ROUNDED values (BH 1dp,
    SB 2dp, ARO int). LIMITATION: borderline ties decided on rounded values.
    NOT FIXED (changing it would break equivalence).
+10. Silent unknown criteria (legacy) — CURRENT: `calculate` returns `0.0`
+    for unknown ids. LIMITATION: masks configuration typos. NOT FIXED on
+    the legacy path (frozen); the additive strict path raises
+    `UnknownCriterionError` instead.
+11. Mutable legacy registry — CURRENT: `calculators.TIEBREAK_REGISTRY`
+    remains a mutable global for compatibility. LIMITATION: importers can
+    corrupt it. NOT REMOVED; new code must read via `frozen_registry()`
+    and extend via `register_criterion()` (built-in overwrite refused).
