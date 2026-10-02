@@ -38,7 +38,35 @@ from tiebreak_core.calculators import (
     calculate_all,
     TIEBREAK_REGISTRY,
 )
-from tiebreak_core.registry import TIEBREAK_IDS, TIEBREAK_FIDE_REF, DEFAULT_CRITERIA
+from tiebreak_core.registry import (
+    TIEBREAK_IDS,
+    TIEBREAK_FIDE_REF,
+    DEFAULT_CRITERIA,
+    frozen_registry,
+    is_known,
+    register_criterion,
+    unregister_criterion,
+)
+from tiebreak_core.errors import (
+    TiebreakError,
+    UnknownCriterionError,
+    UnsupportedRulesetError,
+    InvalidGameRecordError,
+    InvalidPlayerDataError,
+    DuplicatePlayerIdError,
+    RegistryError,
+)
+from tiebreak_core.strict import (
+    calculate_strict,
+    calculate_all_strict,
+    rank_standings_strict,
+    order_ids_strict,
+    validate_game,
+    validate_player,
+    validate_players,
+    require_criteria,
+    require_ruleset,
+)
 from tiebreak_core.ranking import rank_standings, order_ids, sort_key
 from tiebreak_core.rules import (
     CALCULATION_RULES_VERSION,
@@ -77,6 +105,26 @@ __all__ = [
     "TIEBREAK_IDS",
     "TIEBREAK_FIDE_REF",
     "DEFAULT_CRITERIA",
+    "frozen_registry",
+    "is_known",
+    "register_criterion",
+    "unregister_criterion",
+    "TiebreakError",
+    "UnknownCriterionError",
+    "UnsupportedRulesetError",
+    "InvalidGameRecordError",
+    "InvalidPlayerDataError",
+    "DuplicatePlayerIdError",
+    "RegistryError",
+    "calculate_strict",
+    "calculate_all_strict",
+    "rank_standings_strict",
+    "order_ids_strict",
+    "validate_game",
+    "validate_player",
+    "validate_players",
+    "require_criteria",
+    "require_ruleset",
     "rank_standings",
     "order_ids",
     "sort_key",
