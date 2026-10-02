@@ -72,10 +72,13 @@ from tiebreak_core.rules import (
     CALCULATION_RULES_VERSION,
     FIDE_REFERENCE,
     SUPPORTED_RULESETS,
+    RulesetInfo,
+    available_rulesets,
+    describe_ruleset,
     is_supported,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __fide_reference__ = FIDE_REFERENCE
 __rules_version__ = CALCULATION_RULES_VERSION
 
@@ -131,6 +134,9 @@ __all__ = [
     "CALCULATION_RULES_VERSION",
     "FIDE_REFERENCE",
     "SUPPORTED_RULESETS",
+    "RulesetInfo",
+    "available_rulesets",
+    "describe_ruleset",
     "is_supported",
     "__version__",
     "__fide_reference__",
