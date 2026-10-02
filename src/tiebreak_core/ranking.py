@@ -48,8 +48,11 @@ def rank_standings(
     """
     keys = deterministic_keys or {}
     scored: List[PlayerResult] = []
-    for pid, pdata in players.items():
-        values = calculate_all(pdata, dict(players), list(criteria), total_rounds)
+    # Phase 0 perf: build the shared lookup ONCE. Previously dict(players)
+    # was copied per player (O(n^2) churn); values are unchanged.
+    shared = dict(players)
+    for pid, pdata in shared.items():
+        values = calculate_all(pdata, shared, list(criteria), total_rounds)
         scored.append(PlayerResult(
             player_id=pid,
             points=pdata.points or 0.0,
