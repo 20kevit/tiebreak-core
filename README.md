@@ -1,14 +1,18 @@
 # tiebreak-core
 
-Standalone chess tie-break calculation library — behavior-preserving
-extraction from `chess-manager` `domain/tiebreak/`.
+Standalone chess tie-break calculation library: correct, deterministic,
+well-specified calculation of chess tournament tie-break criteria.
+Zero runtime dependencies, stdlib only, Python `>=3.10`, MIT.
 
-- No Flask, no SQLAlchemy, no persistence, no network, zero runtime deps.
-- Deterministic: same input + same rules version → same output.
-- Rules version: `legacy-0.1.0` (see `src/tiebreak_core/rules.py`).
-- Reference for future work: FIDE Handbook C.07 (see `docs/TIEBREAK_RULES.md`).
-- Relationship: `chess-manager → tiebreak-core ← (future) pairing-core`.
-  `pairing-core` does NOT depend on `tiebreak-core` (see `docs/COMPATIBILITY.md`).
+- Deterministic: same input + same ruleset → same output.
+- Rulesets are explicit and inspectable: `legacy-0.1.0` (frozen
+  behavior-preserving extraction) and reserved `fide-2026`
+  (see `src/tiebreak_core/rules.py`, `docs/VERSIONING.md`).
+- Reference: FIDE Handbook C.07 (see `docs/TIEBREAK_RULES.md`,
+  `docs/FIDE_SOURCES.md`).
+- Relationship: `chess-manager → tiebreak-core ← pairing-core callers`
+  (narrow scalar/vector data only — `pairing-core` does NOT depend on
+  `tiebreak-core`; see `docs/COMPATIBILITY.md`).
 
 ## Install
 
@@ -43,23 +47,35 @@ for pr in standings.players:
     print(pr.rank, pr.player_id, pr.points, pr.values)
 ```
 
+Strict fail-fast variant (same values, typed errors, explicit ruleset):
+
+```python
+from tiebreak_core import calculate_all_strict
+values = calculate_all_strict(players[1], players, criteria, 5,
+                              ruleset="legacy-0.1.0")
+```
+
 ## What it is / is NOT
 
-- IS: pure tie-break calculators + explicit ranking comparator + versioned rules model.
+- IS: pure tie-break calculators + explicit ranking comparator +
+  inspectable ruleset model + strict validation boundary.
 - IS NOT: a tournament manager, persistence, HTTP service, Elo engine,
   pairing engine, TRF/Coronate I/O, or UI formatting (Persian names live in
   `tiebreak_core.display`, outside the calculation path).
 
 ## Layout
 
-- `src/tiebreak_core/` — `models`, `calculators`, `registry`, `ranking`,
-  `display` (optional), `rules`
-- `tests/` — ported units + golden/conformance (`data_goldens.json`) + ranking + determinism
-- `docs/` — standalone + integration documentation
+- `src/tiebreak_core/` — `models`, `calculators`, `ranking`, `strict`,
+  `errors`, `registry`, `display` (optional), `rules`
+- `tests/` — units + golden/conformance + FIDE corpus (`tests/corpus/`)
+  + ranking + strict + determinism + benchmarks
+- `docs/` — architecture, API, ADRs (`docs/adr/`), rulesets, roadmap,
+  master plan, integration, conformance methodology
 
 ## Docs
 
-Start with `docs/ARCHITECTURE.md`, then `docs/API.md` (standalone use) and
-`docs/ADAPTER_CHESS_MANAGER.md` (chess-manager integration). Known
-divergences from FIDE are in `docs/KNOWN_LIMITATIONS.md` — they are
-intentionally NOT fixed in v0.1.0.
+Start with `docs/ARCHITECTURE.md`, then `docs/API.md` (standalone use),
+`docs/INTEGRATION_CHESS_MANAGER.md` / `docs/INTEGRATION_PAIRING_CORE.md`
+(consumer contracts), and `docs/ROADMAP.md` + `docs/MASTER_PLAN.md`
+(where the project is going). Known divergences from FIDE are in
+`docs/KNOWN_LIMITATIONS.md`. Releases: `CHANGELOG.md`.
