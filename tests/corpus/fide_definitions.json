@@ -8,32 +8,259 @@
       "source": "FIDE Handbook C.07 definitions (BH §8.1 / pre-2023 §4.1; Median §4.2; Cut-1 §4.4; Cut-2 §4.5; SB §9.1) + TEC Tie-Break Exercises V01-1 (2024-04-16, BH(#2)=13.0 / BH-C1(#4)=11.5 worked examples confirming the sum/subtraction definitions on fully-played events)",
       "source_grade": "PRIMARY",
       "article": "C.07 §8.1 BH, §14 BH-C1/BH-C2/BH-M1, §9.1 SB, §7.5 PS",
-      "notes": "4-player round robin, 3 rounds, no unplayed games: P1 beats P2, draws P3, beats P4 (2.5); P2 loses P1, draws P3/P4 (1.0); P3 draws all (1.5); P4 loses P1, draws P2/P3 (1.0). Rounds: R1 {1-2,3-4}, R2 {1-3,2-4}, R3 {1-4,2-3}. Expected values hand-computed from the definitions (e.g. BH(P1)=1.0+1.5+1.0=3.5; SB(P1)=1.0*1+1.5*0.5+1.0*1=2.75; PS(P1)=1.0+1.5+2.5=5.0). No unplayed-game adjustments apply under any C.07 edition, so legacy==FIDE here by construction.",
+      "notes": "4-player round robin, 3 rounds, no unplayed games: P1 beats P2, draws P3, beats P4 (2.5); P2 loses P1, draws P3/P4 (1.0); P3 draws all (1.5); P4 loses P1, draws P2/P3 (1.0). Rounds: R1 {1-2,3-4}, R2 {1-3,2-4}, R3 {1-4,2-3}. Expected values hand-computed from the definitions (e.g. BH(P1)=1.0+1.5+1.0=3.5; SB(P1)=1.0*1+1.5*0.5+1.0*1=2.75; PS(P1)=1.0+1.5+2.5=5.0). No unplayed-game adjustments apply under any C.07 edition, so legacy==FIDE here by construction. Median-2 on 3 opponents falls back to full Buchholz (documented edge policy); a dedicated 5-opponent case below verifies the trim.",
       "total_rounds": 3,
-      "criteria": ["buchholz", "buchholz_cut1", "buchholz_cut2", "median_buchholz", "sonneborn_berger", "progressive", "wins"],
+      "criteria": [
+        "buchholz",
+        "buchholz_cut1",
+        "buchholz_cut2",
+        "median_buchholz",
+        "median_buchholz_2",
+        "sonneborn_berger",
+        "progressive",
+        "wins"
+      ],
       "players": {
-        "1": {"rating": 2000, "points": 2.5, "games": [
-          {"opponent": 2, "score": 1.0, "color": "white", "round": 1, "rating": 1900},
-          {"opponent": 3, "score": 0.5, "color": "white", "round": 2, "rating": 1800},
-          {"opponent": 4, "score": 1.0, "color": "white", "round": 3, "rating": 1700}]},
-        "2": {"rating": 1900, "points": 1.0, "games": [
-          {"opponent": 1, "score": 0.0, "color": "black", "round": 1, "rating": 2000},
-          {"opponent": 4, "score": 0.5, "color": "white", "round": 2, "rating": 1700},
-          {"opponent": 3, "score": 0.5, "color": "white", "round": 3, "rating": 1800}]},
-        "3": {"rating": 1800, "points": 1.5, "games": [
-          {"opponent": 4, "score": 0.5, "color": "white", "round": 1, "rating": 1700},
-          {"opponent": 1, "score": 0.5, "color": "black", "round": 2, "rating": 2000},
-          {"opponent": 2, "score": 0.5, "color": "black", "round": 3, "rating": 1900}]},
-        "4": {"rating": 1700, "points": 1.0, "games": [
-          {"opponent": 3, "score": 0.5, "color": "black", "round": 1, "rating": 1800},
-          {"opponent": 2, "score": 0.5, "color": "black", "round": 2, "rating": 1900},
-          {"opponent": 1, "score": 0.0, "color": "black", "round": 3, "rating": 2000}]}
+        "1": {
+          "rating": 2000,
+          "points": 2.5,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1900
+            },
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 1800
+            },
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1700
+            }
+          ]
+        },
+        "2": {
+          "rating": 1900,
+          "points": 1.0,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 2000
+            },
+            {
+              "opponent": 4,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 1700
+            },
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "white",
+              "round": 3,
+              "rating": 1800
+            }
+          ]
+        },
+        "3": {
+          "rating": 1800,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 4,
+              "score": 0.5,
+              "color": "white",
+              "round": 1,
+              "rating": 1700
+            },
+            {
+              "opponent": 1,
+              "score": 0.5,
+              "color": "black",
+              "round": 2,
+              "rating": 2000
+            },
+            {
+              "opponent": 2,
+              "score": 0.5,
+              "color": "black",
+              "round": 3,
+              "rating": 1900
+            }
+          ]
+        },
+        "4": {
+          "rating": 1700,
+          "points": 1.0,
+          "games": [
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "black",
+              "round": 1,
+              "rating": 1800
+            },
+            {
+              "opponent": 2,
+              "score": 0.5,
+              "color": "black",
+              "round": 2,
+              "rating": 1900
+            },
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 2000
+            }
+          ]
+        }
       },
       "expected": {
-        "1": {"buchholz": 3.5, "buchholz_cut1": 2.5, "buchholz_cut2": 1.5, "median_buchholz": 1.0, "sonneborn_berger": 2.75, "progressive": 5.0, "wins": 2.0},
-        "2": {"buchholz": 5.0, "buchholz_cut1": 4.0, "buchholz_cut2": 2.5, "median_buchholz": 1.5, "sonneborn_berger": 1.25, "progressive": 1.5, "wins": 0.0},
-        "3": {"buchholz": 4.5, "buchholz_cut1": 3.5, "buchholz_cut2": 2.5, "median_buchholz": 1.0, "sonneborn_berger": 2.25, "progressive": 3.0, "wins": 0.0},
-        "4": {"buchholz": 5.0, "buchholz_cut1": 4.0, "buchholz_cut2": 2.5, "median_buchholz": 1.5, "sonneborn_berger": 1.25, "progressive": 2.5, "wins": 0.0}
+        "1": {
+          "buchholz": 3.5,
+          "buchholz_cut1": 2.5,
+          "buchholz_cut2": 1.5,
+          "median_buchholz": 1.0,
+          "sonneborn_berger": 2.75,
+          "progressive": 5.0,
+          "wins": 2.0,
+          "median_buchholz_2": 3.5
+        },
+        "2": {
+          "buchholz": 5.0,
+          "buchholz_cut1": 4.0,
+          "buchholz_cut2": 2.5,
+          "median_buchholz": 1.5,
+          "sonneborn_berger": 1.25,
+          "progressive": 1.5,
+          "wins": 0.0,
+          "median_buchholz_2": 5.0
+        },
+        "3": {
+          "buchholz": 4.5,
+          "buchholz_cut1": 3.5,
+          "buchholz_cut2": 2.5,
+          "median_buchholz": 1.0,
+          "sonneborn_berger": 2.25,
+          "progressive": 3.0,
+          "wins": 0.0,
+          "median_buchholz_2": 4.5
+        },
+        "4": {
+          "buchholz": 5.0,
+          "buchholz_cut1": 4.0,
+          "buchholz_cut2": 2.5,
+          "median_buchholz": 1.5,
+          "sonneborn_berger": 1.25,
+          "progressive": 2.5,
+          "wins": 0.0,
+          "median_buchholz_2": 5.0
+        }
+      }
+    },
+    {
+      "id": "FIDE-MEDIAN2-TRIM",
+      "ruleset": "legacy-0.1.0",
+      "status": "VERIFIED",
+      "source": "FIDE Handbook C.07 pre-2023 §4.3 (Buchholz reduced by the two highest and two lowest scores); trim direction confirmed by chesspairings.org worked example (secondary)",
+      "source_grade": "PRIMARY",
+      "article": "C.07 §14 BH-M2",
+      "notes": "P1 (3.0 pts) faces five opponents finishing on 1.0, 4.0, 2.0, 5.0, 0.5. Hand computation: BH=12.5; M1=12.5-0.5-5.0=7.0; M2=12.5-0.5-1.0-5.0-4.0=2.0. Fully played, so version-agnostic.",
+      "total_rounds": 5,
+      "criteria": [
+        "buchholz",
+        "median_buchholz",
+        "median_buchholz_2"
+      ],
+      "players": {
+        "1": {
+          "rating": 1500,
+          "points": 3.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1500
+            },
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 1500
+            },
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1500
+            },
+            {
+              "opponent": 5,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1500
+            },
+            {
+              "opponent": 6,
+              "score": 0.5,
+              "color": "white",
+              "round": 5,
+              "rating": 1500
+            }
+          ]
+        },
+        "2": {
+          "rating": 1500,
+          "points": 1.0,
+          "games": []
+        },
+        "3": {
+          "rating": 1500,
+          "points": 4.0,
+          "games": []
+        },
+        "4": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": []
+        },
+        "5": {
+          "rating": 1500,
+          "points": 5.0,
+          "games": []
+        },
+        "6": {
+          "rating": 1500,
+          "points": 0.5,
+          "games": []
+        }
+      },
+      "expected": {
+        "1": {
+          "buchholz": 12.5,
+          "median_buchholz": 7.0,
+          "median_buchholz_2": 2.0
+        }
       }
     }
   ]

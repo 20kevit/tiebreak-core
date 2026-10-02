@@ -6,6 +6,7 @@ Expectations unchanged (behavior-preserving extraction).
 import pytest
 from tiebreak_core.calculators import (
     buchholz, buchholz_cut1, buchholz_cut2, median_buchholz,
+    median_buchholz_2,
     sonneborn_berger, progressive, wins_count, wins_with_black,
     games_with_black, average_rating_opponents, koya, direct_encounter,
     buchholz_sum, arpo, calculate_all, TIEBREAK_REGISTRY,
@@ -55,12 +56,32 @@ class TestBuchholzFamily:
         ap = {2:pdata(2,1600,2.0,[]),10:p}
         assert median_buchholz(p, ap) == buchholz(p, ap)
 
+    def test_median_buchholz_2(self):
+        # FIDE Median-2 (BH-M2): trim two highest + two lowest.
+        # Opponents: 1.0, 4.0, 2.0, 5.0, 0.5 -> 12.5-0.5-1.0-5.0-4.0 = 2.0
+        p = pdata(1, 1500, 3.0, [rec(2, 1, rnd=1), rec(3, 0.5, rnd=2),
+                                 rec(4, 1, rnd=3), rec(5, 0, rnd=4),
+                                 rec(6, 0.5, rnd=5)])
+        allp = {1: p, 2: pdata(2, 1500, 1.0, []), 3: pdata(3, 1500, 4.0, []),
+                4: pdata(4, 1500, 2.0, []), 5: pdata(5, 1500, 5.0, []),
+                6: pdata(6, 1500, 0.5, [])}
+        assert median_buchholz_2(p, allp) == pytest.approx(2.0)
+        assert buchholz(p, allp) == pytest.approx(12.5)
+        assert median_buchholz(p, allp) == pytest.approx(7.0)
+
+    def test_median_buchholz_2_fallback(self):
+        # <5 opponent scores -> full Buchholz (documented edge policy,
+        # mirroring the legacy Median fallback for <3 games).
+        p1, p2, p3, p4, allp = four_player_fixture()
+        assert median_buchholz_2(p1, allp) == buchholz(p1, allp)
+
     def test_buchholz_zero_games(self):
         p = pdata(1,1500,0.0,[])
         assert buchholz(p, {}) == 0.0
         assert buchholz_cut1(p, {}) == 0.0
         assert buchholz_cut2(p, {}) == 0.0
         assert median_buchholz(p, {}) == 0.0
+        assert median_buchholz_2(p, {}) == 0.0
 
     def test_buchholz_virtual_opponent(self):
         p = pdata(1,1500,2.0,[rec(-1,1,rnd=1), rec(2,1,rnd=2)])

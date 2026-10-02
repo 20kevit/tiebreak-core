@@ -62,7 +62,10 @@ def test_corpus_case(case):
                     f"not implemented under ruleset {case['ruleset']}")
     players = _build_players(case["players"])
     total = case.get("total_rounds", 0)
-    for pid, pdata in players.items():
+    # Only players listed in `expected` are asserted; the rest are
+    # context (opponent scores/ratings).
+    for pid in case["expected"]:
+        pdata = players[int(pid)]
         got = calculate_all_strict(pdata, players, case["criteria"], total,
                                     ruleset=case["ruleset"])
         for crit, want in case["expected"][str(pid)].items():

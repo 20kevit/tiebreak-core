@@ -91,11 +91,37 @@ def median_buchholz(
             scores.append(max(0.0, player.points - game.score))
         elif game.opponent_id in all_players:
             scores.append(all_players[game.opponent_id].points)
-            
+
     if len(scores) < 3:
         return buchholz(player, all_players)
-        
+
     return round(sum(scores) - min(scores) - max(scores), 1)
+
+
+def median_buchholz_2(
+    player: PlayerTiebreakData,
+    all_players: Dict[int, PlayerTiebreakData]
+) -> float:
+    """Buchholz minus two highest and two lowest (FIDE Median-2, BH-M2).
+
+    Source: FIDE Handbook C.07 pre-2023 §4.3 ("Buchholz reduced by the two
+    highest and the two lowest scores"), retained in later editions (§14).
+    Edge policy (implementation choice, documented): with fewer than 5
+    opponent scores the trim is undefined, so fall back to full Buchholz —
+    mirroring the legacy Median fallback for <3 games.
+    """
+    scores = []
+    for game in player.games:
+        if game.opponent_id == -1:
+            scores.append(max(0.0, player.points - game.score))
+        elif game.opponent_id in all_players:
+            scores.append(all_players[game.opponent_id].points)
+
+    if len(scores) < 5:
+        return buchholz(player, all_players)
+
+    ordered = sorted(scores)
+    return round(sum(ordered[2:-2]), 1)
 
 
 def sonneborn_berger(
@@ -278,6 +304,7 @@ TIEBREAK_REGISTRY = {
     "buchholz_cut1": buchholz_cut1,
     "buchholz_cut2": buchholz_cut2,
     "median_buchholz": median_buchholz,
+    "median_buchholz_2": median_buchholz_2,
     "sonneborn_berger": sonneborn_berger,
     "progressive": progressive,
     "wins": wins_count,

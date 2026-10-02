@@ -11,6 +11,14 @@ never change across package releases.
 
 ## [Unreleased]
 
+Added:
+
+- `median_buchholz_2` criterion (FIDE Median-2, BH-M2, C.07 §14):
+  Buchholz minus two highest and two lowest opponent scores, with a
+  documented fallback to full Buchholz for fewer than 5 opponent scores.
+  New id only — no existing output changed. Covered by unit tests and a
+  VERIFIED corpus case (`FIDE-MEDIAN2-TRIM`).
+
 ## [0.2.0] — 2026-10-02
 
 Added (all backwards-compatible; no legacy output changed):

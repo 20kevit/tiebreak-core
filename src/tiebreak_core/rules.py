@@ -78,7 +78,7 @@ _RULESETS: Dict[str, RulesetInfo] = {
         ),
         criteria=(
             "buchholz", "buchholz_cut1", "buchholz_cut2",
-            "median_buchholz", "sonneborn_berger", "progressive",
+            "median_buchholz", "median_buchholz_2", "sonneborn_berger", "progressive",
             "wins", "wins_black", "games_black", "aro", "koya",
             "buchholz_sum", "arpo", "direct_encounter",
         ),

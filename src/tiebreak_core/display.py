@@ -12,6 +12,7 @@ TIEBREAK_NAMES_FA = {
     "buchholz_cut1": "بوخهلتس کات ۱",
     "buchholz_cut2": "بوخهلتس کات ۲",
     "median_buchholz": "مدیان بوخهلتس",
+    "median_buchholz_2": "مدیان بوخهلتس ۲",
     "sonneborn_berger": "زونبورن-برگر",
     "progressive": "پیشرونده",
     "wins": "تعداد برد",

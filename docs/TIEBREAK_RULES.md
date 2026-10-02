@@ -9,6 +9,7 @@ Regulations (effective 1 Aug 2024 → 28 Feb 2026; successor from 1 Mar 2026).
 | buchholz_cut1 | §14.1a BH-C1 | verbatim legacy |
 | buchholz_cut2 | §14.2 BH-C2 | verbatim legacy |
 | median_buchholz | §14.3 BH-M1 | verbatim legacy |
+| median_buchholz_2 | §14 BH-M2 | additive (0.2.x); <5 scores → full BH (documented edge) |
 | sonneborn_berger | §9.1 SB | verbatim legacy (2dp) |
 | progressive | §7.5 PS | verbatim legacy |
 | wins / wins_black / games_black | §§7.1–7.4 | verbatim legacy |

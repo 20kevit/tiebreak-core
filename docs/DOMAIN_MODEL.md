@@ -31,9 +31,9 @@ Sonneborn-Berger 2dp, ARO/ARPO integer. Ranking sorts the ROUNDED values.
 
 ## Criteria identifiers (stable)
 
-`buchholz buchholz_cut1 buchholz_cut2 median_buchholz sonneborn_berger
-progressive wins wins_black games_black aro koya buchholz_sum arpo
-direct_encounter`
+`buchholz buchholz_cut1 buchholz_cut2 median_buchholz median_buchholz_2
+sonneborn_berger progressive wins wins_black games_black aro koya
+buchholz_sum arpo direct_encounter`
 
 Unknown identifiers → `0.0`. `direct_encounter` at standings level → `0.0`
 (stub, see KNOWN_LIMITATIONS). `koya` needs `total_rounds` (threshold
