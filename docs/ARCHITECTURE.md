@@ -1,9 +1,85 @@
-# Architecture
+# Architecture (source of truth)
 
 ```
-chess-manager ──adapter──▶ tiebreak-core ◀── (future) pairing-core / CLI / tests
+chess-manager ──adapter──▶ tiebreak-core ◀── narrow scalars ── pairing-core callers
 pairing-core ──✕──▶ tiebreak-core   (no dependency, by design)
 ```
+
+## Responsibilities
+
+`tiebreak-core` calculates tie-break information: per-criterion values,
+ordered standings under an explicit policy, and the metadata (ruleset,
+criterion identity, errors) consumers need. It does NOT own persistence,
+registration, pairing, seeding, ratings, prizes, print/export, or UI.
+
+## Boundaries and dependency direction
+
+- One-way: consumers depend on this library; it depends on nothing
+  domain-specific (stdlib only).
+- No reverse imports (`pairing-core`, `chess-manager`) — enforced by
+  inspection (no such imports exist) and by the zero-dependency policy.
+- No shared `tournament-core`: composition happens in managers; numeric
+  vectors cross pairing boundaries as plain data (see
+  `docs/INTEGRATION_PAIRING_CORE.md`).
+
+## Domain model
+
+Inputs are caller-built plain dataclasses (`GameRecord`,
+`PlayerTiebreakData`, plain `int` ids); outputs are immutable
+(`PlayerResult`, `StandingsResult` carrying `rules_version`). Full
+contract: `docs/DOMAIN_MODEL.md`. Missing-data policy: ADR-004.
+
+## API layers
+
+- Legacy surface: frozen lenient functions (compatibility).
+- Strict surface (`tiebreak_core.strict`): validated, typed errors,
+  explicit `ruleset=`, delegation-guaranteed identical values.
+- Registry: stable ids + controlled extension (ADR-005).
+- Rulesets: explicit versioned behavior pins (ADR-001).
+- Presentation (`display.py`): strictly outside the calculation path.
+
+Decisions: ADR-001 (rulesets), ADR-002 (dual API), ADR-003 (numerics),
+ADR-004 (missing data), ADR-005 (registry).
+
+## Calculation lifecycle
+
+```
+validate (strict only) → per-criterion pure calculation
+→ composition over criteria list → pure ranking comparator
+→ StandingsResult (+rules_version stamp)
+```
+
+No I/O, no clock, no randomness anywhere in the path. Same inputs +
+same ruleset ⇒ same outputs (determinism tests + 25× repeat pins).
+
+## Testing strategy
+
+Unit (every calculator incl. zero/edge) → golden fixtures (frozen) →
+FIDE corpus (`tests/corpus/`, VERIFIED asserted / PENDING skipped) →
+live old-vs-new differential → strict/legacy equivalence → ranking →
+determinism → benchmarks. Every bug becomes a regression test.
+
+## Versioning
+
+Package (semver) × ruleset (frozen pins) × API generation
+(legacy/strict) — independent axes, see `docs/VERSIONING.md` and
+`CHANGELOG.md`.
+
+## Integration
+
+- chess-manager: `docs/INTEGRATION_CHESS_MANAGER.md`
+  (+ `docs/ADAPTER_CHESS_MANAGER.md` field mapping).
+- pairing-core callers: `docs/INTEGRATION_PAIRING_CORE.md`.
+- Compatibility stance: `docs/COMPATIBILITY.md`; divergences from FIDE:
+  `docs/KNOWN_LIMITATIONS.md`; official rules reference:
+  `docs/TIEBREAK_RULES.md`; research provenance: `docs/FIDE_SOURCES.md`.
+
+## Extensibility
+
+New criteria: pure function + registry id + FIDE ref + display name
+(optional) + unit tests + corpus case (VERIFIED where sources allow,
+PENDING otherwise) + CHANGELOG entry. New rulesets: new id + new code
+paths + `RulesetInfo` descriptor; never edits to frozen behavior.
 
 ## Layers
 
