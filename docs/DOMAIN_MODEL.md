@@ -19,6 +19,16 @@ PlayerTiebreakData(player_id: int, rating: int, points: float,
   This is legacy behavior (see KNOWN_LIMITATIONS.md), preserved verbatim.
 - IDs are plain `int` in v0.1.0 (chess-manager compatible). No generics.
 
+## Terminology: VIRTUAL sentinel vs FIDE dummy (not the same thing)
+
+`VIRTUAL_OPPONENT` / `VIRTUAL_KINDS` are legacy input-layer names for
+the `-1` "no scheduled opponent" sentinel. They are NOT the FIDE
+"virtual opponent" abolished in 2023, and NOT the §16.4 "dummy"
+(a calculation fiction: a nominal opponent credited with the
+participant's own — capped in 2026 — score). The sentinel marks
+missing input; the dummy is produced by the engine. Do not conflate
+the three.
+
 ## Game kinds (Phase 1, additive)
 
 `GameRecord.kind` (`""` = unspecified) says WHAT happened, from

@@ -9,7 +9,7 @@ a core change.
 ## What already holds
 
 - **Ruleset dispatch** (`rules.py` + strict `ruleset=`): frozen
-  `legacy-0.1.0` + implemented `fide-2024` + reserved `fide-2026`.
+  `legacy-0.1.0` + implemented `fide-2024` + reserved `fide-2026` (reserved = specified, implementation pending Phase F26-1).
   D13 (dummy caps) and D12 (RR forfeits) fit as new `fide-2026` paths.
 - **Game-kind taxonomy** (ADR-006): all Art-16 categories
   expressible; `classify()` positional early/late split verified

@@ -63,7 +63,7 @@ per-criterion semantics). Differences from legacy, all fail-fast:
 
 - unknown criterion → `UnknownCriterionError` (legacy: silent `0.0`)
 - `ruleset="fide-2026"` (or anything unsupported) →
-  `UnsupportedRulesetError` (`fide-2026` is reserved, not implemented)
+  `UnsupportedRulesetError` (`fide-2026` is reserved = specified but not yet implemented; see `FIDE_2026_DIFF.md`)
 - score not in {0, 0.5, 1}, color not in {"white", "black"},
   round_number < 0, rating < 0, points < 0/non-finite, mapping key !=
   `player_id` → `InvalidGameRecordError` / `InvalidPlayerDataError`

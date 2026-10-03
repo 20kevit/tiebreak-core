@@ -26,7 +26,7 @@ the cited FIDE articles for individual Swiss tournaments
 | aob | §8.2 AOB | Mean of OTB opponents' fide-2024 BH, 1dp (presentation choice). |
 | fore_buchholz | §8.3 FB | Final-round *paired* games as draws; Art.16 on top; dummy uses FB-adjusted own points. |
 | koya | §9.2 KS | Opponents on ≥50% of maximum possible (total rounds); raw points qualify; all real-opponent games count. Applied wherever requested (FIDE scopes Koya to RR). |
-| tpr | §10.2 TPR | Rounded ARO + §8.1a table difference for OTB fraction (rounded half-up to hundredths). No rated OTB games → 0.0. |
+| tpr | §10.2 TPR | Rounded ARO + §8.1a table difference for OTB fraction (fraction rounded half-up to hundredths — documented interpretation, not FIDE text). No rated OTB games → 0.0 (documented edge, not FIDE). |
 | ptp | §10.3 PTP | Lowest rating with Σ §8.1b probabilities ≥ OTB points (documented target reading); zero target → 800 below lowest rated opponent; full scale, binary search. |
 | apro/appo | §§10.4–10.5 APRO/APPO | Mean of OTB opponents' TPR/PTP, 0.5 rounded up. |
 | direct_encounter | §6 DE (group-level) | Mini-standings over tied groups: played games only (Swiss forfeit exclusion §6.1.1), repeated-meeting averages §6.1.2, subset reapplication §6.2, Swiss certainty ranking §6.3. Ranking stage, not a scalar (no per-player value; see ADR-008). |
