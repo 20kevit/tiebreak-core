@@ -9,6 +9,41 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [0.5.0] — 2026-10-03
+
+Final documentation closure (no calculation change; suite green,
+frozen outputs byte-identical):
+
+- MTB26 fully catalogued (`docs/FIDE_MTB26_CATALOG.md`): descriptor
+  grammar (`Name[:MP/:GP][/…]`), Tables 1–3, full code table,
+  generic `/Cn /Mn /Lx /Kx` machine, `/P /F /R` options, `OTHER_*`
+  mechanism; defined-vs-listed-vs-mandatory-vs-optional-vs-consumer
+  distinction.
+- Approval/test ecosystem closed: TEC Manual v1.24 audited
+  (`FIDE_TEC_IMPLEMENTATION_REQUIREMENTS.md`: PTC/RTG, 50k-tournament
+  protocol, discrepancy classes, external-engine exemption; ETT26
+  recorded as non-existent — instruments are PTC+RTG+TRF),
+  C.02.01/03/04 framework (`FIDE_SOFTWARE_CONFORMANCE.md`: what a
+  compliant program is; TAPC≠endorsement), TRF26 interchange boundary
+  (`FIDE_TRF26_INTEROPERABILITY.md`: 202/212/192/013/240/320/801/802,
+  parser-vs-core split), approval path (`FIDE_APPROVAL_PATH.md`:
+  conformant vs approved; tie-break TAPC testing starts in the future;
+  no "FIDE-approved" claim anywhere).
+- Modifiers (`FIDE_TIEBREAK_MODIFIERS.md`), format variants
+  (`FIDE_FORMAT_VARIANTS.md`: Swiss/RR/team/KO/rapid + C.04 boundary),
+  official examples (`FIDE_OFFICIAL_EXAMPLES.md`: Manual annex + TEC
+  chapters + tables + Olympiad-2026 OTHER_ reference + recorded
+  negatives), source registry (`FIDE_SOURCE_REGISTRY.md`: 21 sources
+  with hashes/URLs/effective dates), complete requirements matrix
+  (`FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`: Q-/T-/G-/I-/X-rows +
+  acronym↔id↔requirement crosswalk).
+- Adversarial closure: Olympiad-2026 bespoke systems recorded as
+  OTHER_ differential material; FTM stub recorded; VCL-pending noted.
+  Consistency audit automated (no forbidden claims, no dangling refs,
+  no TODOs, id crosswalk complete). Verdict: CONDITIONALLY CLOSED
+  (see final report) — implementation may proceed without further
+  research barring new FIDE revisions.
+
 ## [0.4.0] — 2026-10-03
 
 Research mission (no calculation change; all frozen outputs byte-identical,
