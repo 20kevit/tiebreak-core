@@ -130,6 +130,72 @@ class TestClassification:
         # P2's trailing zero-bye counts as a draw for opponents' use.
         assert adj == {1: 3.5, 2: 2.0, 3: 4.5, 4: 0.5}
 
+    def test_requested_bye_score_awareness(self):
+        # F2 (§16.1.1): requested byes are half/zero-point byes only.
+        # A requested FULL-point bye is 16.2.1, never VUR — whether or
+        # not a later participated round exists.
+        early = PlayerTiebreakData(1, 2000, 2.0, [
+            g(-1, 1.0, "white", 1, 0, "requested_bye"),
+            g(2, 1.0, "white", 2, 1500, "played"),
+        ])
+        late = PlayerTiebreakData(2, 1900, 1.0, [
+            g(1, 0.0, "black", 2, 2000, "played"),
+            g(-1, 1.0, "white", 3, 0, "requested_bye"),
+        ])
+        for pdata, rnd in ((early, 1), (late, 3)):
+            got = {r.round_number: (r.category, r.is_vur)
+                   for r in fide.classify(pdata)}
+            assert got[rnd] == ("16.2.1", False)
+        # Half/zero requested byes keep positional VUR semantics.
+        half = PlayerTiebreakData(3, 1800, 1.5, [
+            g(-1, 0.5, "white", 1, 0, "requested_bye"),
+            g(2, 1.0, "white", 2, 1500, "played"),
+        ])
+        zero = PlayerTiebreakData(4, 1700, 0.0, [
+            g(-1, 0.0, "white", 1, 0, "requested_bye"),
+        ])
+        assert {r.round_number: (r.category, r.is_vur)
+                for r in fide.classify(half)}[1] == ("16.2.3", True)
+        assert {r.round_number: (r.category, r.is_vur)
+                for r in fide.classify(zero)}[1] == ("16.2.5", True)
+
+    def test_requested_full_point_bye_counts_as_elected(self):
+        # REP §7.6 subtracts half/zero-point byes and forfeit losses
+        # only: a requested 1.0 bye stays elected.
+        players = {
+            1: PlayerTiebreakData(1, 2000, 2.0, [
+                g(-1, 1.0, "white", 1, 0, "requested_bye"),
+                g(2, 1.0, "white", 2, 1500, "played"),
+            ]),
+            2: PlayerTiebreakData(2, 1900, 0.0, [
+                g(1, 0.0, "black", 2, 2000, "played"),
+            ]),
+        }
+        got = calculate_all_strict(players[1], players,
+                                   ["rounds_elected"], 2,
+                                   ruleset="fide-2024")
+        assert got["rounds_elected"] == 2.0
+
+    def test_requested_full_point_bye_not_vur_cut(self):
+        # No VURs remain: BH-C1 cuts the plain minimum (0.5), not the
+        # 1.5 dummy. Under the old kind-only rule the VUR dummy was
+        # cut instead (C1 = 0.5).
+        players = {
+            1: PlayerTiebreakData(1, 2000, 1.5, [
+                g(2, 0.5, "white", 1, 1500, "played"),
+                g(-1, 1.0, "white", 2, 0, "requested_bye"),
+            ]),
+            2: PlayerTiebreakData(2, 1500, 0.5, [
+                g(1, 0.5, "black", 1, 2000, "played"),
+                g(9, 0.0, "white", 2, 0, "played"),
+            ]),
+            9: PlayerTiebreakData(9, 1500, 0.0, []),
+        }
+        got = calculate_all_strict(players[1], players,
+                                   ["buchholz_cut1"], 2,
+                                   ruleset="fide-2024")
+        assert got["buchholz_cut1"] == 1.5
+
 
 class TestValues:
     @pytest.mark.parametrize("pid", [1, 2, 3, 4])

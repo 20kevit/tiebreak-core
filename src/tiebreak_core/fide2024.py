@@ -76,7 +76,7 @@ class ClassifiedRound:
     score: float          # awarded/result points for the round
     opponent_id: int
     opponent_rating: int
-    is_vur: bool          # §16.1.2: requested bye or forfeit loss
+    is_vur: bool          # §16.1.2: requested bye (half/zero-point) or forfeit loss
     category: str | None  # §16.2 category for unplayed rounds
 
 
@@ -87,14 +87,18 @@ def classify(player: PlayerTiebreakData) -> List[ClassifiedRound]:
     *participated* round exists, else 16.2.5. Absent rounds (gaps in the
     record) are ignored for this decision — only recorded rounds carry
     availability signal (documented interpretation; FIDE assumes full
-    pairing coverage in Swiss).
+    pairing coverage in Swiss). A requested bye with a full point is
+    a full-point bye (16.2.1), not a VUR: §16.1.1 defines requested
+    byes as half/zero-point byes only.
     """
     games = sorted(player.games, key=lambda g: g.round_number)
     kinds = [normalize_kind(g) for g in games]
     out: List[ClassifiedRound] = []
     for i, game in enumerate(games):
         kind = kinds[i]
-        is_vur = kind in _VUR_KINDS
+        full_point_request = (kind == REQUESTED_BYE
+                              and game.score == 1.0)
+        is_vur = kind in _VUR_KINDS and not full_point_request
         category: str | None = None
         if kind == PAIRING_BYE:
             category = CAT_PAB
@@ -103,8 +107,11 @@ def classify(player: PlayerTiebreakData) -> List[ClassifiedRound]:
         elif kind == FORFEIT_LOSS:
             category = CAT_FL
         elif kind == REQUESTED_BYE:
-            returned = any(k in _RETURN_KINDS for k in kinds[i + 1:])
-            category = CAT_RB_EARLY if returned else CAT_RB_LATE
+            if full_point_request:
+                category = CAT_PAB
+            else:
+                returned = any(k in _RETURN_KINDS for k in kinds[i + 1:])
+                category = CAT_RB_EARLY if returned else CAT_RB_LATE
         out.append(ClassifiedRound(
             round_number=game.round_number, kind=kind,
             score=float(game.score), opponent_id=game.opponent_id,
