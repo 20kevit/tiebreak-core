@@ -17,6 +17,11 @@ addable without breaking them.
   `describe_ruleset()`.
 - Statuses: `implemented` (calculable) vs `reserved` (name claimed,
   requesting it raises `UnsupportedRulesetError`).
+- Status note (2026-10-03): the non-implemented state is now called
+  `specified` (researched + specified, implementation pending) instead
+  of `reserved`, per the development-readiness gate — same machine
+  meaning (calculation refused), honest label. Code (`rules.py`) and
+  tests updated accordingly.
 - New behavior = new ruleset id + new code paths. Editing a frozen
   ruleset's outputs is forbidden (would be a MAJOR breaking change and a
   reproducibility violation).

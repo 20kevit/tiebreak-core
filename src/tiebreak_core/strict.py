@@ -10,7 +10,7 @@ behave differently (typed errors instead of silent ``0.0``).
 What is validated (core needs only — no tournament-management rules):
   - criterion ids resolve (else ``UnknownCriterionError``)
   - ruleset is supported (else ``UnsupportedRulesetError``;
-    ``"fide-2026"`` is reserved but NOT implemented in Phase 0)
+    ``"fide-2026"`` is specified but NOT implemented (Phase F26-1)
   - scores are 0 / 0.5 / 1 (else ``InvalidGameRecordError``)
   - colors are "white" / "black" (else ``InvalidGameRecordError``)
   - round numbers are ints >= 0 (else ``InvalidGameRecordError``)

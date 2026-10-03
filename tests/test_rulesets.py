@@ -21,9 +21,9 @@ class TestRulesetMetadata:
         assert "buchholz" in info.criteria
         assert "direct_encounter" in info.criteria
 
-    def test_fide_2026_is_reserved_not_implemented(self):
+    def test_fide_2026_is_specified_not_implemented(self):
         info = describe_ruleset("fide-2026")
-        assert info.status == "reserved"
+        assert info.status == "specified"
         assert "2026" in info.fide_reference
         assert not is_supported("fide-2026")
 
@@ -49,4 +49,4 @@ class TestRulesetMetadata:
     def test_info_is_immutable(self):
         info = describe_ruleset("legacy-0.1.0")
         with pytest.raises(AttributeError):
-            info.status = "reserved"
+            info.status = "specified"

@@ -42,14 +42,14 @@ def is_supported(rules_version: str) -> bool:
 
 @dataclass(frozen=True)
 class RulesetInfo:
-    """Inspectable metadata for one ruleset (implemented or reserved).
+    """Inspectable metadata for one ruleset (implemented or specified).
 
     Attributes:
         id: ruleset identifier used in ``ruleset=`` selection and
             ``StandingsResult.rules_version``.
-        status: "implemented" (calculations available) or "reserved"
-            (name claimed for future work; requesting it raises
-            ``UnsupportedRulesetError``).
+        status: "implemented" (calculations available) or "specified"
+            (researched and specified, implementation pending;
+            requesting calculation raises ``UnsupportedRulesetError``).
         description: what behavior this ruleset pins.
         fide_reference: authoritative source the ruleset tracks.
         criteria: criterion ids defined under this ruleset.
@@ -85,11 +85,12 @@ _RULESETS: Dict[str, RulesetInfo] = {
     ),
     "fide-2026": RulesetInfo(
         id="fide-2026",
-        status="reserved",
+        status="specified",
         description=(
-            "Future ruleset tracking the FIDE Handbook C.07 edition "
-            "effective from 1 Mar 2026. Not implemented: the 2026 full "
-            "text has not been retrieved; see docs/FIDE_SOURCES.md."
+            "Specified ruleset tracking the FIDE Handbook C.07 edition "
+            "effective from 1 Mar 2026 (verified D1–D15 diff, PENDING "
+            "corpus shells). Implementation pending (Phase F26-1); "
+            "see docs/FIDE_2026_DIFF.md."
         ),
         fide_reference=(
             "FIDE Handbook C.07 Play-Off and Tie-Break Regulations "
@@ -129,7 +130,7 @@ _RULESETS: Dict[str, RulesetInfo] = {
 
 
 def available_rulesets() -> Tuple[RulesetInfo, ...]:
-    """Return metadata for every known ruleset (implemented + reserved)."""
+    """Return metadata for every known ruleset (implemented + specified)."""
     return tuple(_RULESETS.values())
 
 
@@ -137,9 +138,9 @@ def describe_ruleset(ruleset: str) -> RulesetInfo:
     """Return metadata for ``ruleset``.
 
     Raises ``UnsupportedRulesetError`` for ids the library does not know
-    at all. Reserved rulesets return their descriptor (with
-    ``status="reserved"``); calculation under them is still refused by
-    the strict path.
+    at all. Specified (not yet implemented) rulesets return their
+    descriptor (with ``status="specified"``); calculation under them is
+    still refused by the strict path.
     """
     from tiebreak_core.errors import UnsupportedRulesetError
 

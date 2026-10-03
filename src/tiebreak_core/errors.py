@@ -31,8 +31,8 @@ class UnsupportedRulesetError(TiebreakError):
         super().__init__(
             f"unsupported ruleset: {ruleset!r} "
             f"(supported: {', '.join(supported)}). "
-            f"Note: 'fide-2026' is reserved for future FIDE-correct behavior "
-            f"and is not implemented yet."
+            f"Note: 'fide-2026' is specified (implementation pending, "
+            f"Phase F26-1) and is not implemented yet."
         )
 
 

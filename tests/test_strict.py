@@ -95,7 +95,7 @@ class TestUnknownCriterion:
 
 
 class TestRuleset:
-    def test_fide_2026_reserved_not_implemented(self):
+    def test_fide_2026_specified_not_implemented(self):
         players = fixture()
         with pytest.raises(UnsupportedRulesetError):
             calculate_all_strict(
