@@ -23,6 +23,13 @@ Added:
   `UnsupportedCriterionError`. Strict path dispatches per ruleset;
   uncategorized `-1` rounds are rejected under fide-2024. Corpus case
   `FIDE2024-SWISS5-ART16` (VERIFIED, hand-computed). See ADR-007.
+- Direct Encounter (§6) as a group-level ranking stage under fide-2024:
+  mini-standings (played games only, forfeit exclusion, repeated-meeting
+  averages with exact arithmetic), subset reapplication (§6.2), Swiss
+  certainty ranking (§6.3). Positional in criteria sequences; scalar
+  `direct_encounter` raises `UnsupportedCriterionError` (no per-player
+  scalar exists). Corpus cases `FIDE2024-DE-HEADTOHEAD`,
+  `FIDE2024-DE-CERTAINTY` (VERIFIED). See ADR-008.
 - Explicit game-kind taxonomy (`GAME_KINDS`, `normalize_kind()`):
   `played`, `pairing_bye`, `forfeit_win`, `forfeit_loss`,
   `requested_bye`, `unplayed` (legacy generic), `absent`. Additive:

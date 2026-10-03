@@ -52,8 +52,9 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
     matches, boards, MP/GP). Requested only if a team consumer appears.
 13. TPR/PTP/APRO/APPO (§§10.2–10.5) — rating conversion tables not
     retrieved; requesting them raises `UnsupportedCriterionError`.
-14. Direct Encounter (§6) — needs the Phase-3 group-context ranking
-    architecture; `direct_encounter` under fide-2024 raises.
+14. Direct Encounter (§6) — IMPLEMENTED under fide-2024 as a
+    group-level ranking stage (see ADR-008). Legacy standings-level
+    value remains a 0.0 stub (frozen).
 15. Art.16.6 local overrides — no competition-regulation input contract;
     unsupported by design until a consumer requires it.
 16. March-2026 edition — the engine implements the fully-retrieved 2024

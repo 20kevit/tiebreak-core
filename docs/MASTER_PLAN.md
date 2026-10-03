@@ -33,14 +33,14 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 
 | System | Now | Target phase |
 |---|---|---|
-| BH / C1 / C2 / M1 | legacy-0.1.0 ✓ | Ph.2 Art.16 variants |
-| M2 | ✓ (additive) | done |
-| SB / PS / Wins / B-family | legacy ✓ | Ph.2 cut variants |
-| DE | stub | Ph.3 |
-| Koya | legacy (Swiss-applied) | Ph.2 RR gate |
-| ARO / ARPO | legacy (simplified dp) | Ph.4 full tables |
-| Art.16 taxonomy | absent | Ph.1 |
-| TPR/PTP/APPO/RTNG/AOB/FB | absent | Ph.4 or deferred w/ rationale |
+| BH / C1 / C2 / M1 | legacy ✓ + fide-2024 ✓ (Art.16) | done |
+| M2 | ✓ (additive) + fide-2024 ✓ | done |
+| SB / PS / Wins / B-family | legacy ✓ + fide-2024 ✓ (cuts, OTB) | done |
+| DE | legacy stub + fide-2024 group stage ✓ | done (team EDE future) |
+| Koya | legacy (Swiss-applied) + fide-2024 (max-possible threshold) | done (RR-gating documented) |
+| ARO / ARPO | legacy (simplified dp); fide-2024 ARO/ARO-C1 ✓ | TPR family pending tables |
+| Art.16 taxonomy | ✓ input foundation | done (engine done) |
+| TPR/PTP/APPO/RTNG/AOB/FB | AOB/FB ✓; TPR family pending | Phase 4 or deferred w/ rationale |
 
 ## Release strategy
 

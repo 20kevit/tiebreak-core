@@ -8,8 +8,9 @@ applied 1 Aug 2024 (doc.fide.com). See docs/FIDE_SOURCES.md item 0.
 Scope: individual Swiss tournaments. Out of scope (raise
 ``UnsupportedCriterionError``): team systems (§§11–13), rating-table
 systems TPR/PTP/APRO/APPO (§§10.2–10.5, conversion tables not
-retrieved), Direct Encounter (§6 — needs the group-context ranking
-architecture, roadmap Phase 3), Art.16.6 local overrides.
+retrieved), Art.16.6 local overrides. Direct Encounter (§6) is a
+group-level resolution integrated into ranking (see below), not a
+per-player scalar.
 
 Key mechanics implemented:
   - Unplayed-round categories §16.2.1–§16.2.5 derived from game kinds
@@ -24,6 +25,10 @@ Key mechanics implemented:
   - SB-C1 definition §14.1.1.d, Median order §§14.3–14.4, ARO rounding
     §10.1 ("0.5 rounded up" — NOT banker's), Koya §9.2 (50% of maximum
     possible score; computed as specified, applied wherever requested).
+  - Direct Encounter §§6.1–6.3: mini-standings over tied groups with
+    forfeit exclusion (§6.1.1, Swiss scope), repeated-meeting averaging
+    (§6.1.2), subset reapplication (§6.2) and Swiss conditional ranking
+    (§6.3). See ADR-008.
 
 Legacy behavior is untouched: this module never imports or calls the
 legacy calculators; values here are independent implementations.
@@ -32,6 +37,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import Dict, List, Mapping, Sequence, Tuple
 
 from tiebreak_core.errors import UnsupportedCriterionError
@@ -232,6 +238,13 @@ def validate_inputs(players: Mapping[int, PlayerTiebreakData],
                     f"computed under fide-2024; categorize it with one of "
                     f"pairing_bye/forfeit_win/forfeit_loss/requested_bye/"
                     f"absent first")
+        recorded = sum(float(g.score) for g in pdata.games)
+        if not math.isclose(recorded, pdata.points, abs_tol=1e-9):
+            from tiebreak_core.errors import InvalidPlayerDataError
+            raise InvalidPlayerDataError(
+                f"player {pid}: points {pdata.points} != sum of recorded "
+                f"round scores {recorded}; fide-2024 reconstructions "
+                f"(progressive, dummy rule) require coherent inputs")
 
 
 # ------------------------------------------------------------------
@@ -595,7 +608,10 @@ REDEFINED_IDS: Tuple[str, ...] = (
     "koya", "aro", "wins", "wins_black", "games_black", "progressive",
 )
 
-_UNIMPLEMENTED = ("arpo", "buchholz_sum", "direct_encounter")
+_UNIMPLEMENTED = ("arpo", "buchholz_sum")
+
+#: Group-level (non-scalar) ranking stages.
+GROUP_CRITERIA: Tuple[str, ...] = ("direct_encounter",)
 
 
 def is_supported_criterion(criterion: str) -> bool:
@@ -635,25 +651,149 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
                    criteria: Sequence[str], total_rounds: int,
                    deterministic_keys: Mapping[int, int] | None = None,
                    ) -> StandingsResult:
-    """fide-2024 values + explicit-policy ordering (sort_key shared)."""
-    from tiebreak_core.ranking import sort_key
+    """fide-2024 values + staged ordering (points, then criteria in order).
+
+    Scalar criteria split groups by value (descending); the group-level
+    ``direct_encounter`` resolves tied groups per §§6.1–6.3. Groups that
+    no stage can split fall back to ``deterministic_keys`` (pre-sorted,
+    so every sort stage is stable). ``values`` carries scalar criteria
+    only — group-level criteria have no per-player scalar (documented).
+    """
+    _require_context(players, total_rounds)
+    check_ranking_criteria(criteria)
     keys = deterministic_keys or {}
+    ordered_ids = sorted(players,
+                         key=lambda pid: keys.get(pid, pid))
+    scalar = [c for c in criteria if c in FIDE2024_REGISTRY]
     shared = dict(players)
-    scored: List[PlayerResult] = []
-    for pid, pdata in shared.items():
-        values = calculate_all(pdata, shared, list(criteria), total_rounds)
-        scored.append(PlayerResult(player_id=pid,
-                                   points=pdata.points or 0.0,
-                                   values=dict(values), rank=0))
-
-    def _key(pr: PlayerResult) -> Tuple:
-        return sort_key(pr.points, pr.values, criteria,
-                        keys.get(pr.player_id, pr.player_id))
-
-    ordered = sorted(scored, key=_key)
+    values: Dict[int, Dict[str, float]] = {
+        pid: {c: FIDE2024_REGISTRY[c](shared[pid], shared, total_rounds)
+              for c in scalar}
+        for pid in ordered_ids
+    }
+    groups: List[List[int]] = _split_by(
+        [ordered_ids], lambda pid: -(shared[pid].points or 0.0))
+    for criterion in criteria:
+        if criterion in GROUP_CRITERIA:
+            groups = [tier for g in groups for tier in _de_tiers(g, shared)]
+        else:
+            groups = _split_by(
+                groups, lambda pid: -values[pid][criterion])
+    flat = [pid for g in groups for pid in g]
     ranked = tuple(
-        PlayerResult(player_id=pr.player_id, points=pr.points,
-                     values=pr.values, rank=i + 1)
-        for i, pr in enumerate(ordered))
+        PlayerResult(player_id=pid, points=shared[pid].points or 0.0,
+                     values=dict(values[pid]), rank=i + 1)
+        for i, pid in enumerate(flat))
     return StandingsResult(players=ranked, criteria=tuple(criteria),
                            rules_version=RULESET)
+
+
+def _split_by(groups: List[List[int]],
+              key) -> List[List[int]]:
+    """Split each group into strict subgroups by key (order preserved)."""
+    out: List[List[int]] = []
+    for group in groups:
+        bucket: Dict[float, List[int]] = {}
+        for pid in group:
+            bucket.setdefault(key(pid), []).append(pid)
+        out.extend(bucket[k] for k in sorted(bucket))
+    return out
+
+
+def check_ranking_criteria(criteria: Sequence[str]) -> None:
+    """Validate a ranking criteria sequence (scalars + group stages)."""
+    for criterion in criteria:
+        if criterion in GROUP_CRITERIA:
+            continue
+        require_supported(criterion)
+
+
+# ------------------------------------------------------------------
+# Direct Encounter §§6.1–6.3 (group-level; Swiss scope)
+# ------------------------------------------------------------------
+
+
+def _mini_table(group: Sequence[int],
+                players: Mapping[int, PlayerTiebreakData]
+                ) -> Tuple[Dict[int, Fraction], Dict[int, int]]:
+    """Mini-standings over a tied group (§6.1).
+
+    Only games between group members with kind ``played`` count;
+    forfeit results are excluded (Swiss scope, §6.1.1). Pairs meeting
+    more than once contribute each side's average (§6.1.2). Returns
+    (mini-scores, unplayed-pair counts). A pair counts as unplayed when
+    NO game record exists between them in either direction
+    (documented interpretation — excluded forfeit pairs are fixed
+    exclusions, not variable outcomes).
+    """
+    gset = set(group)
+    scores: Dict[int, Fraction] = {pid: Fraction(0) for pid in group}
+    missing: Dict[int, int] = {pid: 0 for pid in group}
+    done = set()
+    for pid in group:
+        own = [g for g in players[pid].games
+               if g.opponent_id in gset and g.opponent_id != pid
+               and normalize_kind(g) == PLAYED]
+        by_opp: Dict[int, List[float]] = {}
+        for game in own:
+            by_opp.setdefault(game.opponent_id, []).append(float(game.score))
+        for opp, scs in by_opp.items():
+            pair = (min(pid, opp), max(pid, opp))
+            if pair in done:
+                continue
+            done.add(pair)
+            scores[pid] += sum(Fraction(s) for s in scs) / len(scs)
+    for idx, first in enumerate(group):
+        for second in group[idx + 1:]:
+            met = any(g.opponent_id == second for g in players[first].games) \
+                or any(g.opponent_id == first for g in players[second].games)
+            if not met:
+                missing[first] += 1
+                missing[second] += 1
+    return scores, missing
+
+
+def _de_tiers(group: Sequence[int],
+              players: Mapping[int, PlayerTiebreakData]) -> List[List[int]]:
+    """Resolve one tied group per §6 into ordered tiers (best first).
+
+    All-met groups follow §6.2 (mini-table order, recursive reapplication
+    to tied subsets). Otherwise §6.3 certainty ranking applies iteratively;
+    whatever remains unresolvable is returned as one tier (falls through
+    to subsequent criteria).
+    """
+    if len(group) <= 1:
+        return [list(group)]
+    scores, missing = _mini_table(group, players)
+    if all(missing[pid] == 0 for pid in group):
+        tiers: List[List[int]] = []
+        bucket: Dict[Fraction, List[int]] = {}
+        for pid in group:
+            bucket.setdefault(scores[pid], []).append(pid)
+        for score in sorted(bucket, reverse=True):
+            tied = bucket[score]
+            if len(tied) == 1 or len(tied) == len(group):
+                # Single player, or no progress possible (e.g. empty
+                # mini-table after forfeit exclusion): one tier, so the
+                # ranking falls through to subsequent criteria.
+                tiers.append(tied)
+            else:
+                tiers.extend(_de_tiers(tied, players))  # §6.2 reapply
+        return tiers
+    remaining = list(group)
+    tiers = []
+    while remaining:
+        scores_r, missing_r = _mini_table(remaining, players)
+        first = None
+        for candidate in remaining:
+            if all(scores_r[candidate]
+                   > scores_r[other] + missing_r[other]
+                   for other in remaining if other != candidate):
+                first = candidate
+                break  # at most one can satisfy (sums are fixed)
+        if first is None:
+            tiers.append(list(remaining))
+            break
+        tiers.append([first])
+        remaining.remove(first)
+    return tiers

@@ -29,11 +29,12 @@ CHANGELOG entry; `main` stays green throughout.
 
 ## Phase 3 — Direct Encounter architecture
 
-- Objective: §6 mini-standings with subset reapplication.
-- Scope: group-context ranking (`criterion → group → subset →
-  recursive calculation` with termination proof), multi-way tie corpus.
-- Definition of Done: 3+-player tie corpus green; stub retained under
-  legacy only.
+DONE (2026-10-03, under fide-2024): §6 mini-standings with subset
+reapplication (§6.2) and Swiss conditional ranking (§6.3) as a
+group-level ranking stage; forfeit exclusion (§6.1.1, Swiss scope);
+repeated-meeting averaging (§6.1.2, exact arithmetic). See ADR-008,
+`tests/test_direct.py`, corpus `fide2024_direct.json`. Team EDE and
+round-robin forfeit inclusion remain future work.
 
 ## Phase 4 — Rating-based family + remaining FIDE systems
 

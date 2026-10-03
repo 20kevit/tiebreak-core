@@ -26,6 +26,7 @@ the cited FIDE articles for individual Swiss tournaments
 | aob | §8.2 AOB | Mean of OTB opponents' fide-2024 BH, 1dp (presentation choice). |
 | fore_buchholz | §8.3 FB | Final-round *paired* games as draws; Art.16 on top; dummy uses FB-adjusted own points. |
 | koya | §9.2 KS | Opponents on ≥50% of maximum possible (total rounds); raw points qualify; all real-opponent games count. Applied wherever requested (FIDE scopes Koya to RR). |
+| direct_encounter | §6 DE (group-level) | Mini-standings over tied groups: played games only (Swiss forfeit exclusion §6.1.1), repeated-meeting averages §6.1.2, subset reapplication §6.2, Swiss certainty ranking §6.3. Ranking stage, not a scalar (no per-player value; see ADR-008). |
 | arpo/buchholz_sum/direct_encounter | — | NOT in fide-2024 (`UnsupportedCriterionError`): rating tables unretrieved / non-FIDE / needs Phase-3 group architecture. |
 
 Uncategorized unplayed rounds (legacy `-1` without kind) are rejected

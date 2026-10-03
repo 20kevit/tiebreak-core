@@ -1,0 +1,268 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "FIDE2024-DE-HEADTOHEAD",
+      "ruleset": "fide-2024",
+      "status": "VERIFIED",
+      "source": "FIDE Council document 2024_FC2_18 \u00a76.2 (all-met mini-standings determine rankings)",
+      "source_grade": "PRIMARY",
+      "article": "C.07 \u00a76.2 DE",
+      "notes": "A and B tied 2.0; A won their encounter. Mini-table 1.0 vs 0.0 decides.",
+      "total_rounds": 3,
+      "criteria": [
+        "direct_encounter"
+      ],
+      "deterministic_keys": {
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5
+      },
+      "players": {
+        "1": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "2": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 5,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "3": {
+          "rating": 1500,
+          "points": 0.0,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "4": {
+          "rating": 1500,
+          "points": 0.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "5": {
+          "rating": 1500,
+          "points": 0.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        }
+      },
+      "expected_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "FIDE2024-DE-CERTAINTY",
+      "ruleset": "fide-2024",
+      "status": "VERIFIED",
+      "source": "FIDE Council document 2024_FC2_18 \u00a76.3 (Swiss conditional ranking: alone at top whatever the missing outcomes)",
+      "source_grade": "PRIMARY",
+      "article": "C.07 \u00a76.3 DE",
+      "notes": "A beat B and C (mini 2.0); B-C unplayed (max +1 each): A alone-top in all completions -> first. B/C unbroken -> BH (both 4.0) -> keys.",
+      "total_rounds": 3,
+      "criteria": [
+        "direct_encounter",
+        "buchholz"
+      ],
+      "deterministic_keys": {
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5
+      },
+      "players": {
+        "1": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 1.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "2": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "pairing_bye"
+            }
+          ]
+        },
+        "3": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 5,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "pairing_bye"
+            }
+          ]
+        },
+        "4": {
+          "rating": 1500,
+          "points": 0.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "5": {
+          "rating": 1500,
+          "points": 0.0,
+          "games": [
+            {
+              "opponent": 3,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        }
+      },
+      "expected_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  ]
+}

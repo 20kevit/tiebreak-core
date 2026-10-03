@@ -289,8 +289,7 @@ def rank_standings_strict(
         _require_total_rounds(total_rounds)
         checked_players = validate_players(players)
         _fide.validate_inputs(checked_players, total_rounds)
-        for criterion in criteria:
-            _fide.require_supported(criterion)
+        _fide.check_ranking_criteria(criteria)
         _validate_keys(deterministic_keys)
         return _fide.rank_standings(checked_players, list(criteria),
                                     total_rounds, deterministic_keys)
