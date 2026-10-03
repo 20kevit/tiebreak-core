@@ -16,16 +16,18 @@ CHANGELOG entry; `main` stays green throughout.
 - Definition of Done: taxonomy documented in DOMAIN_MODEL, old inputs
   byte-compatible, new fields exercised by tests.
 
-## Phase 2 — fide-2026 calculation engine
+## Phase 2 — fide-2026 calculation engine (SPECIFIED 2026-10-03, build: Phase F26-1)
 
 - Objective: FIDE-correct calculations under explicit `ruleset="fide-2026"`.
-- Scope: Article 16 virtual-opponent arithmetic + cut exception (16.5),
-  full ARPO conversion table, Koya round-robin gating, SB/PS/ARO Cut
-  variants. Each needs the official article text retrieved in full
-  (direct Handbook fetch timed out in this mission — re-retrieve).
-- Deliverables: new code paths only, corpus VERIFIED cases from official
-  worked examples (TEC exercises), legacy goldens untouched.
-- Definition of Done: corpus `fide-2026` cases pass; legacy suite green.
+- Scope (all verified this mission — no further research needed):
+  §16.4.1/16.4.2 dummy caps (core), §15.2 RR forfeit carve-out
+  (+ explicit Swiss/RR mode input), STD (§7.7, needs scheduled-opp
+  scores), TPN/RTNG terminal keys, Art-8 RR-ban note, AOB-FB variant,
+  first-rating contract. Full delta: `docs/FIDE_2026_DIFF.md` (D1–D15).
+- Deliverables: new code paths only; activate the 6 PENDING shells in
+  `tests/corpus/fide2026_unplayed.json`; legacy + fide-2024 goldens untouched.
+- Definition of Done: corpus `fide-2026` cases pass; full suite green.
+  Build order + 1.0 gate: `docs/IMPLEMENTATION_ROADMAP.md`.
 
 ## Phase 3 — Direct Encounter architecture
 

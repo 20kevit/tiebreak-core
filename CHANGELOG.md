@@ -9,6 +9,32 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [0.4.0] — 2026-10-03
+
+Research mission (no calculation change; all frozen outputs byte-identical,
+proven by the suite):
+
+- Complete FIDE tie-break domain specification: `docs/FIDE_TIEBREAK_MASTER_SPEC.md`
+  + `FIDE_RULE_INVENTORY.md` (39 normative rules) + `FIDE_CRITERIA_CATALOG.md`
+  + `FIDE_RULESET_HISTORY.md` (pre-2023 → Mar-2026) + `FIDE_2026_DIFF.md`
+  (verified word-level 2024→2026 delta, D1–D15) + `FIDE_DATA_SEMANTICS.md`
+  + `FIDE_CONFORMANCE_PLAN.md` + `SOFTWARE_COMPARISON.md`
+  + `ARCHITECTURE_GAP_ANALYSIS.md` + `IMPLEMENTATION_ROADMAP.md`
+  (requirements matrix, 1.0 gate, uncertainty register).
+- March-2026 C.07 full text retrieved via the official Arbiters' Manual 2026
+  (Handbook HTML unreachable); TEC Exercises V01-1, both C.07 Tables of Changes,
+  2022 text, C.04 Swiss Basic Rules, Rating/Title Regulations retrieved.
+  `fide-2026` moves reserved → SPECIFIED (no engine change).
+- Corpus `tests/corpus/fide2026_unplayed.json`: 4 VERIFIED fide-2024 vectors
+  from official worked examples (Laxman BH 57/C1 50/SB 37.25, Ex01 BH 51,
+  Ex03 BH 64.5, Ex04 BH 74, TEC-Ex06 BH-C1 11.5) + 6 PENDING fide-2026 shells
+  (NEW-regime values 55/50/37.25, 49.5, 63, 69).
+- Findings: 2026 is a bounded delta (STD/TPN/RTNG, RR-ban note, AOB-FB note,
+  first-rating rule, EDE chain names, §15.2 carve-out, §16.4 dummy caps);
+  architecture needs no structural change; team systems stay out (TeamMatch
+  domain); C.04 pairing quantities belong to pairing-core; B.01 norm-TPR
+  must never share code with tiebreak-TPR.
+
 ## [0.3.0] — 2026-10-03
 
 Added:

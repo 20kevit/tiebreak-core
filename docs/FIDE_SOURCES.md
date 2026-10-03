@@ -61,11 +61,41 @@ via alternate official path (doc.fide.com PDF + local text extraction).
 8. Lichess forum analysis of World Blitz 2024 tie-breaks (VUR §16.1.2 /
    §16.5.1 reapplication debate) — context on real-world ambiguity only.
 
-## NOT retrieved (remaining blockers)
+## PRIMARY — official FIDE (retrieved 2026-10-03, research mission)
 
-- FIDE Handbook C.07 March-2026 edition full text (only index +
-  excerpts). Consequence: the implemented engine is ruleset `fide-2024`
-  (fully sourced above); `fide-2026` stays reserved until the 2026
-  full-text diff is retrieved and reviewed.
-- FIDE Rating Regulations conversion tables (needed for TPR/PTP and
-  hence APRO/APPO) — those systems stay unimplemented.
+8. Play-Off and Tie-Break Regulations effective 1 Mar 2026
+   (approved by FIDE Council 02/02/2026), full text extracted from
+   pp.248–261 of the official FIDE Arbiters' Manual 2026
+   (`https://arbiters.fide.com/wp-content/uploads/Publications/Manual/Arbiter-Manual-2026.pdf`):
+   RETRIEVED IN FULL (630-line extraction). Includes the six-example
+   unplayed-games annex (Laxman + Examples 01–06, OLD/NEW columns).
+   Word-level diff vs item 0 produced `docs/FIDE_2026_DIFF.md`
+   (15 semantic deltas D1–D15); corpus `tests/corpus/fide2026_unplayed.json`.
+9. FIDE TEC Tie-Break Exercises V01-1 (Rev.2403220900 / C.07-2023,
+   IA Mario Held, 2024-04-16,
+   `https://tec.fide.com/wp-content/uploads/2024/04/C.07-2023-Tiebreak-exercises-V01-1.pdf`):
+   RETRIEVED IN FULL (3644-line extraction). Worked BH/BH-C1/AOB/FB/SB/Koya/TPR/APRO/PTP/DE
+   chapters; Example 06 (BH-C1 11.5) encoded as corpus `TEC-EX06-2024-BHC1` (VERIFIED).
+10. C.07 Table of Changes Aug-2024 (`https://doc.fide.com/docs/DOC/2FC2024/2024_FC2_18_TOC.pdf`,
+    Annex 5.5.2b): RETRIEVED — proves the 2024 changes editorial-only.
+11. C.07 Table of Changes Sep-2023 (`https://doc.fide.com/docs/DOC/2FC2023/PO_and_TB_Regulations_Table_of_Changes.pdf`)
+    + 2022 text (`https://spp.fide.com/wp-content/uploads/20220629-Tie-Breaks-2.pdf`)
+    + Apr-2024 decision (`https://doc.fide.com/docs/DOC/3FC2023/FC3_2023_43.pdf`):
+    RETRIEVED — basis of `docs/FIDE_RULESET_HISTORY.md`.
+12. FIDE announcement `fide.com/…updated-play-off-and-tie-break-regulations-effective-march-1-2026`
+    (25 Mar 2026): RETRIEVED — confirms STD/TPN/RTNG rationale, BH/SB unplayed revision,
+    team-KO provisions, rating/Type-B unplayed handling.
+13. C.04 Basic Rules for Swiss Systems (Council 28/10/2025, applied 1 Feb 2026,
+    `https://doc.fide.com/docs/DOC/2025_3FC/CM3-202517.pdf`): RETRIEVED (§§1.6–1.8) —
+    pairing-time opposition evaluation belongs to pairing-core (see gap analysis).
+14. Rating Regulations 1 Mar 2024 (`https://doc.fide.com/docs/DOC/3FC2023/FC3_2023_25.pdf`)
+    + Title Regulations (`.../FC3_2023_26.pdf`): RETRIEVED — tables 8.1a/8.1b unchanged
+    (still current; Oct-2025 400/2650 amendment touches rating calc only, and C.07 §10.3
+    uses the full scale regardless); B.01 norm-TPR ≠ C.07 TPR (floors/imputed 1400/35%).
+
+## NOT retrieved (residual)
+
+- Live Handbook chapter HTML (handbook.fide.com times out from here; mirror
+  handbook1090 likewise). Covered via items 8–11 (official PDFs/manual).
+- 02/02/2026 approving instrument number/URL (UNVERIFIED; dates RETRIEVED).
+- WRBC 2025 regulation PDF fine print (MEDIUM confidence via snippets; no core impact).

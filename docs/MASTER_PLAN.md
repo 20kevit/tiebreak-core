@@ -21,8 +21,10 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 
 ## Current gaps (honest list)
 
-- `fide-2026` calculations: reserved, not implemented (needs full
-  Article 16 text + taxonomy first).
+- `fide-2026` calculations: reserved, not implemented — but the full
+  domain is now specified (2026-10-03 research mission:
+  `docs/FIDE_TIEBREAK_MASTER_SPEC.md` + 9 companion docs, verified
+  2024→2026 diff, 10-case unplayed corpus). Next: Phase F26-1 build.
 - Direct Encounter: standings-level stub under legacy.
 - Rating-based family complete under fide-2024 (TPR/PTP/APRO/APPO ✓); legacy ARPO stays frozen; RTNG + team systems deferred.
 - Cut variants (SB-C1/PS-C1/ARO-C1), AOB, ForeBH: pending.

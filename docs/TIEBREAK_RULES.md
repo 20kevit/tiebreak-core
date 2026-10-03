@@ -59,5 +59,13 @@ Regulations (effective 1 Aug 2024 → 28 Feb 2026; successor from 1 Mar 2026).
 
 Unplayed rounds (Art.16: categories, virtual-opponent draws-forth, Cut-1
 exception) are NOT implemented in v0.1.0 — see KNOWN_LIMITATIONS.md.
+
+March-2026 edition: specified, not implemented — see
+`docs/FIDE_2026_DIFF.md` (D1–D15: STD/TPN/RTNG, RR-ban note, AOB-FB
+note, first-rating rule, EDE chain names, §15.2 carve-out, §16.4 dummy
+caps, worked-examples annex). `fide-2024` behavior is unaffected and
+frozen; the caps/examples are covered by corpus
+`tests/corpus/fide2026_unplayed.json` (VERIFIED 2024 values +
+PENDING 2026 shells).
 Roadmap (new rules versions, never silent changes): Art.16, SB-C1/PS-C1/
 ARO-C1, Median-2, AOB, ForeBH, TPR/PTP/APPO/RTNG, full DE league.
