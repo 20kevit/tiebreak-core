@@ -9,7 +9,7 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
-## [Unreleased]
+## [0.3.0] — 2026-10-03
 
 Added:
 

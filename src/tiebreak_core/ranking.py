@@ -14,7 +14,7 @@ Scope decision (v0.1.0, per architectural correction):
 It never reads ``current_round``, ``status`` or ``rating_snapshot`` and
 never performs seeding. Seeding helpers are intentionally absent.
 """
-from typing import Dict, List, Mapping, Sequence, Tuple
+from typing import List, Mapping, Sequence, Tuple
 
 from tiebreak_core.models import PlayerResult, PlayerTiebreakData, StandingsResult
 from tiebreak_core.calculators import calculate_all

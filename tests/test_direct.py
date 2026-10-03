@@ -192,3 +192,37 @@ def test_incoherent_points_rejected():
     with pytest.raises(InvalidPlayerDataError):
         calculate_all_strict(a, {1: a, 2: b}, ["buchholz"], 2,
                              ruleset="fide-2024")
+
+
+
+def _det_event():
+    # Small coherent event with a real DE stage.
+    a = PlayerTiebreakData(1, 1500, 2.0, [g(2, 1.0, "white", 1),
+                                          g(3, 1.0, "white", 2)])
+    b = PlayerTiebreakData(2, 1500, 1.0, [g(1, 0.0, "black", 1),
+                                          g(3, 1.0, "white", 3)])
+    c = PlayerTiebreakData(3, 1500, 1.0, [g(1, 0.0, "black", 2),
+                                          g(2, 0.0, "black", 3),
+                                          g(4, 1.0, "white", 4)])
+    d = PlayerTiebreakData(4, 1500, 0.0, [g(3, 0.0, "black", 4)])
+    return {1: a, 2: b, 3: c, 4: d}
+
+
+def test_staged_ranking_insertion_order_independent():
+    # Same logical tournament, shuffled mapping order -> identical output
+    # (pre-sort by deterministic keys makes every stage stable).
+    import random
+    players = _det_event()
+    crit = ["buchholz_cut1", "direct_encounter", "sonneborn_berger"]
+    keys = {1: 1, 2: 2, 3: 3, 4: 4}
+    first = rank_standings_strict(players, crit, 4,
+                                  deterministic_keys=keys,
+                                  ruleset="fide-2024")
+    for seed in range(10):
+        ids = [1, 2, 3, 4]
+        random.Random(seed).shuffle(ids)
+        shuffled = {i: players[i] for i in ids}
+        again = rank_standings_strict(shuffled, crit, 4,
+                                      deterministic_keys=keys,
+                                      ruleset="fide-2024")
+        assert again == first

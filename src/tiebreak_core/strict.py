@@ -26,7 +26,7 @@ import math
 from typing import Dict, List, Mapping, Sequence
 
 from tiebreak_core import calculators as _calc
-from tiebreak_core.models import PlayerResult, PlayerTiebreakData, StandingsResult
+from tiebreak_core.models import PlayerTiebreakData, StandingsResult
 from tiebreak_core.ranking import order_ids as _order_ids
 from tiebreak_core.ranking import rank_standings as _rank_standings
 from tiebreak_core.registry import is_known
