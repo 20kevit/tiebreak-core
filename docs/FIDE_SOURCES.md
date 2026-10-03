@@ -1,11 +1,28 @@
 # FIDE sources consulted (this mission)
 
-Retrieval: live web, 2026-10-02. Direct Handbook chapter fetch timed out
-(full article text NOT machine-retrieved — re-retrieve before Phase 2);
-content below is graded accordingly. Third-party material is never
-authoritative.
+Retrieval: live web, 2026-10-02/03. Direct Handbook chapter fetch timed
+out repeatedly; the complete official text below was retrieved IN FULL
+via alternate official path (doc.fide.com PDF + local text extraction).
 
-## PRIMARY — official FIDE
+## PRIMARY — official FIDE (full text retrieved)
+
+0. FIDE Council document 2024_FC2_18
+   (`https://doc.fide.com/docs/DOC/2FC2024/2024_FC2_18.pdf`,
+   "PLAY-OFF AND TIE-BREAK REGULATIONS", approved by FIDE Council on
+   29/07/2024, applied 1 Aug 2024 for all FIDE competitions):
+   RETRIEVED IN FULL (653-line text extraction). Basis for ruleset
+   `fide-2024`. Covers: system table + Cut-1 flags (Art.5), DE §6
+   (6.1/6.1.1/6.1.2/6.2/6.3 incl. Swiss conditional ranking),
+   Type-B §§7.1–7.6 (WIN/WON/BPG/BWG/PS/REP), BH family §§8.1–8.3
+   (BH/AOB/FB), SB §9.1 + Koya §9.2 (RR-only, 50% of maximum possible),
+   rating family §§10.1–10.5, team systems §§11–13, modifiers §§14.1–14.6
+   (incl. SB-C1 14.1.1.d, Median order 14.3/14.4, Koya limit 14.5),
+   unplayed rounds §§15.1–15.3, full Article 16
+   (16.1 VUR/requested-bye, 16.2 five categories, 16.3 adjusted scores,
+   16.4 dummy rule, 16.5/16.5.2 cut exception, 16.6 local override).
+
+## PRIMARY — official FIDE (excerpts)
+
 
 1. FIDE Handbook C.07 pre-2023 chapter (handbook.fide.com, excerpts):
    BH §4.1, Median §4.2, Median-2 §4.3, Cut-1 §4.4, Cut-2 §4.5, DE §5.1
@@ -36,9 +53,11 @@ authoritative.
 7. Lichess forum analysis of World Blitz 2024 tie-breaks (VUR §16.1.2 /
    §16.5.1 reapplication debate) — context on real-world ambiguity only.
 
-## NOT retrieved (blockers for Phase 2)
+## NOT retrieved (remaining blockers)
 
-- Full Article 16 text (16.3 adjusted scores, 16.4 draws-forth, 16.5 cut
-  exception mechanics) beyond excerpts.
-- Full §6 DE reapplication procedure, §10 rating-family conversion
-  tables, §14 modifier mechanics.
+- FIDE Handbook C.07 March-2026 edition full text (only index +
+  excerpts). Consequence: the implemented engine is ruleset `fide-2024`
+  (fully sourced above); `fide-2026` stays reserved until the 2026
+  full-text diff is retrieved and reviewed.
+- FIDE Rating Regulations conversion tables (needed for TPR/PTP and
+  hence APRO/APPO) — those systems stay unimplemented.

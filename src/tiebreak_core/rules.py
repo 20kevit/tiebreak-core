@@ -30,7 +30,7 @@ FIDE_REFERENCE = (
     "1 Mar 2026). See docs/TIEBREAK_RULES.md and docs/KNOWN_LIMITATIONS.md."
 )
 
-SUPPORTED_RULESETS: Tuple[str, ...] = ("legacy-0.1.0",)
+SUPPORTED_RULESETS: Tuple[str, ...] = ("legacy-0.1.0", "fide-2024")
 
 ROADMAP_RULESETS: Tuple[str, ...] = ("FIDE_2024", "FIDE_2026")
 
@@ -87,9 +87,9 @@ _RULESETS: Dict[str, RulesetInfo] = {
         id="fide-2026",
         status="reserved",
         description=(
-            "Future FIDE-correct behavior (unplayed-round taxonomy, "
-            "Article 16 virtual opponents, full Direct Encounter, "
-            "complete rating-based family). Not implemented."
+            "Future ruleset tracking the FIDE Handbook C.07 edition "
+            "effective from 1 Mar 2026. Not implemented: the 2026 full "
+            "text has not been retrieved; see docs/FIDE_SOURCES.md."
         ),
         fide_reference=(
             "FIDE Handbook C.07 Play-Off and Tie-Break Regulations "
@@ -97,6 +97,30 @@ _RULESETS: Dict[str, RulesetInfo] = {
             "02/02/2026)."
         ),
         criteria=(),
+    ),
+    "fide-2024": RulesetInfo(
+        id="fide-2024",
+        status="implemented",
+        description=(
+            "FIDE-correct calculations for individual Swiss tournaments: "
+            "Article 16 unplayed-round management (categories, adjusted "
+            "scores, dummy rule, cut exception), Cut/Median modifiers, "
+            "SB-C1/PS-C1/ARO-C1, AOB, Fore Buchholz, over-the-board "
+            "Type-B semantics, Koya threshold on maximum possible score. "
+            "Out of scope: team systems, TPR/PTP/APRO/APPO (rating "
+            "tables), Direct Encounter, Art.16.6 overrides."
+        ),
+        fide_reference=(
+            "FIDE Council document 2024_FC2_18, PLAY-OFF AND TIE-BREAK "
+            "REGULATIONS (approved 29/07/2024, applied 1 Aug 2024)."
+        ),
+        criteria=(
+            "buchholz", "buchholz_cut1", "buchholz_cut2",
+            "median_buchholz", "median_buchholz_2", "sonneborn_berger",
+            "sonneborn_berger_cut1", "progressive", "progressive_cut1",
+            "wins", "won", "games_black", "wins_black", "rounds_elected",
+            "aro", "aro_cut1", "aob", "fore_buchholz", "koya",
+        ),
     ),
 }
 

@@ -31,13 +31,20 @@ class TestRulesetMetadata:
         with pytest.raises(UnsupportedRulesetError):
             describe_ruleset("fide-1999")
 
-    def test_available_lists_both(self):
+    def test_available_lists_all(self):
         ids = {r.id for r in available_rulesets()}
-        assert {"legacy-0.1.0", "fide-2026"} <= ids
+        assert {"legacy-0.1.0", "fide-2024", "fide-2026"} <= ids
 
-    def test_supported_set_unchanged(self):
-        assert SUPPORTED_RULESETS == ("legacy-0.1.0",)
+    def test_supported_set(self):
+        assert set(SUPPORTED_RULESETS) == {"legacy-0.1.0", "fide-2024"}
         assert is_supported("legacy-0.1.0")
+        assert is_supported("fide-2024")
+
+    def test_fide_2024_is_implemented(self):
+        info = describe_ruleset("fide-2024")
+        assert info.status == "implemented"
+        assert "buchholz" in info.criteria
+        assert "sonneborn_berger_cut1" in info.criteria
 
     def test_info_is_immutable(self):
         info = describe_ruleset("legacy-0.1.0")

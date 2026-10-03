@@ -1,0 +1,308 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "FIDE2024-SWISS5-ART16",
+      "ruleset": "fide-2024",
+      "status": "VERIFIED",
+      "source": "FIDE Council document 2024_FC2_18 (approved 29/07/2024, applied 1 Aug 2024), Articles 7/8/9/14/16; expectations hand-computed from the article mechanics (see tests/test_fide2024.py for the full derivation)",
+      "source_grade": "PRIMARY",
+      "article": "C.07 \u00a7\u00a77, 8.1\u20138.3, 9.1\u20139.2, 10.1, 14.1\u201314.4, 16.1\u201316.5",
+      "notes": "4 players, 5 rounds: pairing bye (P1 R2, P3 R5), requested half-byes (P1 R4 early, P4 R2 early), requested zero-byes (P4 R4 early, P2 R5 trailing/withdrawn -> 16.2.5), forfeit-free. Exercises 16.3 adjusted scores (P2 adj 2.0 vs raw 1.5), 16.4 dummy rule, 16.5 VUR-preferential cuts (BH-C1 P1 cuts 3.0 not 0.5; SB-C1 higher-of rule), OTB-only Type-B semantics, ARO 0.5-up rounding, gap-filled PS, FB final-round draws.",
+      "total_rounds": 5,
+      "criteria": [
+        "buchholz",
+        "buchholz_cut1",
+        "buchholz_cut2",
+        "median_buchholz",
+        "median_buchholz_2",
+        "sonneborn_berger",
+        "sonneborn_berger_cut1",
+        "progressive",
+        "progressive_cut1",
+        "koya",
+        "aro",
+        "aro_cut1",
+        "aob",
+        "fore_buchholz",
+        "wins",
+        "won",
+        "games_black",
+        "wins_black",
+        "rounds_elected"
+      ],
+      "players": {
+        "1": {
+          "rating": 2000,
+          "points": 3.5,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "pairing_bye"
+            },
+            {
+              "opponent": 3,
+              "score": 0.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1800,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 0.5,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "requested_bye"
+            },
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 1700,
+              "kind": "played"
+            }
+          ]
+        },
+        "2": {
+          "rating": 1900,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 0.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1800,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1700,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "black",
+              "round": 4,
+              "rating": 1800,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 0.0,
+              "color": "white",
+              "round": 5,
+              "rating": 0,
+              "kind": "requested_bye"
+            }
+          ]
+        },
+        "3": {
+          "rating": 1800,
+          "points": 4.5,
+          "games": [
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1700,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 1.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": 1,
+              "score": 1.0,
+              "color": "black",
+              "round": 3,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 0.5,
+              "color": "white",
+              "round": 4,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 0,
+              "kind": "pairing_bye"
+            }
+          ]
+        },
+        "4": {
+          "rating": 1700,
+          "points": 0.5,
+          "games": [
+            {
+              "opponent": 3,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 1800,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "requested_bye"
+            },
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "requested_bye"
+            },
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 5,
+              "rating": 2000,
+              "kind": "played"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "1": {
+          "buchholz": 14.0,
+          "buchholz_cut1": 10.5,
+          "buchholz_cut2": 10.0,
+          "median_buchholz": 6.0,
+          "median_buchholz_2": 2.0,
+          "sonneborn_berger": 7.75,
+          "sonneborn_berger_cut1": 6.0,
+          "progressive": 11.0,
+          "progressive_cut1": 10.0,
+          "koya": 0.0,
+          "aro": 1800,
+          "aro_cut1": 1850,
+          "aob": 12.7,
+          "fore_buchholz": 13.5,
+          "wins": 3.0,
+          "won": 2.0,
+          "games_black": 0.0,
+          "wins_black": 0.0,
+          "rounds_elected": 4.0
+        },
+        "2": {
+          "buchholz": 14.5,
+          "buchholz_cut1": 13.0,
+          "buchholz_cut2": 12.5,
+          "median_buchholz": 8.5,
+          "median_buchholz_2": 3.5,
+          "sonneborn_berger": 2.75,
+          "sonneborn_berger_cut1": 2.75,
+          "progressive": 4.0,
+          "progressive_cut1": 4.0,
+          "koya": 0.5,
+          "aro": 1825,
+          "aro_cut1": 1867,
+          "aob": 12.5,
+          "fore_buchholz": 14.5,
+          "wins": 1.0,
+          "won": 1.0,
+          "games_black": 2.0,
+          "wins_black": 0.0,
+          "rounds_elected": 4.0
+        },
+        "3": {
+          "buchholz": 12.5,
+          "buchholz_cut1": 12.0,
+          "buchholz_cut2": 10.0,
+          "median_buchholz": 7.5,
+          "median_buchholz_2": 2.0,
+          "sonneborn_berger": 11.5,
+          "sonneborn_berger_cut1": 11.0,
+          "progressive": 14.0,
+          "progressive_cut1": 13.0,
+          "koya": 1.0,
+          "aro": 1875,
+          "aro_cut1": 1933,
+          "aob": 13.5,
+          "fore_buchholz": 12.5,
+          "wins": 4.0,
+          "won": 3.0,
+          "games_black": 2.0,
+          "wins_black": 2.0,
+          "rounds_elected": 5.0
+        },
+        "4": {
+          "buchholz": 11.0,
+          "buchholz_cut1": 10.5,
+          "buchholz_cut2": 10.0,
+          "median_buchholz": 6.0,
+          "median_buchholz_2": 2.0,
+          "sonneborn_berger": 0.25,
+          "sonneborn_berger_cut1": 0.25,
+          "progressive": 2.0,
+          "progressive_cut1": 2.0,
+          "koya": 0.0,
+          "aro": 1900,
+          "aro_cut1": 1950,
+          "aob": 13.7,
+          "fore_buchholz": 11.5,
+          "wins": 0.0,
+          "won": 0.0,
+          "games_black": 3.0,
+          "wins_black": 0.0,
+          "rounds_elected": 3.0
+        }
+      }
+    }
+  ]
+}

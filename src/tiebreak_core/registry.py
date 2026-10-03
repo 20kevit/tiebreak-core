@@ -53,6 +53,13 @@ TIEBREAK_FIDE_REF: Dict[str, str] = {
     "koya": "C.07 §9.2 KS (RR-only per FIDE; legacy applies to Swiss)",
     "buchholz_sum": "non-FIDE extension (Buchholz of Buchholz)",
     "arpo": "C.07 §10.4 APRO (legacy uses simplified dp table)",
+    "sonneborn_berger_cut1": "C.07 §14.1.1.d SB-C1 (fide-2024)",
+    "progressive_cut1": "C.07 §14.1.1.c PS-C1 (fide-2024)",
+    "aro_cut1": "C.07 §14.1.1.b ARO-C1 (fide-2024)",
+    "aob": "C.07 §8.2 AOB (fide-2024)",
+    "fore_buchholz": "C.07 §8.3 FB (fide-2024)",
+    "won": "C.07 §7.2 WON (fide-2024; legacy 'wins' counts all 1.0)",
+    "rounds_elected": "C.07 §7.6 REP (fide-2024)",
     "direct_encounter": "C.07 §6 DE (legacy standings-level value is a 0.0 stub)",
 }
 

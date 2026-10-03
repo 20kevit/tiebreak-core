@@ -22,6 +22,13 @@ TIEBREAK_NAMES_FA = {
     "koya": "کویا",
     "buchholz_sum": "مجموع بوخهلتس",
     "arpo": "ARPO",
+    "sonneborn_berger_cut1": "زونبورن-برگر کات ۱",
+    "progressive_cut1": "پیشرونده کات ۱",
+    "aro_cut1": "میانگین ریتینگ حریفان کات ۱",
+    "aob": "میانگین بوخهلتس حریفان",
+    "fore_buchholz": "فور بوخهلتس",
+    "won": "بردهای داخل صفحه",
+    "rounds_elected": "راندهای انتخاب‌شده",
     "direct_encounter": "رویارویی مستقیم",
 }
 

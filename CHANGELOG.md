@@ -13,6 +13,16 @@ never change across package releases.
 
 Added:
 
+- Ruleset `fide-2024` (implemented): FIDE-correct engine for individual
+  Swiss tournaments from the fully-retrieved 2024 C.07 text — Article 16
+  categories/adjusted scores/dummy rule/cut exception, Cut/Median
+  modifiers, SB-C1/PS-C1/ARO-C1, AOB, Fore Buchholz, over-the-board
+  Type-B semantics, gap-filled Progressive, Koya on maximum-possible
+  threshold. New criteria: `sonneborn_berger_cut1`, `progressive_cut1`,
+  `aro_cut1`, `aob`, `fore_buchholz`, `won`, `rounds_elected`. New error:
+  `UnsupportedCriterionError`. Strict path dispatches per ruleset;
+  uncategorized `-1` rounds are rejected under fide-2024. Corpus case
+  `FIDE2024-SWISS5-ART16` (VERIFIED, hand-computed). See ADR-007.
 - Explicit game-kind taxonomy (`GAME_KINDS`, `normalize_kind()`):
   `played`, `pairing_bye`, `forfeit_win`, `forfeit_loss`,
   `requested_bye`, `unplayed` (legacy generic), `absent`. Additive:

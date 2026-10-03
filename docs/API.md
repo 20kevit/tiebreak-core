@@ -57,7 +57,9 @@ from tiebreak_core import (
 
 Same values/order as legacy for valid inputs under
 `ruleset="legacy-0.1.0"` (delegation, proven by
-`tests/test_strict.py`). Differences from legacy, all fail-fast:
+`tests/test_strict.py`). Under `ruleset="fide-2024"` the FIDE-2024
+engine computes independently (see `docs/TIEBREAK_RULES.md` for
+per-criterion semantics). Differences from legacy, all fail-fast:
 
 - unknown criterion → `UnknownCriterionError` (legacy: silent `0.0`)
 - `ruleset="fide-2026"` (or anything unsupported) →
@@ -71,6 +73,11 @@ Same values/order as legacy for valid inputs under
   `unplayed`, else `played`). Legacy calculators ignore `kind`.
 - `frozen_registry()` → immutable snapshot (`TypeError` on write)
 - `register_criterion()` refuses built-in ids (`RegistryError`)
+
+fide-2024 additionally requires: `total_rounds` = tournament rounds
+(≥1); categorized unplayed rounds (legacy `-1` without kind is
+rejected); supported criteria only (`arpo`, `buchholz_sum`,
+`direct_encounter` → `UnsupportedCriterionError`).
 
 ## Adding a new tie-break
 

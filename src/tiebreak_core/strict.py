@@ -228,8 +228,20 @@ def calculate_strict(
     total_rounds: int = 0,
     ruleset: str = "legacy-0.1.0",
 ) -> float:
-    """Validated single-criterion calculation (values identical to legacy)."""
+    """Validated single-criterion calculation.
+
+    Under ``legacy-0.1.0`` values are identical to the legacy path
+    (delegation). Under ``fide-2024`` the FIDE-2024 engine computes
+    independently (see tiebreak_core.fide2024).
+    """
     require_ruleset(ruleset)
+    if ruleset == "fide-2024":
+        from tiebreak_core import fide2024 as _fide
+        _require_total_rounds(total_rounds)
+        validate_player(player)
+        players = validate_players(all_players)
+        _fide.validate_inputs(players, total_rounds)
+        return _fide.calculate(player, players, criterion, total_rounds)
     require_criteria([criterion])
     _require_total_rounds(total_rounds)
     validate_player(player)
@@ -244,8 +256,18 @@ def calculate_all_strict(
     total_rounds: int = 0,
     ruleset: str = "legacy-0.1.0",
 ) -> Dict[str, float]:
-    """Validated multi-criterion calculation (values identical to legacy)."""
+    """Validated multi-criterion calculation (ruleset-dispatched)."""
     require_ruleset(ruleset)
+    if ruleset == "fide-2024":
+        from tiebreak_core import fide2024 as _fide
+        _require_total_rounds(total_rounds)
+        validate_player(player)
+        players = validate_players(all_players)
+        _fide.validate_inputs(players, total_rounds)
+        for criterion in criteria:
+            _fide.require_supported(criterion)
+        return _fide.calculate_all(player, players, list(criteria),
+                                   total_rounds)
     checked_criteria = require_criteria(criteria)
     _require_total_rounds(total_rounds)
     validate_player(player)
@@ -260,11 +282,30 @@ def rank_standings_strict(
     deterministic_keys: Mapping[int, int] | None = None,
     ruleset: str = "legacy-0.1.0",
 ) -> StandingsResult:
-    """Validated ranking (order identical to legacy ``rank_standings``)."""
+    """Validated ranking (ruleset-dispatched ordering)."""
     require_ruleset(ruleset)
+    if ruleset == "fide-2024":
+        from tiebreak_core import fide2024 as _fide
+        _require_total_rounds(total_rounds)
+        checked_players = validate_players(players)
+        _fide.validate_inputs(checked_players, total_rounds)
+        for criterion in criteria:
+            _fide.require_supported(criterion)
+        _validate_keys(deterministic_keys)
+        return _fide.rank_standings(checked_players, list(criteria),
+                                    total_rounds, deterministic_keys)
     checked_criteria = require_criteria(criteria)
     _require_total_rounds(total_rounds)
     checked_players = validate_players(players)
+    _validate_keys(deterministic_keys)
+    return _rank_standings(
+        checked_players, checked_criteria, total_rounds, deterministic_keys
+    )
+
+
+def _validate_keys(
+    deterministic_keys: Mapping[int, int] | None,
+) -> None:
     if deterministic_keys is not None:
         if not isinstance(deterministic_keys, Mapping):
             raise InvalidPlayerDataError("deterministic_keys must be a mapping")
@@ -278,9 +319,6 @@ def rank_standings_strict(
                 raise InvalidPlayerDataError(
                     "deterministic_keys must map int -> int"
                 )
-    return _rank_standings(
-        checked_players, checked_criteria, total_rounds, deterministic_keys
-    )
 
 
 def order_ids_strict(

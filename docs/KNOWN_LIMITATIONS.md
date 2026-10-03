@@ -1,4 +1,7 @@
-# Known limitations (v0.1.0) — CURRENT BEHAVIOR, NOT FIXED
+# Known limitations and explicit scope boundaries
+
+Items 1–11: legacy (`legacy-0.1.0`) behavior — CURRENT BEHAVIOR, NOT
+FIXED (frozen). Items 12–16: `fide-2024` explicit scope boundaries.
 
 Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
 
@@ -42,3 +45,17 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
     remains a mutable global for compatibility. LIMITATION: importers can
     corrupt it. NOT REMOVED; new code must read via `frozen_registry()`
     and extend via `register_criterion()` (built-in overwrite refused).
+
+## fide-2024 boundaries (explicit scope, not defects)
+
+12. Team systems (§§11–13) — not modeled (different domain objects:
+    matches, boards, MP/GP). Requested only if a team consumer appears.
+13. TPR/PTP/APRO/APPO (§§10.2–10.5) — rating conversion tables not
+    retrieved; requesting them raises `UnsupportedCriterionError`.
+14. Direct Encounter (§6) — needs the Phase-3 group-context ranking
+    architecture; `direct_encounter` under fide-2024 raises.
+15. Art.16.6 local overrides — no competition-regulation input contract;
+    unsupported by design until a consumer requires it.
+16. March-2026 edition — the engine implements the fully-retrieved 2024
+    text as ruleset `fide-2024`; `fide-2026` stays reserved (see
+    ADR-007 and `docs/FIDE_SOURCES.md`).

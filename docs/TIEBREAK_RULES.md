@@ -1,4 +1,38 @@
-# Tie-break rules reference (informational — v0.1.0 does NOT reimplement FIDE)
+# Tie-break rules reference
+
+Two rulesets exist. Legacy (`legacy-0.1.0`) is a frozen extraction
+(divergences below are preserved, NOT fixed). `fide-2024` implements
+the cited FIDE articles for individual Swiss tournaments
+(basis: FIDE Council 2024_FC2_18; see `docs/FIDE_SOURCES.md` item 0).
+
+## fide-2024 semantics per criterion id
+
+| id | FIDE | Semantics (deltas vs legacy) |
+|---|---|---|
+| buchholz | §8.1 + §§16.3–16.4 | Σ adj(opp) for played; own points (dummy) per unplayed round. Exact (no rounding). |
+| buchholz_cut1/cut2 | §14.1.1.a/§14.2 + §16.5 | VUR-preferential cuts, reapplied (§16.5.2). Keeps ≥1 element (edge). |
+| median_buchholz/_2 | §§14.3–14.4 + §16.5 | Least (VUR rule) then most. <3 / <5 elements → full BH (edge). |
+| sonneborn_berger | §9.1 + §§16.3–16.4 | Σ adj(opp)×score; dummy own×awarded. Exact. |
+| sonneborn_berger_cut1 | §14.1.1.d + §16.5.1 | Cut higher of (lowest VUR contribution, least significant). |
+| progressive | §7.5 | Gap-filled over all tournament rounds (absent carries). |
+| progressive_cut1 | §14.1.1.c | PS minus score after round 1. |
+| wins | §7.1 WIN | Rounds with win-points incl. unplayed (same numbers as legacy here). |
+| won | §7.2 WON | Over-the-board wins only (legacy `wins` counts byes/forfeits). |
+| games_black | §7.3 BPG | OTB black games only (legacy counts unplayed sides). |
+| wins_black | §7.4 BWG | OTB wins with black only. |
+| rounds_elected | §7.6 REP | Recorded non-absent rounds minus half/zero-byes and forfeit losses. |
+| aro | §10.1 ARO | OTB rated opponents; 0.5 rounded UP (legacy uses banker's). Unrated excluded; empty → 0.0. |
+| aro_cut1 | §14.1.1.b ARO-C1 | Exclude lowest rating; <2 rated OTB opponents → uncut ARO (edge). |
+| aob | §8.2 AOB | Mean of OTB opponents' fide-2024 BH, 1dp (presentation choice). |
+| fore_buchholz | §8.3 FB | Final-round *paired* games as draws; Art.16 on top; dummy uses FB-adjusted own points. |
+| koya | §9.2 KS | Opponents on ≥50% of maximum possible (total rounds); raw points qualify; all real-opponent games count. Applied wherever requested (FIDE scopes Koya to RR). |
+| arpo/buchholz_sum/direct_encounter | — | NOT in fide-2024 (`UnsupportedCriterionError`): rating tables unretrieved / non-FIDE / needs Phase-3 group architecture. |
+
+Uncategorized unplayed rounds (legacy `-1` without kind) are rejected
+under fide-2024 — categories must be explicit (see ADR-006). Art.16.6
+local overrides are unsupported. Team systems are out of scope.
+
+## legacy-0.1.0 (informational — v0.1.0 does NOT reimplement FIDE)
 
 Authoritative source: FIDE Handbook C.07 Play-Off and Tie-Break
 Regulations (effective 1 Aug 2024 → 28 Feb 2026; successor from 1 Mar 2026).

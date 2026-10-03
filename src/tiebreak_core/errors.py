@@ -25,7 +25,6 @@ class UnknownCriterionError(TiebreakError):
 
 class UnsupportedRulesetError(TiebreakError):
     """Raised when a ruleset other than a supported one is requested."""
-
     def __init__(self, ruleset: object, supported: tuple = ("legacy-0.1.0",)) -> None:
         self.ruleset = ruleset
         self.supported = supported
@@ -39,6 +38,18 @@ class UnsupportedRulesetError(TiebreakError):
 
 class InvalidGameRecordError(TiebreakError):
     """Raised when a GameRecord carries values the calculators cannot interpret."""
+
+
+class UnsupportedCriterionError(TiebreakError):
+    """Raised when a known criterion is not implemented under a ruleset
+    (e.g. rating-table systems under fide-2024)."""
+
+    def __init__(self, criterion: object, ruleset: object) -> None:
+        self.criterion = criterion
+        self.ruleset = ruleset
+        super().__init__(
+            f"criterion {criterion!r} is not implemented under ruleset "
+            f"{ruleset!r}")
 
 
 class InvalidPlayerDataError(TiebreakError):
