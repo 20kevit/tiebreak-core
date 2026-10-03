@@ -56,6 +56,9 @@ uncertainty register (`IMPLEMENTATION_ROADMAP.md`), never hidden.
 17. **Optional/future**: Koya-limit machinery, 16.6 overrides, team
     module (on demand), AOB-FB variant, norm-TPR (never in core).
 
+Tournament classification: ETT26 (C.02.03 Annex C) maps TRF field 192 to the format regime
+(Swiss/RR/team/knockout/custom) — consumer-owned lookup; see `FIDE_FORMAT_VARIANTS.md`.
+
 Research provenance: `FIDE_SOURCES.md`. Software context (never
 normative): `SOFTWARE_COMPARISON.md`. Conformance method:
 `FIDE_CONFORMANCE_PLAN.md`. Build order:

@@ -104,3 +104,29 @@ Formula sources: `FIDE_CRITERIA_CATALOG.md` (individual),
 code: base inputs from the catalog + `:MP/:GP` (team match scores) +
 variant inputs (cut counts; Koya half-point shifts; SSSC divisor;
 forfeit-inclusion flag; FB projection).
+
+## Descriptor → core-request boundary (normative for adapters)
+
+The core never parses TRF syntax. Consumer-owned normalization maps
+each ordered descriptor to a calculation request:
+
+```text
+MTB26/TRF descriptor  →  consumer parsing  →  normalized core request  →  tiebreak-core
+"BH/C1/P"             →  base BH + Cut-1    →  criterion "buchholz_cut1" (+ forfeit-inclusion flag, F26-1)
+"ARO/M2"              →  base ARO + Median-2 →  future parametric cut (SPECIFIED; today: UnsupportedCriterionError)
+"DE/P"                →  base DE + forfeit-inclusion → positional "direct_encounter" stage (Swiss default today;
+                         regulations opt-in is a future flag — SPECIFIED, unsupported under fide-2024)
+"OTHER_x"             →  NOT a FIDE criterion, never silently mapped; consumer resolves or the strict
+                         core raises UnknownCriterionError on calculation request (legacy: frozen 0.0)
+"BH:GP/C1"            →  team reference score → future team module (today: out of scope, explicit error)
+```
+
+Rules: modifiers are semantic (cut counts, flags, team-score refs),
+never opaque strings inside the core; descriptor ORDER stays
+consumer-controlled (the `criteria` list order); `PTS` (record 212)
+means "primary points first", i.e. points-descending before the
+listed codes — the core's standing comparator already orders by
+points first. Unknown criteria: strict → typed error; legacy →
+frozen `0.0` (never change). No broad API redesign needed: the
+contract is ids + flags, and future flags (forfeit-inclusion,
+mode) are additive strict parameters.

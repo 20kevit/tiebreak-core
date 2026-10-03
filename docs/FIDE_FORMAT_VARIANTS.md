@@ -57,3 +57,16 @@ tie-break inputs. Status: STD SPECIFIED; rest CONSUMER_OWNED.
 C.04 §§1.7–1.8 opposition evaluation (current scores, self-game,
 acceleration exclusion; bracket order BH→SB→TPN) belongs to
 pairing-core. Names collide with C.07; namespaces must not.
+
+## ETT26 → regime mapping (consumer-owned)
+
+| 192 code family | C.07 regime | tie-break consequences |
+|---|---|---|
+| FIDE_DUTCH_*, FIDE_DUBOV, FIDE_BURSTEIN, *_SWISS, FIDE_TEAM_*SWISS | Swiss (individual/team) | Art 16; BH allowed; DE §§6.1–6.3 |
+| BERGER_*ROUNDROBIN, FIDE_*ROUNDROBIN (incl. team) | predetermined pairing | §15.2 (2026 carve-out); BH-ban; Koya home |
+| SCHILLER / SCHEVENINGEN | predetermined (order/colour rules "not yet defined") | same as RR; rules pending are flagged NON-BLOCKING (no core input depends on them) |
+| *KNOCKOUT | play-off (Art 3) / team §12 | individual: no tie-break values defined; team: BC/TBR/BBE chains |
+| CUSTOM_* | organiser-defined | explicit `OTHER_*` mapping; NO silent inference from unrelated input |
+
+The final architecture makes format selection explicit via a mode flag;
+the adapter (never the core) owns 192 parsing + ETT26 lookup.

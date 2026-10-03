@@ -52,6 +52,7 @@ ids from `FIDE_CRITERIA_CATALOG.md`. `Status` is per §15 of the mission
 | R-DUMMY26 | C.07 §16.4.1–16.4.2 (2026) | Dummy ≤ scheduled-opp adjusted (forfeits) / ≤ draw×rounds (rest) | bh/sb | 2026 | SPECIFIED (fide-2026 core) |
 | R-VURCUT | C.07 §16.5.1–16.5.2 | Cut lowest VUR contribution (SB: higher-of), reapplied | cuts | 2023→ | IMPLEMENTED |
 | R-OPT OUT | C.07 §16.6 | Pre-announced alternatives to 16.3–16.5 | art16 | all | DEFERRED (no competition-reg input contract) |
+| R-ETT192 | ETT26 (C.02.03 Annex C) + TRF26-192 | 192 code → format regime (Swiss→Art16; predetermined→§15.2; team→§§11–13 codes; KO→Art3/§12; CUSTOM_*→explicit OTHER_ mapping, never inferred) | ETT26 | SPECIFIED (consumer-owned lookup; core receives normalized mode) |
 | R-PAIR-BH/SB | C.04 Basic Rules §§1.7–1.8 | Pairing-time BH/SB on CURRENT scores + self-game + accel exclusion; bracket order BH→SB→TPN | pairing | 2026 | CONSUMER_OWNED (pairing-core, not this lib) |
 | R-NORM-TPR | B.01 §§1.4.6–1.4.9 | Norm Rp: floors, imputed 1400, 35% min — NOT tiebreak TPR | — | all | OUT_OF_SCOPE (documented warning) |
 
