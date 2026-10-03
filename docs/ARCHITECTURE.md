@@ -99,8 +99,8 @@ paths + `RulesetInfo` descriptor; never edits to frozen behavior.
   rounds, mapping integrity) and DELEGATE to the legacy functions, so
   values/order are identical. Unknown criteria raise
   `UnknownCriterionError` here (legacy yields 0.0, frozen). `ruleset=`
-  accepts only supported versions; `"fide-2026"` is specified, implementation pending (Phase F26-1), and raises
-  `UnsupportedRulesetError` until implemented.
+  accepts only supported versions (`legacy-0.1.0`, `fide-2024`,
+  `fide-2026`); unknown rulesets raise `UnsupportedRulesetError`.
 - `errors.py` — typed error taxonomy (`TiebreakError` base). Raised only
   on the strict path and by `register_criterion`; legacy path never raises.
 - `registry.py` — stable identifiers + FIDE cross-reference + default

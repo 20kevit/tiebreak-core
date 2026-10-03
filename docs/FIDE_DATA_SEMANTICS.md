@@ -14,7 +14,7 @@ failure. `missing == 0` is forbidden unless the article says so:
 | Uncategorized `-1` round (fide-2024) | `InvalidGameRecordError` | strict gate |
 | Unknown criterion (strict) | `UnknownCriterionError` | fail-fast |
 | Unsupported criterion for ruleset | `UnsupportedCriterionError` | `arpo`/`buchholz_sum`/scalar-DE under fide-2024 |
-| Unsupported ruleset | `UnsupportedRulesetError` | `fide-2026` (specified, not yet calculable) |
+| Unsupported ruleset | `UnsupportedRulesetError` | unknown ruleset id |
 
 Ratings snapshot: the core receives ONE rating per player, defined as
 the tournament-start (first) list — this satisfies the 2026

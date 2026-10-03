@@ -8,13 +8,13 @@ library and recorded in case `notes`.
 
 | Example | Article | Input (summary) | Calculation | Expected | Status / test path |
 |---|---|---|---|---|---|
-| Laxman (SOA GM 2024) | §§8.1/9.1/14.1.1/16 | 7.0/10, R4 withdrawal (VUR) | BH 50+7=57 (2024) / 50+5=55 (2026 cap 16.4.2); C1 cut 7.0→50 / cut 5.0→50; SB 37.25 both | BH 57/55, C1 50/50, SB 37.25 | VERIFIED (`LAXMAN-2024…`) + PENDING (`LAXMAN-2026…`) |
-| Ex01 (forfeit win R7) | §§8.1/16.3–16.4 | 7.0/9, sched-opp adj 5.5 | dummy 7.0 (2024) / 5.5 (2026 16.4.1) | BH 51 / 49.5 | VERIFIED + PENDING |
+| Laxman (SOA GM 2024) | §§8.1/9.1/14.1.1/16 | 7.0/10, R4 withdrawal (VUR) | BH 50+7=57 (2024) / 50+5=55 (2026 cap 16.4.2); C1 cut 7.0→50 / cut 5.0→50; SB 37.25 both | BH 57/55, C1 50/50, SB 37.25 | VERIFIED (`LAXMAN-2024…` + `LAXMAN-2026…`, 0.7.0) |
+| Ex01 (forfeit win R7) | §§8.1/16.3–16.4 | 7.0/9, sched-opp adj 5.5 | dummy 7.0 (2024) / 5.5 (2026 16.4.1) | BH 51 / 49.5 | VERIFIED + VERIFIED (0.7.0) |
 | Ex02 (R1 bye) | §16.4.2 | 4.0/9, cap 4.5 no-op | dummy = own 4.0 both | BH 4.0 both | docs-only (no-op; note the "maximum" wording slip) |
-| Ex03 (forfeit loss + withdrawal) | §§8.1/16.4 | 6.5/10 | dummies 6.5+6.5 (2024) / 6.5+5.0 (2026) | BH 64.5 / 63 | VERIFIED + PENDING |
-| Ex04 (R1 forfeit win, opp excluded) | §§8.1/16.4.1 | 9.5/10, sched adj 4.5 | dummy 9.5 (2024) / 4.5 (2026) | BH 74 / 69 | VERIFIED + PENDING |
+| Ex03 (forfeit loss + withdrawal) | §§8.1/16.4 | 6.5/10 | dummies 6.5+6.5 (2024) / 6.5+5.0 (2026) | BH 64.5 / 63 | VERIFIED + VERIFIED (0.7.0) |
+| Ex04 (R1 forfeit win, opp excluded) | §§8.1/16.4.1 | 9.5/10, sched adj 4.5 | dummy 9.5 (2024) / 4.5 (2026) | BH 74 / 69 | VERIFIED + VERIFIED (0.7.0) |
 | Ex05 (forfeit win, opp unpaired R6) | §§8.1/16.4.1 | ambiguous ZPB/HPB/FPB | officially unresolved | — | docs-only (ambiguity registered) |
-| Ex06 = TEC Ex06 | §§8.1/16.5.1 | #4 3.5/5, R2 HPB (VUR) | cut VUR dummy → 11.5 | BH-C1 11.5 | VERIFIED + PENDING (see TEC row; "2.5" vestige noted) |
+| Ex06 = TEC Ex06 | §§8.1/16.5.1 | #4 3.5/5, R2 HPB (VUR) | cut VUR dummy → 11.5 | BH-C1 11.5 | VERIFIED + VERIFIED (0.7.0; "2.5" vestige noted) |
 
 ## TEC Exercises V01-1 (2024-04-16, C.07-2023 basis)
 

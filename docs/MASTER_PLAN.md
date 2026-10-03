@@ -19,15 +19,19 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 - Stage G: pairing-core narrow-contract + chess-manager adapter docs.
 - Stage H: consolidated ARCHITECTURE, benchmarks, packaging verification.
 
-## Current gaps (honest list)
+## Current gaps (honest list — updated 0.8.0; was accurate at 0.6.0)
 
-- `fide-2026` calculations: specified, implementation pending — but the full
-  domain is now specified (2026-10-03 research mission:
-  `docs/FIDE_TIEBREAK_MASTER_SPEC.md` + 9 companion docs, verified
-  2024→2026 diff, 10-case unplayed corpus). Next: Phase F26-1 build.
-- Direct Encounter: standings-level stub under legacy.
-- Rating-based family complete under fide-2024 (TPR/PTP/APRO/APPO ✓); legacy ARPO stays frozen; RTNG + team systems deferred.
-- Cut variants (SB-C1/PS-C1/ARO-C1), AOB, ForeBH: pending.
+- `fide-2026` calculations: IMPLEMENTED (0.7.0/0.8.0). Remaining
+  SPECIFIED surface: generic /Cn /Mn machine, Koya limits §14.5,
+  exotic-scoring STD (U6), team module (on demand), Art.16.6
+  overrides. Full domain specification: `docs/FIDE_TIEBREAK_MASTER_SPEC.md`
+  + companions, verified 2024→2026 diff, 20-case VERIFIED corpus.
+- Direct Encounter: standings-level stub under legacy (frozen);
+  group stage under fide-2024/fide-2026.
+- Rating-based family complete under fide-2024 AND fide-2026
+  (TPR/PTP/APRO/APPO ✓ + RTNG terminal); legacy ARPO stays frozen.
+- Cut variants (SB-C1/PS-C1/ARO-C1, BH-C2, SB-C2, ARO-C2, FB-C1/C2),
+  AOB (+AOB/FB), ForeBH: implemented; PS-C2 declined (no semantics).
 - No serialization format (none needed yet — do not invent one).
 - GitHub publication: working (remote `github-tiebreak`, `main` pushes succeed; releases 0.4.0/0.5.0 pushed 2026-10-03). No tags cut for 0.4.0/0.5.0 (tags exist only to v0.3.0) — tag policy is an owner decision, not a blocker.
 
