@@ -31,7 +31,8 @@ Implemented: `median_buchholz`, `median_buchholz_2`.
 ### AOB — Average of Opponents' Buchholz §8.2 (Type CC).
 Mean of the (Fore-)Buchholz values of opponents played over the
 board (2026 "(or Fore Buchholz)" = live-FB variant allowed).
-Implemented: `aob` (fide-2024, BH-based, 1dp presentation).
+Implemented: `aob` (exact mean, no rounding — FIDE states none and
+ranking sorts on the exact value).
 
 ### FB — Fore Buchholz §8.3 (Type D).
 BH computed as if all paired final-round games were draws, then
@@ -42,8 +43,9 @@ Implemented: `fore_buchholz` (fide-2024).
 Σ over rounds: opponent final adjusted score × points scored against
 them; own unplayed rounds = dummy × awarded points (§16.4, 2026 caps
 apply). Implemented: `sonneborn_berger` (legacy 2dp / fide-2024
-exact), `sonneborn_berger_cut1` (§14.1.1.d + §16.5.1 higher-of rule,
-fide-2024).
+exact), `sonneborn_berger_cut1` (§14.1.1.d opponent-score
+identification + §16.5.1 higher-of rule, fide-2024; SB-C2 reapplies
+per §16.5.2 under fide-2026).
 
 ### KS — Koya System §9.2 (Type BC, round-robin scope).
 Points scored against opponents finishing on ≥50% of the maximum

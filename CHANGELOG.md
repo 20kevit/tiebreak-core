@@ -9,6 +9,30 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [0.9.0] — 2026-10-03
+
+Correctness remediation (independent audit F1/F2/F3). API
+backwards-compatible; three calculation corrections change affected
+values — pre-1.0 rulesets, no consumer adoption yet (integration
+contract still future-tense), so fixed in place with explicit
+before/after notice rather than new ruleset ids:
+
+- F1 (P0): SB-C1/SB-C2 cut the product of the lowest-SCORED
+  opponent (§14.1.1.d + TEC worked rule), not the least product.
+  E.g. win-vs-2.0 (2.0) + draw-vs-3.0 (1.5): cut is now 2.0 (was
+  1.5). Official TEC Stephan SB-C1 5.75 (was 7.25), Maria 4.25
+  (was 5.75) — added as corpus `TEC-SB-C1-STEPHAN-MARIA`. Base SB
+  unchanged. Affects fide-2024 + fide-2026. Hand-derived P2
+  SWISS5 SB-C1 corrected 2.75 → 2.25 (lowest basis R3 0.5).
+- F2 (P1): requested FULL-point byes are 16.2.1 non-VUR (§16.1.1
+  defines requested byes as half/zero-point only). Affects VUR-cut
+  preference + REP for such rounds; all other categories unchanged.
+  Affects fide-2024 + fide-2026 (shared classifier).
+- F3 (P1): AOB returns the exact mean (§8.2 states no rounding);
+  ranking sorts on the exact value (was 1dp-rounded). E.g.
+  SWISS5 P1 AOB 12.7 → 12.666666666666666 (38/3). `aob_fb`
+  intentionally unchanged (stability test added).
+
 ## [0.8.0] — 2026-10-03
 
 Phase F26-2: close the specified individual-Swiss surface under

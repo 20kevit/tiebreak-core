@@ -13,7 +13,7 @@ the cited FIDE articles for individual Swiss tournaments
 | buchholz_cut1/cut2 | §14.1.1.a/§14.2 + §16.5 | VUR-preferential cuts, reapplied (§16.5.2). Keeps ≥1 element (edge). |
 | median_buchholz/_2 | §§14.3–14.4 + §16.5 | Least (VUR rule) then most. <3 / <5 elements → full BH (edge). |
 | sonneborn_berger | §9.1 + §§16.3–16.4 | Σ adj(opp)×score; dummy own×awarded. Exact. |
-| sonneborn_berger_cut1 | §14.1.1.d + §16.5.1 | Cut higher of (lowest VUR contribution, least significant). |
+| sonneborn_berger_cut1 | §14.1.1.d + §16.5.1 | Cut higher of (lowest VUR contribution, product of lowest-scored opponent). |
 | progressive | §7.5 | Gap-filled over all tournament rounds (absent carries). |
 | progressive_cut1 | §14.1.1.c | PS minus score after round 1. |
 | wins | §7.1 WIN | Rounds with win-points incl. unplayed (same numbers as legacy here). |
@@ -23,7 +23,7 @@ the cited FIDE articles for individual Swiss tournaments
 | rounds_elected | §7.6 REP | Recorded non-absent rounds minus half/zero-byes and forfeit losses. |
 | aro | §10.1 ARO | OTB rated opponents; 0.5 rounded UP (legacy uses banker's). Unrated excluded; empty → 0.0. |
 | aro_cut1 | §14.1.1.b ARO-C1 | Exclude lowest rating; <2 rated OTB opponents → uncut ARO (edge). |
-| aob | §8.2 AOB | Mean of OTB opponents' fide-2024 BH, 1dp (presentation choice). |
+| aob | §8.2 AOB | Mean of OTB opponents' fide-2024 BH, exact (no rounding). |
 | fore_buchholz | §8.3 FB | Final-round *paired* games as draws; Art.16 on top; dummy uses FB-adjusted own points. |
 | koya | §9.2 KS | Opponents on ≥50% of maximum possible (total rounds); raw points qualify; all real-opponent games count. Applied wherever requested (FIDE scopes Koya to RR). |
 | tpr | §10.2 TPR | Rounded ARO + §8.1a table difference for OTB fraction (fraction rounded half-up to hundredths — documented interpretation, not FIDE text). No rated OTB games → 0.0 (documented edge, not FIDE). |

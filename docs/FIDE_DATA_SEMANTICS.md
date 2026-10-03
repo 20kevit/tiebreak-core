@@ -28,8 +28,9 @@ mid-tournament re-ratings; the adapter contract states this.
   half-points where aggregation order could matter). Legacy rounding
   (BH 1dp, SB 2dp) is frozen calculation behavior, and ranking sorts
   the rounded values (KNOWN_LIMITATIONS 9) — never "fix" under legacy.
-- ARO/APRO/APPO/AOB: round half-up to integer (AOB: 1dp presentation
-  choice, documented) exactly once, after averaging.
+- ARO/APRO/APPO: round half-up to integer exactly once, after
+  averaging. AOB: exact mean (no rounding — ranking sorts on it).
+  (Legacy BH 1dp / SB 2dp rounding-before-ranking is frozen.)
 - TPR: fractional score rounded half-up to hundredths → §8.1a lookup
   (documented interpretation); PTP: binary search on §8.1b bands, full
   scale, no ±400 cut.
@@ -53,9 +54,11 @@ mid-tournament re-ratings; the adapter contract states this.
 Game-kind → category mapping (implemented `classify()`): `played`→—;
 `pairing_bye`→16.2.1; `forfeit_win`→16.2.2; `forfeit_loss`→16.2.4;
 `requested_bye`→16.2.3/16.2.5 positionally (later participated round
-= early); `unplayed` (legacy generic)→rejected under fide-2024;
-`absent`→no round (gap-filled by PS only). VUR = requested/forfeit-loss
-kinds (§16.1.2).
+= early), except a requested FULL-point bye →16.2.1 (full-point bye,
+non-VUR — §16.1.1 defines requested byes as half/zero-point only);
+`unplayed` (legacy generic)→rejected under fide-2024;
+`absent`→no round (gap-filled by PS only). VUR = half/zero-point
+requested/forfeit-loss kinds (§16.1.2).
 
 ## 4. Missing inputs per SPECIFIED criterion (model gaps)
 
