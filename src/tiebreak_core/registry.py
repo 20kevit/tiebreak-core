@@ -67,6 +67,12 @@ TIEBREAK_FIDE_REF: Dict[str, str] = {
     "direct_encounter": "C.07 §6 DE (legacy standings-level value is a 0.0 stub)",
     "tpn": "C.07 §7.8 TPN (fide-2026 terminal ranking stage, ascending)",
     "rtng": "C.07 §10.6 RTNG (fide-2026 terminal ranking stage, descending)",
+    "std": "C.07 §7.7 STD (fide-2026; needs scheduled-opp round scores)",
+    "sonneborn_berger_cut2": "C.07 §14.2 SB-C2 (fide-2026)",
+    "aro_cut2": "C.07 §14.2 ARO-C2 (fide-2026)",
+    "fore_buchholz_cut1": "C.07 §8.3+§14.1.1 FB-C1 (fide-2026)",
+    "fore_buchholz_cut2": "C.07 §8.3+§14.2 FB-C2 (fide-2026)",
+    "aob_fb": "C.07 §8.2 AOB over Fore BH (fide-2026)",
 }
 
 DEFAULT_CRITERIA: List[str] = [

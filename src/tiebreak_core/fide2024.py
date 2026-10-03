@@ -207,7 +207,30 @@ def _require_context(players: Mapping[int, PlayerTiebreakData],
         raise InvalidPlayerDataError(
             f"fide-2024 requires total_rounds (tournament rounds) >= 1, "
             f"got {total_rounds!r}")
+    _require_known_opponents(players)
     return {pid: classify(p) for pid, p in players.items()}
+
+
+def _require_known_opponents(
+        players: Mapping[int, PlayerTiebreakData]) -> None:
+    """Reject dangling played-game references with a typed error.
+
+    Over-the-board games index the opponent's adjusted score; an
+    opponent id absent from the map would otherwise crash with a bare
+    ``KeyError`` deep in aggregation. Valid-input outputs are
+    unaffected (the gate fires only where computation cannot proceed).
+    """
+    from tiebreak_core.errors import InvalidPlayerDataError
+    for pid, pdata in players.items():
+        for game in pdata.games:
+            if (normalize_kind(game) == PLAYED and game.opponent_id != -1
+                    and game.opponent_id not in players):
+                raise InvalidPlayerDataError(
+                    f"player {pid}: played round {game.round_number} "
+                    f"references unknown opponent {game.opponent_id}; "
+                    f"fide-2024 needs every over-the-board opponent "
+                    f"in the players map (or a categorized unplayed "
+                    f"round instead)")
 
 
 def _adj_table(players: Mapping[int, PlayerTiebreakData],

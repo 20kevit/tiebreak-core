@@ -9,6 +9,34 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [0.8.0] — 2026-10-03
+
+Phase F26-2: close the specified individual-Swiss surface under
+`fide-2026` (additive new criteria; frozen outputs byte-identical):
+
+- STD (§7.7, Q-STD): new `std` criterion + optional
+  `GameRecord.opponent_score` input (backwards-compatible: appended
+  optional field; legacy/fide-2024 ignore it). Played rounds compare
+  against the scheduled opponent's round score (explicit value, else
+  standard 1-½-0 complement when `draw_points == 0.5`); unplayed
+  rounds compare against the draw value; RR-mode/`/P` forfeits count
+  as regular games. Non-standard draw values without explicit scores
+  raise `InvalidPlayerDataError` (organizer contract; U6 now blocks
+  exotic scoring tables only).
+- Cut combos: `sonneborn_berger_cut2` (SB-C2 = reapplied C1-cut per
+  §16.5.2, documented interpretation), `aro_cut2` (drop two lowest,
+  keep-≥1 guard mirroring BH-C2), `fore_buchholz_cut1/cut2`,
+  `aob_fb` (AOB over Fore Buchholz, D8). All hand-computed +
+  chain-monotonicity property tests. PS-C2 deliberately NOT built
+  (no FIDE semantics exist — PS-C1 is round-exclusion).
+- Robustness: dangling over-the-board opponent references now raise
+  `InvalidPlayerDataError` under fide-2024/fide-2026 instead of a bare
+  `KeyError` (valid-input outputs unaffected; the crash site surfaced
+  during fixture work).
+- Matrix/modifiers/MTB26/roadmap states updated to the exact
+  remaining scope (generic /Cn /Mn machine, Koya limits, team,
+  16.6, exotic STD).
+
 ## [0.7.0] — 2026-10-03
 
 Phase F26-1: `fide-2026` implemented (Swiss scope + RR mode; suite

@@ -105,6 +105,7 @@ def validate_game(game: object, *, index: int = -1) -> None:
             f"got {game.round_number!r}"
         )
     _validate_kind(game, index)
+    _validate_opponent_score(game, index)
 
 
 def _validate_kind(game: object, index: int) -> None:
@@ -135,6 +136,29 @@ def _validate_kind(game: object, index: int) -> None:
         raise InvalidGameRecordError(
             f"game[{index}]: kind {kind!r} requires opponent_id=-1, "
             f"got {game.opponent_id!r}"
+        )
+
+
+def _validate_opponent_score(game: object, index: int) -> None:
+    """Validate the optional §7.7 input (fide-2026 "std").
+
+    ``None`` = unknown (derived or required downstream); otherwise a
+    finite number >= 0. Exotic scoring tables may legitimately carry
+    values outside {0, 0.5, 1} here (e.g. 3.0), so — unlike ``score``
+    itself — no value-set restriction applies.
+    """
+    opp_score = game.opponent_score
+    if opp_score is None:
+        return
+    if (
+        isinstance(opp_score, bool)
+        or not isinstance(opp_score, (int, float))
+        or not math.isfinite(opp_score)
+        or opp_score < 0
+    ):
+        raise InvalidGameRecordError(
+            f"game[{index}]: opponent_score must be None or a finite "
+            f"number >= 0, got {opp_score!r}"
         )
 
 

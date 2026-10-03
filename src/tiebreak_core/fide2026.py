@@ -149,7 +149,31 @@ def _precompute(shared: Mapping[int, PlayerTiebreakData],
     _validate_mode(mode)
     _validate_draw_points(draw_points)
     ctx = _f24._require_context(shared, total_rounds)
+    _require_known_opponents(ctx, shared)
     return ctx, _f24._adj_table(shared, ctx)
+
+
+def _require_known_opponents(
+        ctx: Dict[int, List[_f24.ClassifiedRound]],
+        shared: Mapping[int, PlayerTiebreakData]) -> None:
+    """Reject dangling played-game references with a typed error.
+
+    Over-the-board games index the opponent's adjusted score; an
+    opponent id absent from the map would otherwise crash with a bare
+    ``KeyError`` deep in aggregation. (Forfeit rounds with an unknown
+    pairing use the sentinel + uncapped-dummy fallback instead.)
+    """
+    from tiebreak_core.errors import InvalidPlayerDataError
+    for pid, rounds in ctx.items():
+        for r in rounds:
+            if (r.kind == PLAYED and r.opponent_id != -1
+                    and r.opponent_id not in shared):
+                raise InvalidPlayerDataError(
+                    f"player {pid}: played round {r.round_number} "
+                    f"references unknown opponent {r.opponent_id}; "
+                    f"fide-2026 needs every over-the-board opponent "
+                    f"in the players map (or a categorized unplayed "
+                    f"round instead)")
 
 
 def _use_pre(shared: Mapping[int, PlayerTiebreakData],
@@ -400,6 +424,33 @@ def sonneborn_berger_cut1(player: PlayerTiebreakData,
     return sum(c.value for c in remaining)
 
 
+def sonneborn_berger_cut2(player: PlayerTiebreakData,
+                          all_players: Mapping[int, PlayerTiebreakData],
+                          total_rounds: int, mode: str = "swiss",
+                          draw_points: float = 0.5,
+                          forfeits_as_played: bool = False,
+                          _pre: _Precomputed | None = None) -> float:
+    """SB-C2: SB with the §16.5.2 reapplied double cut.
+
+    MTB26 ``/C2`` combo on the SB base. Each cut follows the SB-C1
+    higher-of rule (§14.1.1.d + §16.5.1), reapplied to the remainder
+    (§16.5.2); keeps ≥1 element. Documented interpretation (no
+    official SB-C2 example): one iteration is exactly SB-C1.
+    """
+    ctx, adj = _use_pre(all_players, total_rounds, mode, draw_points,
+                        _pre)
+    eff = _regular_mode(mode, forfeits_as_played)
+    contribs = _sb_contribs(player.points, ctx[player.player_id], adj,
+                            eff, draw_points, total_rounds)
+    remaining = list(contribs)
+    for _ in range(min(2, max(0, len(remaining) - 1))):
+        vur = [c.value for c in remaining if c.from_vur]
+        least = min(c.value for c in remaining)
+        cut = max(min(vur), least) if vur else least
+        remaining.remove(next(c for c in remaining if c.value == cut))
+    return sum(c.value for c in remaining)
+
+
 def fore_buchholz(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
                   total_rounds: int, mode: str = "swiss",
@@ -412,10 +463,115 @@ def fore_buchholz(player: PlayerTiebreakData,
     keep awarded points; Article 16 applies on top with the dummy rule
     using FB-adjusted own points (capped per 16.4.1/16.4.2).
     """
-    ctx, _adj = _use_pre(all_players, total_rounds, mode, draw_points,
+    ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
                          _pre)
-    eff = _regular_mode(mode, forfeits_as_played)
+    _validate_forfeits_flag(forfeits_as_played)
+    own_fb, adj = _fb_tables(ctx, dict(all_players), total_rounds)
+    contribs = _fb_contribs(player, ctx, own_fb, adj, mode,
+                            draw_points, total_rounds,
+                            forfeits_as_played)
+    return sum(c.value for c in contribs)
 
+
+def fore_buchholz_cut1(player: PlayerTiebreakData,
+                       all_players: Mapping[int, PlayerTiebreakData],
+                       total_rounds: int, mode: str = "swiss",
+                       draw_points: float = 0.5,
+                       forfeits_as_played: bool = False,
+                       _pre: _Precomputed | None = None) -> float:
+    """FB-C1: Fore Buchholz with one 16.5-aware least cut (§§14.1.1/16.5).
+
+    MTB26 ``/C1`` combo on the FB base. Single-element edge keeps the
+    value uncut (same guard as BH-C1).
+    """
+    ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
+                         _pre)
+    _validate_forfeits_flag(forfeits_as_played)
+    own_fb, adj = _fb_tables(ctx, dict(all_players), total_rounds)
+    contribs = _fb_contribs(player, ctx, own_fb, adj, mode,
+                            draw_points, total_rounds,
+                            forfeits_as_played)
+    if len(contribs) < 2:
+        return sum(c.value for c in contribs)
+    return sum(c.value for c in contribs) - _f24._cut_least_exception(
+        contribs)
+
+
+def fore_buchholz_cut2(player: PlayerTiebreakData,
+                       all_players: Mapping[int, PlayerTiebreakData],
+                       total_rounds: int, mode: str = "swiss",
+                       draw_points: float = 0.5,
+                       forfeits_as_played: bool = False,
+                       _pre: _Precomputed | None = None) -> float:
+    """FB-C2: Fore Buchholz with the §16.5.2 reapplied double cut.
+
+    MTB26 ``/C2`` combo on the FB base. Keeps ≥1 element (same guard
+    as BH-C2).
+    """
+    ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
+                         _pre)
+    _validate_forfeits_flag(forfeits_as_played)
+    own_fb, adj = _fb_tables(ctx, dict(all_players), total_rounds)
+    contribs = _fb_contribs(player, ctx, own_fb, adj, mode,
+                            draw_points, total_rounds,
+                            forfeits_as_played)
+    if len(contribs) < 2:
+        return sum(c.value for c in contribs)
+    return sum(c.value for c in _f24._apply_cuts_least(contribs, 2))
+
+
+def _fore_buchholz_core(player: PlayerTiebreakData,
+                        ctx: Dict[int, List[_f24.ClassifiedRound]],
+                        own_fb: Mapping[int, float],
+                        adj: Mapping[int, float], mode: str,
+                        draw_points: float, total_rounds: int,
+                        forfeits_as_played: bool) -> float:
+    return sum(c.value for c in _fb_contribs(
+        player, ctx, own_fb, adj, mode, draw_points, total_rounds,
+        forfeits_as_played))
+
+
+def average_opponents_fore_buchholz(
+        player: PlayerTiebreakData,
+        all_players: Mapping[int, PlayerTiebreakData],
+        total_rounds: int, mode: str = "swiss",
+        draw_points: float = 0.5,
+        forfeits_as_played: bool = False,
+        _pre: _Precomputed | None = None) -> float:
+    """AOB/F (D8 "(or Fore Buchholz)"): average of OTB opponents'
+    Fore-Buchholz values.
+
+    The default ``aob`` id averages BH (final); this additive id
+    averages FB (e.g. computed live before the final round). Rounded
+    to 1 decimal (same documented presentation choice as AOB).
+    Empty set → 0.0.
+    """
+    ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
+                         _pre)
+    _validate_forfeits_flag(forfeits_as_played)
+    shared = dict(all_players)
+    opp_ids = [r.opponent_id for r in ctx[player.player_id]
+               if r.kind == PLAYED and r.opponent_id in shared]
+    if not opp_ids:
+        return 0.0
+    own_fb, adj = _fb_tables(ctx, shared, total_rounds)
+    fbs = [_fore_buchholz_core(shared[oid], ctx, own_fb, adj, mode,
+                               draw_points, total_rounds,
+                               forfeits_as_played)
+           for oid in opp_ids]
+    return round(sum(fbs) / len(fbs), 1)
+
+
+def _fb_tables(ctx: Dict[int, List[_f24.ClassifiedRound]],
+               all_players: Mapping[int, PlayerTiebreakData],
+               total_rounds: int
+               ) -> Tuple[Dict[int, float], Dict[int, float]]:
+    """FB projection tables: (own FB points, FB-adjusted scores).
+
+    Final-round *paired* games count as draws; unpaired final rounds
+    keep awarded points; Article 16 applies on top (16.2.5 rounds as
+    draws in the adjusted leg).
+    """
     def fb_own(pid: int) -> float:
         pts = 0.0
         for r in ctx[pid]:
@@ -436,17 +592,28 @@ def fore_buchholz(player: PlayerTiebreakData,
                 total += r.score
         return total
 
-    own_fb = fb_own(player.player_id)
-    adj = {pid: fb_adj(pid) for pid in all_players}
-    total = 0.0
+    return ({pid: fb_own(pid) for pid in all_players},
+            {pid: fb_adj(pid) for pid in all_players})
+
+
+def _fb_contribs(player: PlayerTiebreakData,
+                 ctx: Dict[int, List[_f24.ClassifiedRound]],
+                 own_fb: Mapping[int, float], adj: Mapping[int, float],
+                 mode: str, draw_points: float, total_rounds: int,
+                 forfeits_as_played: bool = False) -> List[_f24._Contribution]:
+    """FB elements with §16.4 caps on the dummy legs."""
+    _validate_forfeits_flag(forfeits_as_played)
+    eff = _regular_mode(mode, forfeits_as_played)
+    out: List[_f24._Contribution] = []
     for r in ctx[player.player_id]:
         sched = r.opponent_id != -1 and r.opponent_id in adj
         if _is_regular_game(r.kind, eff, sched):
-            total += adj[r.opponent_id]
+            out.append(_f24._Contribution(adj[r.opponent_id], False))
         else:
-            total += _dummy_value(r, own_fb, adj, draw_points,
-                                  total_rounds)
-    return total
+            out.append(_f24._Contribution(
+                _dummy_value(r, own_fb[player.player_id], adj,
+                             draw_points, total_rounds), r.is_vur))
+    return out
 
 
 def average_opponents_buchholz(
@@ -668,8 +835,73 @@ def koya(player: PlayerTiebreakData,
     return total
 
 
-# --- Rating family (D9/D12-compliant in both modes: rated OTB only). ---
+def _opponent_round_score(game, round_: _f24.ClassifiedRound,
+                           draw_points: float) -> float:
+    """Scheduled opponent's score for one regular-game round (§7.7).
 
+    Explicit ``GameRecord.opponent_score`` wins when present (required
+    for exotic scoring tables). Otherwise derived from the standard
+    1-½-0 complement (``1.0 - own``: win↔0.0, draw↔0.5, loss↔1.0 —
+    same for forfeit rounds counted as regular). Derivation is only
+    available when ``draw_points == 0.5`` (standard scoring); anything
+    else without an explicit value raises ``InvalidPlayerDataError``
+    (organizer contract; uncertainty U6).
+    """
+    from tiebreak_core.errors import InvalidPlayerDataError
+    explicit = game.opponent_score if game is not None else None
+    if explicit is not None:
+        value = float(explicit)
+        import math
+        if not math.isfinite(value) or value < 0:
+            raise InvalidPlayerDataError(
+                f"round {round_.round_number}: opponent_score must be "
+                f"a finite number >= 0, got {explicit!r}")
+        return value
+    if draw_points == 0.5:
+        return 1.0 - float(round_.score)
+    raise InvalidPlayerDataError(
+        f"round {round_.round_number}: non-standard draw value "
+        f"({draw_points}) needs an explicit opponent_score for "
+        f"Standard Points (see §7.7 organizer contract)")
+
+
+def standard_points(player: PlayerTiebreakData,
+                    all_players: Mapping[int, PlayerTiebreakData],
+                    total_rounds: int, mode: str = "swiss",
+                    draw_points: float = 0.5,
+                    forfeits_as_played: bool = False,
+                    _pre: _Precomputed | None = None) -> float:
+    """STD §7.7: rounds outscoring the scheduled opponent (or the draw).
+
+    Per recorded non-absent round: 1.0 when own points exceed the
+    reference, 0.5 on equality, else 0.0. The reference is the
+    scheduled opponent's round score for regular games (played; plus
+    RR-mode//P forfeits vs a scheduled opponent) and the draw value
+    (``draw_points``) for every unplayed round — pairing/forfeit
+    byes included ("obtains, without playing, ..."). Exact halves.
+    """
+    ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
+                      _pre)
+    eff = _regular_mode(mode, forfeits_as_played)
+    by_round = {g.round_number: g for g in player.games}
+    total = 0.0
+    for r in ctx[player.player_id]:
+        if r.kind == ABSENT:
+            continue
+        sched = r.opponent_id != -1 and r.opponent_id in all_players
+        if _is_regular_game(r.kind, eff, sched):
+            ref = _opponent_round_score(by_round.get(r.round_number), r,
+                                       draw_points)
+        else:
+            ref = draw_points
+        if r.score > ref:
+            total += 1.0
+        elif r.score == ref:
+            total += 0.5
+    return total
+
+
+# --- Rating family (D9/D12-compliant in both modes: rated OTB only). ---
 def _otb_rated_opponents(player: PlayerTiebreakData,
                          all_players: Mapping[int, PlayerTiebreakData]
                          ) -> List[PlayerTiebreakData]:
@@ -726,6 +958,32 @@ def aro_cut1(player: PlayerTiebreakData,
         return float(_f24._fide_round_half_up(
             sum(o.rating for o in opps) / len(opps)))
     rest = opps[1:]
+    return float(_f24._fide_round_half_up(
+        sum(o.rating for o in rest) / len(rest)))
+
+
+def aro_cut2(player: PlayerTiebreakData,
+             all_players: Mapping[int, PlayerTiebreakData],
+             total_rounds: int, mode: str = "swiss",
+             draw_points: float = 0.5,
+             forfeits_as_played: bool = False,
+             _pre: _Precomputed | None = None) -> float:
+    """ARO-C2: exclude the two lowest opponent ratings.
+
+    MTB26 ``/C2`` combo on the ARO base (§§14.2 + 10.1). VUR rounds
+    contribute no opponent rating, so the §16.5 exception has no
+    element to prefer; the plain lowest ratings are cut. At most
+    ``len - 1`` ratings are cut (mirrors the BH-C2 keep-≥1 guard):
+    fewer than 3 rated OTB opponents degrades gracefully (2 → the
+    ARO-C1 value, 1 → uncut ARO, 0 → 0.0; documented edges).
+    """
+    _validate_forfeits_flag(forfeits_as_played)
+    _use_pre(all_players, total_rounds, mode, draw_points, _pre)
+    opps = sorted(_otb_rated_opponents(player, all_players),
+                  key=lambda o: o.rating)
+    if not opps:
+        return 0.0
+    rest = opps[min(2, len(opps) - 1):]
     return float(_f24._fide_round_half_up(
         sum(o.rating for o in rest) / len(rest)))
 
@@ -847,6 +1105,7 @@ FIDE2026_IDS: Tuple[str, ...] = (
     "median_buchholz_2",
     "sonneborn_berger",
     "sonneborn_berger_cut1",
+    "sonneborn_berger_cut2",
     "progressive",
     "progressive_cut1",
     "wins",
@@ -854,10 +1113,15 @@ FIDE2026_IDS: Tuple[str, ...] = (
     "games_black",
     "wins_black",
     "rounds_elected",
+    "std",
     "aro",
     "aro_cut1",
+    "aro_cut2",
     "aob",
+    "aob_fb",
     "fore_buchholz",
+    "fore_buchholz_cut1",
+    "fore_buchholz_cut2",
     "koya",
     "tpr",
     "ptp",
@@ -873,6 +1137,7 @@ FIDE2026_REGISTRY = {
     "median_buchholz_2": median_buchholz_2,
     "sonneborn_berger": sonneborn_berger,
     "sonneborn_berger_cut1": sonneborn_berger_cut1,
+    "sonneborn_berger_cut2": sonneborn_berger_cut2,
     "progressive": progressive,
     "progressive_cut1": progressive_cut1,
     "wins": wins,
@@ -880,10 +1145,15 @@ FIDE2026_REGISTRY = {
     "games_black": games_black,
     "wins_black": wins_black,
     "rounds_elected": rounds_played_elected,
+    "std": standard_points,
     "aro": average_rating_opponents,
     "aro_cut1": aro_cut1,
+    "aro_cut2": aro_cut2,
     "aob": average_opponents_buchholz,
+    "aob_fb": average_opponents_fore_buchholz,
     "fore_buchholz": fore_buchholz,
+    "fore_buchholz_cut1": fore_buchholz_cut1,
+    "fore_buchholz_cut2": fore_buchholz_cut2,
     "koya": koya,
     "tpr": tournament_performance,
     "ptp": perfect_performance,

@@ -267,7 +267,7 @@
    "source": "FIDE Handbook C.07 pre-2023 §4.3 ('Buchholz reduced by the two highest and two lowest scores'); retained as Median Buchholz 2 in later editions (§14)",
    "source_grade": "PRIMARY",
    "article": "C.07 §14 BH-M2",
-   "notes": "VERIFIED (F26-1, fide-2026; BH-M2 s.14.4 + cut family on five fully-played opponents 0.0/0.5/1.0/1.5/2.0, so 2024==2026 by construction). Hand computation: BH=5.0; C1=5.0-0.0; C2=5.0-0.0-0.5; M1=5.0-0.0-2.0; M2=5.0-0.0-0.5-2.0-1.5=1.0 (trims the two lowest and two highest). Fully-played 2-game stubs keep every record coherent. Original definition-shell text retained in git history.",
+   "notes": "VERIFIED (F26-1, fide-2026; BH-M2 s.14.4 + cut family on five fully-played opponents 0.0/0.5/1.0/1.5/2.0, so 2024==2026 by construction). Hand computation: BH=5.0; C1=5.0-0.0; C2=5.0-0.0-0.5; M1=5.0-0.0-2.0; M2=5.0-0.0-0.5-2.0-1.5=1.0 (trims the two lowest and two highest). Fully-played 2-game stubs keep every record coherent. Original definition-shell text retained in git history. Context stub #9999 (empty, 0.0) anchors the played-game opponent references (fide-2026 input gate); it contributes nothing to asserted values.",
    "total_rounds": 5,
    "criteria": [
     "buchholz",
@@ -441,6 +441,11 @@
        "kind": "played"
       }
      ]
+    },
+    "9999": {
+     "rating": 0,
+     "points": 0.0,
+     "games": []
     }
    }
   },
@@ -451,7 +456,7 @@
    "source": "FIDE Council 2024_FC2_18, PLAY-OFF AND TIE-BREAK REGULATIONS, s.9.1 SB + s.14.1.1.d SB-C1 (cut exception s.16.5); verified unchanged in the March-2026 edition (diff D1-D15: s.14.x word-identical)",
    "source_grade": "PRIMARY",
    "article": "C.07 §9.1 + §14 (SB cut modifiers)",
-   "notes": "VERIFIED (F26-1, fide-2026; SB-C1 s.14.1.1.d). Grade upgraded SECONDARY->PRIMARY: the cut semantics come from the retrieved 2024_FC2_18 article text (not secondary guides), and the 2026 diff verifies s.14.x word-identical. Hand computation on fully-played rounds (2024==2026): SB=2.0x1+1.0x1+3.0x0.5=4.5, elements [2.0,1.0,1.5], no VURs -> cut least 1.0 -> SB-C1=3.5. Original caution-shell text retained in git history.",
+   "notes": "VERIFIED (F26-1, fide-2026; SB-C1 s.14.1.1.d). Grade upgraded SECONDARY->PRIMARY: the cut semantics come from the retrieved 2024_FC2_18 article text (not secondary guides), and the 2026 diff verifies s.14.x word-identical. Hand computation on fully-played rounds (2024==2026): SB=2.0x1+1.0x1+3.0x0.5=4.5, elements [2.0,1.0,1.5], no VURs -> cut least 1.0 -> SB-C1=3.5. Original caution-shell text retained in git history. Context stub #9999 (empty, 0.0) anchors the played-game opponent references (fide-2026 input gate); it contributes nothing to asserted values.",
    "total_rounds": 3,
    "criteria": [
     "sonneborn_berger",
@@ -567,6 +572,11 @@
        "kind": "played"
       }
      ]
+    },
+    "9999": {
+     "rating": 0,
+     "points": 0.0,
+     "games": []
     }
    }
   }

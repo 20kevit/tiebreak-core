@@ -74,6 +74,13 @@ class GameRecord:
     kind: str = ""         # "" = unspecified; see normalize_kind().
     # Explicit kinds (GAME_KINDS) describe unplayed-game semantics for
     # future rulesets. Legacy calculators ignore this field entirely.
+    opponent_score: float | None = None
+    # Scheduled opponent's points scored in THIS round (when known).
+    # Needed by §7.7 Standard Points (fide-2026 "std"): played rounds
+    # compare own score against the scheduled opponent's round score.
+    # None = unknown (derived from standard 1-½-0 complement where the
+    # rules allow, else the caller must supply it). Legacy and
+    # fide-2024 calculators ignore this field entirely.
 
 
 def normalize_kind(game: GameRecord) -> str:

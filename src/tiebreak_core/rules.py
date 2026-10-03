@@ -108,10 +108,12 @@ _RULESETS: Dict[str, RulesetInfo] = {
         criteria=(
             "buchholz", "buchholz_cut1", "buchholz_cut2",
             "median_buchholz", "median_buchholz_2", "sonneborn_berger",
-            "sonneborn_berger_cut1", "progressive", "progressive_cut1",
+            "sonneborn_berger_cut1", "sonneborn_berger_cut2",
+            "progressive", "progressive_cut1",
             "wins", "won", "games_black", "wins_black", "rounds_elected",
-            "aro", "aro_cut1", "aob", "fore_buchholz", "koya",
-            "tpr", "ptp", "apro", "appo",
+            "std", "aro", "aro_cut1", "aro_cut2", "aob", "aob_fb",
+            "fore_buchholz", "fore_buchholz_cut1", "fore_buchholz_cut2",
+            "koya", "tpr", "ptp", "apro", "appo",
         ),
     ),
     "fide-2024": RulesetInfo(

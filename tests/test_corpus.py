@@ -46,7 +46,8 @@ def _build_players(spec):
                               opponent_rating=g.get("rating", 0),
                               score=g["score"], color=g["color"],
                               round_number=g["round"],
-                              kind=g.get("kind", ""))
+                              kind=g.get("kind", ""),
+                              opponent_score=g.get("opponent_score"))
                    for g in p["games"]],
         )
     return players

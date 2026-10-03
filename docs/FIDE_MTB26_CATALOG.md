@@ -45,9 +45,9 @@ cut exception); the behavior is the §6.1.1 forfeit-inclusion opt-in
 | BPG | Games Played w/ Black | 7.3 | — | fide-2024 | IMPLEMENTED |
 | BWG | Games Won w/ Black | 7.4 | — | fide-2024 | IMPLEMENTED |
 | REP | Rounds Elected to Play | 7.6 | — | fide-2024 | IMPLEMENTED |
-| STD | Standard Points | 7.7 | — | fide-2026 | SPECIFIED (needs sched-opp scores) |
-| SB + /C1 /C2 /P (+ combos) | Sonneborn-Berger | 9.1 | C1 C2 P | fide-2024 (+SB-C1) + fide-2026 | IMPLEMENTED (C1; /P flag under fide-2026); C2 SPECIFIED |
-| ARO + /C1 /C2 /M1 /M2 | Average Rating of Opponents | 10.1 | C1 C2 M1 M2 | fide-2024 (+C1) | IMPLEMENTED (C1); C2/M1/M2 SPECIFIED |
+| STD | Standard Points | 7.7 | — | fide-2026 | IMPLEMENTED (standard scoring; exotic tables need score-model extension, U6) |
+| SB + /C1 /C2 /P (+ combos) | Sonneborn-Berger | 9.1 | C1 C2 P | fide-2024 (+SB-C1) + fide-2026 | IMPLEMENTED (C1, C2, /P flag) |
+| ARO + /C1 /C2 /M1 /M2 | Average Rating of Opponents | 10.1 | C1 C2 M1 M2 | fide-2024 (+C1) + fide-2026 | IMPLEMENTED (C1, C2); M1/M2 SPECIFIED |
 | TPR | Tournament Performance Rating | 10.2 | — | fide-2024 | IMPLEMENTED |
 | PTP | Perfect Tournament Performance | 10.3 | — | fide-2024 | IMPLEMENTED |
 | APRO | Avg TPR of Opponents | 10.4 | — | fide-2024 | IMPLEMENTED |
@@ -66,8 +66,8 @@ Codes `SB/P`, `SB/C1/P`, `SB/C2/P`, `ARO/C1…`, `ARO/M1…` are listed
 | PS[:MP/:GP] + /C1 /C2 | 7.5 | MP GP | C1 C2 | IMPLEMENTED (PS, PS-C1); PS-C2/… SPECIFIED |
 | TPN, TPN/R | 7.8 | — | R | IMPLEMENTED (ascending terminal under fide-2026; /R consumer-side) |
 | BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual BH/C1/C2/M1/M2; /P flag under fide-2026; /F-combos SPECIFIED) |
-| AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base); /F SPECIFIED |
-| FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB; /P flag under fide-2026); cut-combos SPECIFIED |
+| AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base + AOB/FB id `aob_fb` under fide-2026) |
+| FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB + C1/C2 + /P flag under fide-2026); M-combos SPECIFIED |
 | KS[:MP/:GP] + /Lx | 9.2 | MP GP | Lx | IMPLEMENTED (base); limits SPECIFIED |
 
 ## Table 3 — teams only

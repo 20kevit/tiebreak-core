@@ -156,6 +156,8 @@ class TestSwissParity:
         }
         for pid in pl:
             for crit in ALL_SCALARS:
+                if crit not in f24.FIDE2024_REGISTRY:
+                    continue  # F26-2 C2/FB-combos have no 2024 counterpart
                 assert f26.calculate(pl[pid], pl, crit, 3) == \
                     f24.calculate(pl[pid], pl, crit, 3), (pid, crit)
 
@@ -181,6 +183,14 @@ class TestSwissParity:
         assert [p.player_id for p in r26.players] == \
                [p.player_id for p in r24.players]
         assert r26.rules_version == "fide-2026"
+
+    def test_dangling_opponent_rejected_typed(self):
+        from tiebreak_core.errors import InvalidPlayerDataError
+        pl = {1: P(1, 2000, 1.0, [(99, 1.0, "white", 1, "played")])}
+        with pytest.raises(InvalidPlayerDataError):
+            f26.calculate(pl[1], pl, "buchholz", 1)
+        with pytest.raises(InvalidPlayerDataError):
+            f24.rank_standings(pl, ["buchholz"], 1)
 
     def test_cap_monotonicity_random_swiss(self):
         rng = random.Random(20260301)
@@ -340,6 +350,243 @@ class TestForfeitInclusionFlag:
                 == [p.player_id for p in res_rr.players])
 
 
+class TestCutCombosAndAobFb:
+    """F26-2 MTB26 combos: SB-C2, ARO-C2, FB-C1/C2, AOB/FB.
+
+    Hand-computed fixture (derivation in comments): P1 (3.5) meets
+    O1..O4 (4.0/3.5/2.0/1.5) then takes a trailing requested half-bye
+    (16.2.5, VUR; 16.4.2 cap min(3.5, 2.5) = 2.5). R5 is the final
+    round: played finals project to draws in FB legs; the unpaired
+    R5 bye keeps its awarded 0.5.
+    """
+
+    def fixture(self):
+        return {
+            1: P(1, 2000, 3.5, [
+                (11, 1.0, "white", 1, "played"),
+                (12, 0.5, "black", 2, "played"),
+                (13, 1.0, "white", 3, "played"),
+                (14, 0.5, "black", 4, "played"),
+                (-1, 0.5, "white", 5, "requested_bye")]),
+            11: P(11, 1800, 4.0, [
+                (1, 0.0, "black", 1, "played"),
+                (9999, 1.0, "white", 2, "played"),
+                (9999, 1.0, "white", 3, "played"),
+                (9999, 1.0, "white", 4, "played"),
+                (9999, 1.0, "white", 5, "played")]),
+            12: P(12, 1700, 3.5, [
+                (9999, 1.0, "white", 1, "played"),
+                (1, 0.5, "white", 2, "played"),
+                (9999, 1.0, "white", 3, "played"),
+                (9999, 1.0, "white", 4, "played"),
+                (9999, 0.0, "white", 5, "played")]),
+            13: P(13, 1600, 2.0, [
+                (9999, 1.0, "white", 1, "played"),
+                (9999, 0.0, "white", 2, "played"),
+                (1, 0.0, "black", 3, "played"),
+                (9999, 1.0, "white", 4, "played"),
+                (9999, 0.0, "white", 5, "played")]),
+            14: P(14, 1500, 1.5, [
+                (9999, 0.0, "white", 1, "played"),
+                (9999, 1.0, "white", 2, "played"),
+                (9999, 0.0, "white", 3, "played"),
+                (1, 0.5, "black", 4, "played"),
+                (9999, 0.0, "white", 5, "played")]),
+            9999: P(9999, 0, 0.0, []),
+        }
+
+    def test_fb_family(self):
+        from tiebreak_core import calculate_all_strict
+        pl = self.fixture()
+        got = calculate_all_strict(
+            pl[1], pl, ["buchholz", "fore_buchholz",
+                        "fore_buchholz_cut1", "fore_buchholz_cut2",
+                        "aob", "aob_fb"], 5, ruleset="fide-2026")
+        # BH legs 4.0/3.5/2.0/1.5 + capped R5 dummy 2.5 = 13.5.
+        # FB legs 3.5/4.0/2.5/2.0 (finals as draws) + 2.5 = 14.5;
+        # C1 cuts the VUR 2.5 -> 12.0; C2 then cuts 2.0 -> 10.0.
+        # AOB averages BH (4 x 3.5); AOB/FB averages FB (4 x 3.5).
+        assert got == {"buchholz": 13.5, "fore_buchholz": 14.5,
+                       "fore_buchholz_cut1": 12.0,
+                       "fore_buchholz_cut2": 10.0, "aob": 3.5,
+                       "aob_fb": 3.5}
+
+    def test_sb_c2(self):
+        from tiebreak_core import calculate_all_strict
+        pl = self.fixture()
+        got = calculate_all_strict(
+            pl[1], pl, ["sonneborn_berger", "sonneborn_berger_cut1",
+                        "sonneborn_berger_cut2"], 5, ruleset="fide-2026")
+        # Elements [4.0, 1.75, 2.0, 0.75, 1.25(VUR)]: SB = 9.75;
+        # C1 cuts higher-of(1.25, 0.75) = 1.25 -> 8.5; C2 reapplied
+        # cuts 0.75 -> 7.75.
+        assert got == {"sonneborn_berger": 9.75,
+                       "sonneborn_berger_cut1": 8.5,
+                       "sonneborn_berger_cut2": 7.75}
+
+    def test_aro_c2(self):
+        from tiebreak_core import calculate_all_strict
+        pl = self.fixture()
+        got = calculate_all_strict(
+            pl[1], pl, ["aro", "aro_cut1", "aro_cut2"], 5,
+            ruleset="fide-2026")
+        assert got == {"aro": 1650.0, "aro_cut1": 1700.0,
+                       "aro_cut2": 1750.0}
+
+    def test_aro_c2_edge_uncut(self):
+        pl = {1: P(1, 2000, 1.0, [(2, 1.0, "white", 1, "played")]),
+              2: P(2, 1500, 0.0, [(1, 0.0, "black", 1, "played")])}
+        # One rated OTB opponent (< 3): uncut ARO, documented edge.
+        assert f26.calculate(pl[1], pl, "aro_cut2", 1) == 1500.0
+
+    def test_c2_monotonicity_random_swiss(self):
+        rng = random.Random(20260302)
+        for trial in range(10):
+            n, rounds = 8, 5
+            pl = {}
+            for pid in range(1, n + 1):
+                games, pts = [], 0.0
+                for r in range(1, rounds + 1):
+                    roll = rng.random()
+                    opp = (pid + r) % n + 1
+                    if roll < 0.8:
+                        s = rng.choice([0.0, 0.5, 1.0])
+                        games.append((opp, s, "white", r, "played"))
+                        pts += s
+                    else:
+                        games.append((-1, 0.5, "white", r,
+                                      "requested_bye"))
+                        pts += 0.5
+                pl[pid] = P(pid, rng.choice([1200, 1500, 1800, 2100,
+                                             2400]), pts, games)
+            for pid in pl:
+                # Subtractive families shrink along the cut chain
+                # (elements are non-negative).
+                sb = f26.calculate(pl[pid], pl, "sonneborn_berger",
+                                   rounds)
+                c1 = f26.calculate(pl[pid], pl, "sonneborn_berger_cut1",
+                                   rounds)
+                c2 = f26.calculate(pl[pid], pl, "sonneborn_berger_cut2",
+                                   rounds)
+                assert sb >= c1 >= c2, (trial, pid)
+                fb = f26.calculate(pl[pid], pl, "fore_buchholz", rounds)
+                fc1 = f26.calculate(pl[pid], pl, "fore_buchholz_cut1",
+                                    rounds)
+                fc2 = f26.calculate(pl[pid], pl, "fore_buchholz_cut2",
+                                    rounds)
+                assert fb >= fc1 >= fc2, (trial, pid)
+                # Averaging families grow along the cut chain
+                # (lowest ratings are dropped).
+                aro = f26.calculate(pl[pid], pl, "aro", rounds)
+                ac1 = f26.calculate(pl[pid], pl, "aro_cut1", rounds)
+                ac2 = f26.calculate(pl[pid], pl, "aro_cut2", rounds)
+                assert aro <= ac1 <= ac2 or not pl[pid].games, \
+                    (trial, pid)
+
+
+class TestStandardPoints:
+    """STD §7.7 (D5): outscore the scheduled opponent — or the draw
+    value when unplayed — for 1, halves for ties.
+
+    Hand-computed fixture: P1 (3.0) W/D/L vs O1..O3, pairing bye R4,
+    requested half-bye R5. STD = 1 + 0.5 + 0 + 1 + 0.5 = 3.0.
+    """
+
+    def fixture(self, explicit=True):
+        def g(o, s, r, k, opp_score=None):
+            return GameRecord(opponent_id=o, opponent_rating=1500,
+                              score=s, color="white", round_number=r,
+                              kind=k, opponent_score=opp_score)
+        es = (lambda v: v) if explicit else (lambda v: None)
+        return {
+            1: PlayerTiebreakData(
+                player_id=1, rating=2000, points=3.0, games=[
+                    g(11, 1.0, 1, "played", es(0.0)),
+                    g(12, 0.5, 2, "played", es(0.5)),
+                    g(13, 0.0, 3, "played", es(1.0)),
+                    g(-1, 1.0, 4, "pairing_bye"),
+                    g(-1, 0.5, 5, "requested_bye")]),
+            11: P(11, 1500, 0.0, [(1, 0.0, "black", 1, "played")]),
+            12: P(12, 1500, 0.5, [(1, 0.5, "black", 2, "played")]),
+            13: P(13, 1500, 1.0, [(1, 1.0, "black", 3, "played")]),
+        }
+
+    def test_explicit_opponent_scores(self):
+        from tiebreak_core import calculate_strict
+        pl = self.fixture(explicit=True)
+        assert calculate_strict(pl[1], pl, "std", 5,
+                                ruleset="fide-2026") == 3.0
+
+    def test_derived_standard_complement(self):
+        from tiebreak_core import calculate_strict
+        pl = self.fixture(explicit=False)
+        assert calculate_strict(pl[1], pl, "std", 5,
+                                ruleset="fide-2026") == 3.0
+
+    def test_exotic_draw_requires_explicit(self):
+        from tiebreak_core import calculate_strict
+        pl = self.fixture(explicit=False)
+        with pytest.raises(InvalidPlayerDataError):
+            calculate_strict(pl[1], pl, "std", 5, ruleset="fide-2026",
+                             draw_points=1.0)
+
+    def test_exotic_draw_with_explicit(self):
+        from tiebreak_core import calculate_strict
+        pl = self.fixture(explicit=True)
+        # Draw value 1.0: R4 bye 1.0 ties (0.5), R5 0.5 loses (0.0);
+        # played legs unchanged (explicit opp scores).
+        assert calculate_strict(pl[1], pl, "std", 5, ruleset="fide-2026",
+                                draw_points=1.0) == 2.0
+
+    def test_forfeit_scope_pin(self):
+        # Swiss: forfeit loss is unplayed -> 0 vs draw 0.5 -> 0.0.
+        # Swiss+/P: regular game with explicit opp 0.0 -> tie -> 0.5.
+        def mk(opp_score=None):
+            return {
+            1: PlayerTiebreakData(
+                player_id=1, rating=2000, points=1.0, games=[
+                    GameRecord(opponent_id=2, opponent_rating=1500,
+                               score=1.0, color="white", round_number=1,
+                               kind="played"),
+                    GameRecord(opponent_id=3, opponent_rating=1500,
+                               score=0.0, color="black", round_number=2,
+                               kind="forfeit_loss",
+                               opponent_score=opp_score)]),
+            2: P(2, 1500, 0.0, [(1, 0.0, "black", 1, "played")]),
+            3: P(3, 1500, 1.0, []),
+        }
+        assert f26.calculate(mk()[1], mk(), "std", 2) == 1.0
+        assert f26.calculate(mk(0.0)[1], mk(0.0), "std", 2, "swiss",
+                             0.5, True) == 1.5
+
+    def test_absent_rounds_skipped(self):
+        pl = {1: PlayerTiebreakData(
+            player_id=1, rating=2000, points=1.0, games=[
+                GameRecord(opponent_id=2, opponent_rating=1500,
+                           score=1.0, color="white", round_number=1,
+                           kind="played"),
+                GameRecord(opponent_id=-1, opponent_rating=0,
+                           score=0.0, color="white", round_number=2,
+                           kind="absent")]),
+            2: P(2, 1500, 0.0, [(1, 0.0, "black", 1, "played")])}
+        assert f26.calculate(pl[1], pl, "std", 2) == 1.0
+
+    def test_std_ranking_descending(self):
+        from tiebreak_core import rank_standings_strict
+        pl = self.fixture(explicit=True)
+        pl[13] = P(13, 1500, 1.0, [(1, 1.0, "black", 3, "played")])
+        res = rank_standings_strict(pl, ["std"], 5, ruleset="fide-2026")
+        assert res.rules_version == "fide-2026"
+        assert [p.player_id for p in res.players][0] == 1
+
+    def test_std_unknown_outside_2026(self):
+        from tiebreak_core import calculate_strict
+        from tiebreak_core.errors import UnknownCriterionError
+        pl = self.fixture(explicit=True)
+        with pytest.raises(UnknownCriterionError):
+            calculate_strict(pl[1], pl, "std", 5, ruleset="fide-2024")
+
+
 class TestTerminals:
     def test_tpn_orders_ascending(self):
         pl = {1: P(1, 2200, 2.0, []), 2: P(2, 2300, 2.0, []),
@@ -381,7 +628,11 @@ class TestUnsupported:
     def test_unknown_criterion(self):
         pl = {1: P(1, 2000, 1.0, [])}
         with pytest.raises(UnknownCriterionError):
-            f26.calculate(pl[1], pl, "std", 1)
+            f26.calculate(pl[1], pl, "std_opt", 1)
+
+    def test_std_is_supported_not_unknown(self):
+        # 'std' (§7.7) is implemented under fide-2026 (F26-2c).
+        assert f26.is_supported_criterion("std")
 
     def test_std_is_unsupported_not_unknown(self):
         # 'std' is not registered anywhere -> unknown. A *known*

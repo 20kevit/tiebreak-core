@@ -17,15 +17,20 @@ priorities/statuses: `docs/FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
   2026≤2024 monotonicity); 2000-player fide-2026 bench 0.22s.
 - Follow-up: F26-2 (STD + remaining 2026 deltas) is NEXT.
 
-## F26-2 — STD + remaining 2026 deltas
+## F26-2 — STD + remaining 2026 deltas (DONE in 0.8.0)
 
-- Objective: close the specified-but-unbuilt 2026 surface.
-- Scope: STD (§7.7: scheduled-opp round scores + TRF-013 scoring-table
-  inputs); AOB-FB variant id; Art-8 RR-ban warning; PS-C2/SB-C2/
-  ARO-C2/M1/M2 + FB/ARO cut-combos (MTB26 machine rows);
-  Koya-limit ±½ machinery (§14.5).
-- Definition of Done: matrix shows no SPECIFIED individual-Swiss
-  rows; corpus extended from TEC chapters; suite green.
+- Delivered: STD (§7.7, standard scoring via explicit `opponent_score`
+  or 1-½-0 complement; exotic tables still blocked, U6); AOB-FB
+  variant id (`aob_fb`); SB-C2/ARO-C2/FB-C1/FB-C2 combos;
+  dangling-opponent typed errors (fide-2024 + fide-2026; crash
+  site found by differential fixture work).
+- Declined with reasons (not deferred silently): PS-C2 (no FIDE
+  semantics — PS-C1 is round-exclusion, not element-cut), generic
+  /Cn /Mn machine, Koya limits §14.5 (still SPECIFIED/DEFERRED),
+  Art-8 RR-ban enforcement (documented-not-enforced by design).
+- NEXT: differential validation + performance + conformance prep;
+  consumer per-tournament `fide-2026` opt-in; 1.0 gate per
+  IMPLEMENTATION_ROADMAP.
 
 ## Team-domain future (on demand — no team consumer today)
 

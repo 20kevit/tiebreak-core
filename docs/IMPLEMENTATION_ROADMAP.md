@@ -21,10 +21,12 @@ criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 | F-ART16 | Categories/adjusted/dummy/cuts | §§15.3, 16 | fide-2024 | IMPLEMENTED | kinds | classify() | corpus VERIFIED | — |
 | N-DUMMYCAP | §16.4.1/16.4.2 caps | §16.4 (2026) | fide-2026 | IMPLEMENTED (F26-1) | sched-opp adj | F-ART16 | 5 VERIFIED corpus | **P0** |
 | N-RR15.2 | RR forfeit carve-out | §15.2 (2026) | fide-2026 | IMPLEMENTED (F26-1) | Swiss/RR mode flag | mode input | unit | P1 |
-| N-STD | Standard Points | §7.7 | fide-2026 | SPECIFIED | sched-opp round scores + scoring table | model ext | PENDING | P1 |
+| N-STD | Standard Points | §7.7 | fide-2026 | IMPLEMENTED standard scope (F26-2c; explicit `opponent_score` or 1-½-0 complement) / SPECIFIED exotic tables (U6 blocks) | sched-opp round scores + scoring table | model ext (optional field landed) | unit | P1 |
 | N-TPN | Pairing-number order | §7.8 | fide-2026 | IMPLEMENTED (F26-1, ascending terminal) | pairing numbers | ranking key | unit | P2 |
 | N-RTNG | Rating order | §10.6 | fide-2026 | IMPLEMENTED (F26-1, descending terminal) | rating (have) | ranking key | unit | P2 |
 | N-PFLAG | Forfeit-inclusion opt-in (/P) | §6.1.1/MTB26 | fide-2026 | IMPLEMENTED (F26-1) | forfeits_as_played flag | BH/SB/FB/Koya/DE scope | unit | P1 |
+| N-AOBFB | AOB over Fore BH | §8.2 (2026) | fide-2026 | IMPLEMENTED (F26-2a, additive id `aob_fb`) | FB values | F-AOB/FB | unit | P2 |
+| N-C2COMBO | SB-C2/ARO-C2/FB-C1/FB-C2 | §§14.1–14.2 | fide-2026 | IMPLEMENTED (F26-2b; SB-C2 = reapplied C1-cut, documented; PS-C2 declined — no FIDE semantics) | cut helpers | F26-1 cuts | unit | P1 |
 | N-RRBAN | BH round-robin ban | Art 8 note | fide-2026 | SPECIFIED | coverage detect | docs/warn | docs | P2 |
 | N-AOBFB | AOB over Fore BH | §8.2 (2026) | fide-2026 | SPECIFIED | FB values | F-AOB/FB | unit | P2 |
 | N-KOYALIM | Koya limit ±½ | §14.5 | future | DEFERRED | param | F-KOYA | — | P3 |
@@ -66,7 +68,7 @@ NOT 1.0 blockers (documented rationale above).
 | U3 | Manual Ex02 "maximum" vs cap wording | numbers fit cap reading | none | NON-BLOCKING | corpus notes | none (recorded) |
 | U4 | Manual Ex05 unpaired-round scoring genuinely ambiguous | official text punts ("might be ZPB/HPB/FPB") | Ex05 stays docs-only | NON-BLOCKING for F26-1 | FIDE (class-c clarification) | none in-repo |
 | U5 | Ex06 "2.5" vestige | totals coincide at 11.5 | none | NON-BLOCKING | corpus notes | none (recorded) |
-| U6 | STD exotic-table mapping | unspecified by FIDE | STD phase needs organiser input contract | BLOCKS N-STD only (P1), not F26-1 core | consumer contract | specify scoring-table input in F26-2 |
+| U6 | STD exotic-table mapping | unspecified by FIDE | standard-scoring STD implemented (F26-2c) with explicit-`opponent_score` organizer contract; exotic own-score values (e.g. 3.0) still outside the core score model | BLOCKS exotic STD only, not standard | consumer contract | score-table model extension if a consumer requires exotic scoring |
 | U7 | SSSC normaliser edges | Handbook text only | team module only | NON-BLOCKING (team deferred) | future team module | implement from text if built |
 | U8 | WRBC fine print | downloads failed; snippets convergent | none (standard scoring, C.07-referenced) | NON-BLOCKING | docs | none |
 | U9 | ETT26 Handbook-PDF direct bytes | hosts unreachable; content verified via index + TEC table | version labels (DUTCH_2025 vs 2026 cutover) recorded; Handbook governs | NON-BLOCKING | docs | re-fetch on reachability |
