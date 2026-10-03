@@ -10,7 +10,11 @@ import pathlib
 import pytest
 
 from tiebreak_core import calculate_all_strict
-from tiebreak_core.models import GameRecord, PlayerTiebreakData
+from tiebreak_core.models import (
+    GAME_KINDS,
+    GameRecord,
+    PlayerTiebreakData,
+)
 
 CORPUS_DIR = pathlib.Path(__file__).parent / "corpus"
 
@@ -41,7 +45,8 @@ def _build_players(spec):
             games=[GameRecord(opponent_id=g["opponent"],
                               opponent_rating=g.get("rating", 0),
                               score=g["score"], color=g["color"],
-                              round_number=g["round"])
+                              round_number=g["round"],
+                              kind=g.get("kind", ""))
                    for g in p["games"]],
         )
     return players
@@ -58,6 +63,12 @@ def test_corpus_case(case):
         f"{case['id']}: bad status {case['status']}")
     assert case["source_grade"] in GRADES
     if case["status"] == "PENDING":
+        # PENDING cases may carry kind-annotated input examples: validate
+        # the vocabulary (not values) so the taxonomy stays honest.
+        for pid, p in (case.get("players") or {}).items():
+            for g in p.get("games", []):
+                assert g.get("kind", "") in GAME_KINDS + ("",), (
+                    f"{case['id']}: unknown kind {g.get('kind')!r}")
         pytest.skip(f"PENDING: {case['id']} ({case['article']}) — "
                     f"not implemented under ruleset {case['ruleset']}")
     players = _build_players(case["players"])

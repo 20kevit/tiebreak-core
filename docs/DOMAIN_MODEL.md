@@ -19,6 +19,25 @@ PlayerTiebreakData(player_id: int, rating: int, points: float,
   This is legacy behavior (see KNOWN_LIMITATIONS.md), preserved verbatim.
 - IDs are plain `int` in v0.1.0 (chess-manager compatible). No generics.
 
+## Game kinds (Phase 1, additive)
+
+`GameRecord.kind` (`""` = unspecified) says WHAT happened, from
+`GAME_KINDS`: `played`, `pairing_bye` (§16.2.1), `forfeit_win`
+(§16.2.2), `forfeit_loss` (§16.2.4), `requested_bye` (§16.2.3/§16.2.5;
+post-withdrawal rounds are zero-point requested byes per §16.1.1),
+`unplayed` (legacy generic), `absent` (no pairing at all).
+
+- Unspecified normalizes via `normalize_kind()`: `-1` → `unplayed`,
+  real opponent → `played`. Old inputs keep exact legacy meaning.
+- Legacy calculators ignore `kind`. Future `fide-2026` calculators
+  branch on it. Strict path validates vocabulary + kind/opponent
+  consistency (explicit `played` needs a real opponent; bye-like kinds
+  need `-1`; forfeits allow a scheduled opponent or `-1`).
+- Chess-manager 9-type → kind guidance for adapters: `1-0/0-1/1/2` →
+  `played`; `+/-` → `forfeit_win`; `-/+` → `forfeit_loss`;
+  `bye` → `pairing_bye`; `half-bye/zero-bye` → `requested_bye`;
+  missing slot → `absent` (or legacy `-1` unspecified).
+
 ## Outputs (immutable)
 
 ```python

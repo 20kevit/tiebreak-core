@@ -13,6 +13,15 @@ never change across package releases.
 
 Added:
 
+- Explicit game-kind taxonomy (`GAME_KINDS`, `normalize_kind()`):
+  `played`, `pairing_bye`, `forfeit_win`, `forfeit_loss`,
+  `requested_bye`, `unplayed` (legacy generic), `absent`. Additive:
+  `GameRecord.kind` defaults to unspecified, legacy calculators ignore
+  it (values byte-identical, proven by tests), strict path validates
+  vocabulary + kind/opponent consistency. See ADR-006.
+- Corpus input examples for Article 16 categories and the DE
+  mini-table (PENDING execution; kind vocabulary schema-checked).
+
 - `median_buchholz_2` criterion (FIDE Median-2, BH-M2, C.07 §14):
   Buchholz minus two highest and two lowest opponent scores, with a
   documented fallback to full Buchholz for fewer than 5 opponent scores.

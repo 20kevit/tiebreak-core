@@ -13,7 +13,7 @@ Machine-readable cases live next to this file (`*.json`).
 | `source` | where the expectation comes from (URL/title/date) |
 | `source_grade` | `PRIMARY` (official FIDE) / `SECONDARY` / `UNVERIFIED` |
 | `article` | FIDE Handbook article/section (e.g. `C.07 §8.1 BH`) |
-| `players` | `{id: {rating, points, games: [...]}}`; game = `{opponent, score, color, round, rating}` |
+| `players` | `{id: {rating, points, games: [...]}}`; game = `{opponent, score, color, round, rating, kind?}` (`kind` from `GAME_KINDS`, default `""` = unspecified) |
 | `criteria` | criteria to evaluate |
 | `total_rounds` | rounds argument (Koya/context) |
 | `expected` | `{player_id: {criterion: value}}` (absent for PENDING) |

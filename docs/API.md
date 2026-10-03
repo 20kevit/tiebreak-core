@@ -65,6 +65,10 @@ Same values/order as legacy for valid inputs under
 - score not in {0, 0.5, 1}, color not in {"white", "black"},
   round_number < 0, rating < 0, points < 0/non-finite, mapping key !=
   `player_id` → `InvalidGameRecordError` / `InvalidPlayerDataError`
+- unknown `kind`, or kind/opponent mismatch (explicit `played` with
+  `-1`; bye-like kinds with a real opponent) → `InvalidGameRecordError`.
+  Unspecified `kind` normalizes via `normalize_kind()` (`-1` →
+  `unplayed`, else `played`). Legacy calculators ignore `kind`.
 - `frozen_registry()` → immutable snapshot (`TypeError` on write)
 - `register_criterion()` refuses built-in ids (`RegistryError`)
 

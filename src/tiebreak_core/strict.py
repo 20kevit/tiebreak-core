@@ -104,6 +104,38 @@ def validate_game(game: object, *, index: int = -1) -> None:
             f"game[{index}]: round_number must be int >= 0, "
             f"got {game.round_number!r}"
         )
+    _validate_kind(game, index)
+
+
+def _validate_kind(game: object, index: int) -> None:
+    """Validate game-kind vocabulary + kind/opponent consistency.
+
+    Only what is checkable without tournament context: an explicitly
+    played game needs a real opponent; bye-like kinds need the virtual
+    sentinel; forfeit results may carry a scheduled (real) opponent or
+    the sentinel when the pairing is unknown. Color is NOT constrained:
+    adapters record the side sat (or would-have-sat) for unplayed games.
+    """
+    from tiebreak_core.models import GAME_KINDS, PLAYED, VIRTUAL_KINDS
+
+    kind = game.kind
+    if not isinstance(kind, str) or (kind and kind not in GAME_KINDS):
+        raise InvalidGameRecordError(
+            f"game[{index}]: kind must be one of {list(GAME_KINDS)} "
+            f"(or empty for unspecified), got {kind!r}"
+        )
+    if not kind:
+        return
+    if kind == PLAYED and game.opponent_id == -1:
+        raise InvalidGameRecordError(
+            f"game[{index}]: kind 'played' requires a real opponent, "
+            f"got opponent_id=-1"
+        )
+    if kind in VIRTUAL_KINDS and game.opponent_id != -1:
+        raise InvalidGameRecordError(
+            f"game[{index}]: kind {kind!r} requires opponent_id=-1, "
+            f"got {game.opponent_id!r}"
+        )
 
 
 def validate_player(player: object) -> None:

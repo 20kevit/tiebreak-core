@@ -8,7 +8,65 @@
       "source": "FIDE Handbook C.07 (effective 1 Mar 2026), Article 16: five unplayed-round categories (16.2.1 pairing-allocated/full-point byes; 16.2.2 forfeit wins; 16.2.3 requested byes followed by a non-VUR round; 16.2.4 forfeit losses; 16.2.5 trailing requested byes) + VUR concept (16.1) + virtual-opponent draws-forth (16.4) + cut exception (16.5)",
       "source_grade": "PRIMARY",
       "article": "C.07 §16",
-      "notes": "Shell only. Requires the unplayed-game input taxonomy (new GameKind fields) before expectations can be encoded. The legacy single-sentinel (-1) model cannot express these categories."
+      "notes": "Shell only. Requires the unplayed-game input taxonomy (new GameKind fields) before expectations can be encoded. The legacy single-sentinel (-1) model cannot express these categories. Input example (taxonomy only, no expectations): R1 played win; R2 pairing bye; R3 forfeit win vs scheduled opponent 3; R4 requested half-bye; R5 trailing requested zero-bye (cf. §16.2.5). Expectations require the Phase-2 engine.",
+      "players": {
+        "1": {
+          "rating": 2000,
+          "points": 3.5,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "pairing_bye"
+            },
+            {
+              "opponent": 3,
+              "score": 1.0,
+              "color": "black",
+              "round": 3,
+              "rating": 1800,
+              "kind": "forfeit_win"
+            },
+            {
+              "opponent": -1,
+              "score": 0.5,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "requested_bye"
+            },
+            {
+              "opponent": -1,
+              "score": 0.0,
+              "color": "black",
+              "round": 5,
+              "rating": 0,
+              "kind": "requested_bye"
+            }
+          ]
+        },
+        "2": {
+          "rating": 1900,
+          "points": 0.0,
+          "games": []
+        },
+        "3": {
+          "rating": 1800,
+          "points": 2.0,
+          "games": []
+        }
+      }
     },
     {
       "id": "FIDE2026-DE-MINITABLE",
@@ -17,7 +75,75 @@
       "source": "FIDE Handbook C.07 (effective 1 Mar 2026), §6 Direct Encounter: mini-standings over tied participants who met, reapplied to subsets until resolved",
       "source_grade": "PRIMARY",
       "article": "C.07 §6 DE",
-      "notes": "Shell only. Requires the group-context ranking architecture (criterion -> group context -> derived subset -> recursive calculation). Legacy standings-level DE stub (0.0) is unrelated."
+      "notes": "Shell only. Requires the group-context ranking architecture (criterion -> group context -> derived subset -> recursive calculation). Legacy standings-level DE stub (0.0) is unrelated. Input example: three players tied on 2.0 who all met (1 beats 2, draws 3; 2 beats 3): mini-table scores are 1.5/1.0/0.5, resolving the tie under §6. Group-context engine pending.",
+      "players": {
+        "1": {
+          "rating": 2000,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "black",
+              "round": 2,
+              "rating": 1800,
+              "kind": "played"
+            }
+          ]
+        },
+        "2": {
+          "rating": 1900,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1800,
+              "kind": "played"
+            }
+          ]
+        },
+        "3": {
+          "rating": 1800,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 1900,
+              "kind": "played"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "FIDE-MEDIAN2",
