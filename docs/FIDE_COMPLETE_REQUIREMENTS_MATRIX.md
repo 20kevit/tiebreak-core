@@ -38,7 +38,14 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | Q-FIRSTR | §10 note | first-rating rule | 2026 | any | snapshot | contract | diff D9 | — | contract | IMPLEMENTED-by-construction | consumer | — |
 | Q-SEQ | §§4.1–4.2 | ordered lists + subgroups → lots | all | any | descriptors | ranking | arch-gap §26 | — | ranking tests | IMPLEMENTED+CONSUMER_OWNED (selection) | shared | — |
 
-## Team criteria (all OUT_OF_SCOPE; team-module on demand)
+## Team criteria (FIDE-defined YES; THP-mandatory YES where MTB26-listed; core implementation NO)
+
+Deferred from the current tiebreak-core scope SOLELY because the current
+domain model (`GameRecord`: one player's game) and consumer do not require
+them — NOT because they are optional for a complete FIDE-approved THP
+(they are mandatory there wherever MTB26 lists them). Required future
+domain: TeamMatch (round, opponent team, MP/GP for-against, per-board GP
+vector, unplayed/bye flags) in a team module beside — not inside — the core.
 
 | Req | Art | Code | Inputs | Status |
 |---|---|---|---|---|
@@ -60,7 +67,7 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | I-TRF | TRF26 202/212/192/013/240/320/801/802 | descriptor + data interchange | CONSUMER_OWNED (parser) + core consumes ids | consumer |
 | I-PTC/RTG | TEC Manual §3.9.4 | 50k differential verification | CONSUMER_OWNED (THP vendor) | vendor |
 | I-TAPC | C.02.01 + TEC Manual | VCL/SDPC/TAPC/FEAP, cycles | CONSUMER_OWNED | vendor+FIDE |
-| I-ETT | — (negative: no such format) | PTC+RTG+TRF are the instruments | documented absence | — |
+| I-ETT | ETT26 (C.02.03 Annex C) | 192 code → format regime (Swiss/RR/team/KO/custom) → §15.2-vs-16/BH-ban/team-code selection | SPECIFIED (mapping table in TEC-requirements doc) | consumer (adapter owns 192 parse + lookup + mode flag; core receives normalized mode) |
 | X-LEGACY | — | buchholz_sum/arpo/stub-DE frozen | IMPLEMENTED (frozen) | core |
 | X-NORMTPR | B.01 | norm performance (floors/1400/35%) | OUT_OF_SCOPE + warning | — |
 

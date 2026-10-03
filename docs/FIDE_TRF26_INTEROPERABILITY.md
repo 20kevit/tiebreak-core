@@ -45,3 +45,31 @@ pass-through at parse level) and MUST NOT implement TRF parsing —
 zero-dependency policy + boundary above. A TRF reader, when needed,
 lives in chess-manager/THP land and is tested against the 801/802
 fixtures quoted in the TRF26 text.
+
+## ETT26 — field 192 classification (C.02.03 Annex C)
+
+TRF26 field 192 carries an ETT26 tournament-type code
+(`FIDE_DUTCH_*`, `BERGER_ROUNDROBIN_Gn`, `FIDE_TEAM_*`,
+`CUSTOM_*`, … — full table: `FIDE_TEC_IMPLEMENTATION_REQUIREMENTS.md`
+§ETT26; registry SRC-ETT26). Architectural chain (consumer-owned
+until the last step):
+
+```text
+TRF26 field 192
+        ↓  (consumer/THP: TRF parsing + ETT26 lookup)
+tournament/format classification
+        ↓  (consumer: explicit regime mapping — Swiss / predetermined /
+            team-Swiss / team-RR / knockout / custom; CUSTOM_* never inferred)
+C.07 format regime (§15.2 vs §16; BH-ban; team codes)
+        ↓
+tie-break semantics + descriptor list (202/212)
+        ↓  (normalized request: players, games+kinds, criteria, total_rounds, mode)
+tiebreak-core calculation
+```
+
+`tiebreak-core` must NOT become a TRF parser merely because ETT26
+exists, and must NOT embed the ETT26 table: the adapter owns parsing,
+lookup, and conversion into normalized domain semantics (including
+the future Swiss/RR mode flag). ETT26 version drift (e.g. the
+DUTCH_2025→2026 cutover change) is therefore a consumer data-update,
+never a core behavior change.

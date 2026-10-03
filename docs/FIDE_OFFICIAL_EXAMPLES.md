@@ -43,11 +43,12 @@ differential inputs once a TRF reader exists consumer-side.
 
 ## Searched, none found (recorded negatives)
 
-Pre-2023 worked examples beyond the 2022 text; ETT26 as a FIDE test
-format (test instruments are PTC+RTG+TRF — see TEC doc); FIDE
+Pre-2023 worked examples beyond the 2022 text; FIDE
 certification suites beyond the 50k-RTG TAPC protocol (no fixed
 expected-output files published; approval is differential, not
-golden).
+golden). (Correction 2026-10-03: ETT26 DOES exist — it is the C.02.03
+Annex C tournament-type code table for TRF field 192, not test
+material. See the TEC-requirements doc.)
 
 ## Tournament-specific systems (C.07 §4.1 self-defined lists — OTHER_ usage)
 

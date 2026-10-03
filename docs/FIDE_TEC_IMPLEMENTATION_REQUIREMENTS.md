@@ -45,18 +45,47 @@ on any discrepancy (TEC Manual §1.1.2).
    compliance; regulations stay authoritative. CLI tools cover
    pairing, tie-break, ranking checks, test generation; TRF-26 native.
 
-## ETT26 boundary (negative result, recorded)
+## ETT26 — Encoded Type (of tournament) Table (CORRECTED 2026-10-03)
 
-No FIDE "ETT26" test-tournament format exists in the Manual, the
-Congress paper, TEC downloads, or indexed sources (searched
-2026-10-03; hits are unrelated ETTs). FIDE test material =
-RTG-generated TRFs + PTC cross-checks + published worked examples.
-`tiebreak-core` must therefore **consume/generate nothing called
-ETT**; conformance interfaces are: (a) official worked examples
-(corpus), (b) RTG-style seeded generation (recommended property
-harness), (c) PTC-style differential checks (gacrux/echecsjs oracles).
-If FIDE ever publishes an ETT, this section gets revised — until
-then the boundary is explicit absence.
+A prior revision of this document falsely concluded "ETT26 does not
+exist". That conclusion is withdrawn: ETT26 exists as **C.02.03
+Annex C — Tournament Type Code Table (for TRF_CODE 192)**
+(`handbook.fide.com/files/handbook/ETT26.pdf`, Roberto Ricca).
+It is NOT a test format; it is the code table for TRF26 field 192,
+i.e. the tournament/system classifier. (The earlier search confused
+the acronym with unrelated "ETT" test products.)
+
+Content (verified: TEC Apr-2025 `TournamentTypeCodeTable192-TRF26.pdf`
+extracted in full, 96 lines; Handbook ETT26 indexed text Precise):
+
+- SWISS FOR INDIVIDUALS: FIDE_DUTCH_* (+_BAKU), FIDE_DUBOV (±BAKU),
+  FIDE_BURSTEIN (±BAKU), CUSTOM_SWISS, FIDE_DOUBLESWISS (±BAKU),
+  CUSTOM_DOUBLESWISS. Version note: TEC draft uses DUTCH_2017/2025
+  with a July-1-2025 cutover; Handbook ETT26 uses DUTCH_2017/2026
+  with a Feb-1-2026 cutover — Handbook governs.
+- PREDETERMINED PAIRING (INDIVIDUALS): BERGER_ROUNDROBIN_Gn
+  (G1 default; G2 = double), FIDE_ROUNDROBIN, FIDE_DOUBLEROUNDROBIN
+  (last two rounds reversed + G1), CUSTOM_ROUNDROBIN;
+  FIDE_SCHILLER_TxP (default 4x3) / CUSTOM_SCHILLER;
+  FIDE_SCHEVENINGEN_Gn (G1 default; G2 = double) / CUSTOM_SCHEVENINGEN;
+  CUSTOM_KNOCKOUT. (Berger tables live in Competition Rules
+  Appendix 1; SCHILLER/SCHEVENINGEN order/colour rules "not yet
+  defined" — flagged, non-blocking: no core inputs depend on them.)
+- SWISS FOR TEAMS (TEAM always in code): FIDE_TEAM_TYPEA/B ×
+  MP_GP/MP/GP primaries (±BAKU), FIDE_TEAM_MP_GP etc.,
+  CUSTOM_TEAM_SWISS.
+- PREDETERMINED PAIRING (TEAMS): BERGER_TEAM_ROUNDROBIN_Gn/G1/G2,
+  FIDE_TEAM_ROUNDROBIN (+DOUBLE), CUSTOM_TEAM_ROUNDROBIN.
+- OTHER: CUSTOM_TEAM_KNOCKOUT.
+
+Tie-break relevance is ONLY the regime mapping (consumer-owned):
+Swiss codes → C.07 Article 16; Berger/Schiller/Scheveningen codes →
+predetermined-pairing regime (C.07 §15.2, incl. the 2026 carve-out);
+KNOCKOUT codes → play-off/§12 context; CUSTOM_* → organiser-defined
+(`OTHER_*` descriptors; explicit mapping, never inferred).
+Conformance interfaces remain: (a) official worked examples
+(corpus), (b) RTG-style seeded generation, (c) PTC-style
+differential checks.
 
 ## What this means for tiebreak-core now
 
