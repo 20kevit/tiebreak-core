@@ -56,3 +56,52 @@ def test_benchmark_2000():
     assert len(res.players) == 2000
     assert [p.rank for p in res.players] == list(range(1, 2001))
     assert elapsed < 30
+
+
+def _players_26(n, rounds=7, seed=42):
+    """Kind-annotated Swiss event (fide-2026 strict gate needs kinds)."""
+    rng = random.Random(seed)
+    out = {}
+    for pid in range(1, n + 1):
+        games, pts = [], 0.0
+        for i in range(rounds):
+            roll = rng.random()
+            opp = ((pid + i) % n) + 1
+            color = "white" if i % 2 else "black"
+            if roll < 0.85:
+                s = rng.choice([0.0, 0.5, 1.0])
+                games.append(GameRecord(opponent_id=opp, opponent_rating=1500,
+                                        score=s, color=color,
+                                        round_number=i + 1, kind="played"))
+                pts += s
+            elif roll < 0.93:
+                games.append(GameRecord(opponent_id=-1, opponent_rating=0,
+                                        score=1.0, color=color,
+                                        round_number=i + 1,
+                                        kind="pairing_bye"))
+                pts += 1.0
+            else:
+                games.append(GameRecord(opponent_id=-1, opponent_rating=0,
+                                        score=0.5, color=color,
+                                        round_number=i + 1,
+                                        kind="requested_bye"))
+                pts += 0.5
+        out[pid] = PlayerTiebreakData(pid, 1500, pts, games)
+    return out
+
+
+CRITERIA_26 = ["buchholz_cut1", "buchholz", "sonneborn_berger",
+               "progressive", "direct_encounter", "rtng"]
+
+
+def test_benchmark_2000_fide2026():
+    from tiebreak_core import fide2026
+    players = _players_26(2000)
+    start = time.perf_counter()
+    res = fide2026.rank_standings(players, CRITERIA_26, 7)
+    elapsed = time.perf_counter() - start
+    print(f"\nbenchmark fide-2026 n=2000: {elapsed:.3f}s")
+    assert len(res.players) == 2000
+    assert [p.rank for p in res.players] == list(range(1, 2001))
+    assert res.rules_version == "fide-2026"
+    assert elapsed < 60

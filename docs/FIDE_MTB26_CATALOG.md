@@ -41,18 +41,18 @@ cut exception); the behavior is the §6.1.1 forfeit-inclusion opt-in
 
 | identifier | official_name | § | allowed modifiers/options | ruleset | implementation_status |
 |---|---|---|---|---|---|
-| DE, DE/P | Direct Encounter | 6 | /P | fide-2024 | IMPLEMENTED (group stage; /P = regulations opt-in flag) |
+| DE, DE/P | Direct Encounter | 6 | /P | fide-2024 + fide-2026 | IMPLEMENTED (group stage; /P flag under fide-2026) |
 | BPG | Games Played w/ Black | 7.3 | — | fide-2024 | IMPLEMENTED |
 | BWG | Games Won w/ Black | 7.4 | — | fide-2024 | IMPLEMENTED |
 | REP | Rounds Elected to Play | 7.6 | — | fide-2024 | IMPLEMENTED |
 | STD | Standard Points | 7.7 | — | fide-2026 | SPECIFIED (needs sched-opp scores) |
-| SB + /C1 /C2 /P (+ combos) | Sonneborn-Berger | 9.1 | C1 C2 P | fide-2024 (+SB-C1) | IMPLEMENTED (C1); C2/P SPECIFIED |
+| SB + /C1 /C2 /P (+ combos) | Sonneborn-Berger | 9.1 | C1 C2 P | fide-2024 (+SB-C1) + fide-2026 | IMPLEMENTED (C1; /P flag under fide-2026); C2 SPECIFIED |
 | ARO + /C1 /C2 /M1 /M2 | Average Rating of Opponents | 10.1 | C1 C2 M1 M2 | fide-2024 (+C1) | IMPLEMENTED (C1); C2/M1/M2 SPECIFIED |
 | TPR | Tournament Performance Rating | 10.2 | — | fide-2024 | IMPLEMENTED |
 | PTP | Perfect Tournament Performance | 10.3 | — | fide-2024 | IMPLEMENTED |
 | APRO | Avg TPR of Opponents | 10.4 | — | fide-2024 | IMPLEMENTED |
 | APPO | Avg PTP of Opponents | 10.5 | — | fide-2024 | IMPLEMENTED |
-| RTNG, RTNG/R | Rating | 10.6 | R | fide-2026 | SPECIFIED (terminal key) |
+| RTNG, RTNG/R | Rating | 10.6 | R | fide-2026 | IMPLEMENTED (descending terminal; /R consumer-side) |
 
 Codes `SB/P`, `SB/C1/P`, `SB/C2/P`, `ARO/C1…`, `ARO/M1…` are listed
 "to be implemented" — i.e. FIDE-mandatory once the base exists.
@@ -64,10 +64,10 @@ Codes `SB/P`, `SB/C1/P`, `SB/C2/P`, `ARO/C1…`, `ARO/M1…` are listed
 | WIN[:MP] | 7.1 | MP | — | IMPLEMENTED (individual; team use needs TeamMatch) |
 | WON[:MP] | 7.2 | MP | — | IMPLEMENTED (individual; team dito) |
 | PS[:MP/:GP] + /C1 /C2 | 7.5 | MP GP | C1 C2 | IMPLEMENTED (PS, PS-C1); PS-C2/… SPECIFIED |
-| TPN, TPN/R | 7.8 | — | R | SPECIFIED |
-| BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual BH/C1/C2/M1/M2); /P /F-combos SPECIFIED |
+| TPN, TPN/R | 7.8 | — | R | IMPLEMENTED (ascending terminal under fide-2026; /R consumer-side) |
+| BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual BH/C1/C2/M1/M2; /P flag under fide-2026; /F-combos SPECIFIED) |
 | AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base); /F SPECIFIED |
-| FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB); cut-combos SPECIFIED |
+| FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB; /P flag under fide-2026); cut-combos SPECIFIED |
 | KS[:MP/:GP] + /Lx | 9.2 | MP GP | Lx | IMPLEMENTED (base); limits SPECIFIED |
 
 ## Table 3 — teams only
@@ -112,10 +112,9 @@ each ordered descriptor to a calculation request:
 
 ```text
 MTB26/TRF descriptor  →  consumer parsing  →  normalized core request  →  tiebreak-core
-"BH/C1/P"             →  base BH + Cut-1    →  criterion "buchholz_cut1" (+ forfeit-inclusion flag, F26-1)
+"BH/C1/P"             →  base BH + Cut-1    →  criterion "buchholz_cut1" (+ forfeit-inclusion flag, live under fide-2026 since 0.7.0)
 "ARO/M2"              →  base ARO + Median-2 →  future parametric cut (SPECIFIED; today: UnsupportedCriterionError)
-"DE/P"                →  base DE + forfeit-inclusion → positional "direct_encounter" stage (Swiss default today;
-                         regulations opt-in is a future flag — SPECIFIED, unsupported under fide-2024)
+"DE/P"                →  base DE + forfeit-inclusion → positional "direct_encounter" stage (Swiss default; regulations opt-in via the fide-2026 flag since 0.7.0)
 "OTHER_x"             →  NOT a FIDE criterion, never silently mapped; consumer resolves or the strict
                          core raises UnknownCriterionError on calculation request (legacy: frozen 0.0)
 "BH:GP/C1"            →  team reference score → future team module (today: out of scope, explicit error)

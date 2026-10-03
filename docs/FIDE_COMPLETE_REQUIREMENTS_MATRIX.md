@@ -10,30 +10,30 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 
 | Req | Source/Art | Criterion/Modifier | Ruleset | Type | Inputs | Deps | Formula → | Example | Test | Impl | Owner | Pri |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Q-BH | C.07 §8.1 | BH | 2024 + 2026 | Swiss | opp finals, kinds | 16.3/16.4 | catalog §BH | Manual Laxman | VERIFIED corpus (2024) + PENDING shells (2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (caps) | core | P0 |
-| Q-BHC1 | §14.1.1.a+16.5 | BH-C1 (BH/C1) | 2024 + 2026 | Swiss | +VUR flags | VUR-cut | catalog | Laxman/Ex06 | VERIFIED (2024) + PENDING (2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (caps) | core | P0 |
-| Q-BHC2 | §14.2+16.5.2 | BH-C2 (BH/C2) | 2024 + 2026 | Swiss | same | reapply | catalog | — | unit | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (caps) | core | P0 |
-| Q-BHM | §§14.3–14.4 | BH-M1/M2 (BH/M1/M2) | 2024 + 2026 | Swiss | same | order | catalog | — | unit | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (caps) | core | P0 |
+| Q-BH | C.07 §8.1 | BH | 2024 + 2026 | Swiss | opp finals, kinds | 16.3/16.4 | catalog §BH | Manual Laxman | VERIFIED corpus (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
+| Q-BHC1 | §14.1.1.a+16.5 | BH-C1 (BH/C1) | 2024 + 2026 | Swiss | +VUR flags | VUR-cut | catalog | Laxman/Ex06 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
+| Q-BHC2 | §14.2+16.5.2 | BH-C2 (BH/C2) | 2024 + 2026 | Swiss | same | reapply | catalog | — | unit | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
+| Q-BHM | §§14.3–14.4 | BH-M1/M2 (BH/M1/M2) | 2024 + 2026 | Swiss | same | order | catalog | — | unit + VERIFIED (2026 MEDIAN2) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-BHGEN | MTB26 /Cn /Mn | generic cuts/medians | 2026 | Swiss | n | machine | modifiers | — | — | SPECIFIED | core | P2 |
-| Q-AOB | §8.2 | AOB (+/F) | 2024 + 2026 | Swiss | opp BH | FB proj | catalog | TEC AOB | unit | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTATION_PENDING (recompute under caps; /F SPECIFIED) | core | P1 |
-| Q-FB | §8.3 | FB (+cuts/P) | 2024 + 2026 | Swiss | final pairing | draws | catalog | TEC FB | VERIFIED (2024) | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTATION_PENDING (caps; cut-combos SPECIFIED) | core | P0 |
-| Q-SB | §9.1 | SB | 2024 + 2026 | Swiss | opp finals × scores | 16.3/16.4 | catalog | Laxman 37.25 | VERIFIED (2024) + PENDING (2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (caps) | core | P0 |
-| Q-SBC1 | §14.1.1.d+16.5 | SB-C1 (SB/C1; +/C2 /P) | 2024 + 2026 | Swiss | +VUR | higher-of | catalog | — | unit | 2024: IMPLEMENTED (C1) · 2026: IMPLEMENTATION_PENDING (caps; C2/P SPECIFIED) | core | P0 |
-| Q-PS | §7.5 | PS (+:MP/:GP /C1 /C2) | 2024 + 2026 | Swiss | round scores | gap-fill | catalog | — | unit | 2024: IMPLEMENTED (PS, PS-C1) · 2026: IMPLEMENTATION_PENDING (ruleset-gated; no semantic delta) | core | P1 |
-| Q-KOYA | §9.2+14.5 | KS (+:MP/:GP /Lx) | 2024 + 2026 | RR/Swiss-arith | total=max | raw pts | catalog | TEC Koya | unit | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTATION_PENDING (ruleset-gated; limits SPECIFIED) | core | P1 |
-| Q-TYPEB | §§7.1–7.4,7.6 | WIN/WON/BPG/BWG/REP | 2024 + 2026 | Swiss | games+kinds | OTB | catalog | TEC ch.7 | unit | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (RR-mode §15.2 part) | core | P1 |
+| Q-AOB | §8.2 | AOB (+/F) | 2024 + 2026 | Swiss | opp BH | FB proj | catalog | TEC AOB | unit | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base, under caps; /F SPECIFIED) | core | P1 |
+| Q-FB | §8.3 | FB (+cuts/P) | 2024 + 2026 | Swiss | final pairing | draws | catalog | TEC FB | VERIFIED (2024) + unit (2026 caps+/P) | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base, under caps; /P flag; cut-combos SPECIFIED) | core | P0 |
+| Q-SB | §9.1 | SB | 2024 + 2026 | Swiss | opp finals × scores | 16.3/16.4 | catalog | Laxman 37.25 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
+| Q-SBC1 | §14.1.1.d+16.5 | SB-C1 (SB/C1; +/C2 /P) | 2024 + 2026 | Swiss | +VUR | higher-of | catalog | — | unit + VERIFIED (2026 SB-C1) | 2024: IMPLEMENTED (C1) · 2026: IMPLEMENTED (C1, under caps; /P flag; C2 SPECIFIED) | core | P0 |
+| Q-PS | §7.5 | PS (+:MP/:GP /C1 /C2) | 2024 + 2026 | Swiss | round scores | gap-fill | catalog | — | unit | 2024: IMPLEMENTED (PS, PS-C1) · 2026: IMPLEMENTED (same; no semantic delta) | core | P1 |
+| Q-KOYA | §9.2+14.5 | KS (+:MP/:GP /Lx) | 2024 + 2026 | RR/Swiss-arith | total=max | raw pts | catalog | TEC Koya | unit | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base + RR//P forfeit scope; limits SPECIFIED) | core | P1 |
+| Q-TYPEB | §§7.1–7.4,7.6 | WIN/WON/BPG/BWG/REP | 2024 + 2026 | Swiss | games+kinds | OTB | catalog | TEC ch.7 | unit | 2024: IMPLEMENTED · 2026: IMPLEMENTED (Swiss + RR-mode §15.2 scope) | core | P1 |
 | Q-STD | §7.7 | STD | 2026 | any scoring | sched-opp scores + 013 table | draw-value | catalog | — | — | SPECIFIED | core | P1 |
-| Q-TPN | §7.8 | TPN/R | 2026 | any | pairing nos | order | catalog | — | — | SPECIFIED | core+consumer | P2 |
-| Q-ARO | §10.1 | ARO (+/C1/C2/M1/M2) | 2024 + 2026 | Swiss | OTB ratings | half-up | catalog | — | unit | 2024: IMPLEMENTED (base+C1) · 2026: IMPLEMENTATION_PENDING (RR forfeit scope; C2/M1/M2 SPECIFIED) | core | P1 |
-| Q-TPR | §10.2+RR8.1a | TPR | 2024 + 2026 | Swiss | OTB frac | table | catalog | TEC TPR | VERIFIED (2024) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (RR forfeit scope) | core | P1 |
-| Q-PTP | §10.3+RR8.1b | PTP | 2024 + 2026 | Swiss | OTB scores | full scale | catalog | — | VERIFIED (2024) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (RR forfeit scope) | core | P1 |
-| Q-APRO | §10.4 | APRO | 2024 + 2026 | Swiss | opp TPR | half-up | catalog | TEC APRO | VERIFIED (2024) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (RR forfeit scope) | core | P1 |
-| Q-APPO | §10.5 | APPO | 2024 + 2026 | Swiss | opp PTP | half-up | catalog | — | VERIFIED (2024) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (RR forfeit scope) | core | P1 |
-| Q-RTNG | §10.6 | RTNG/R | 2026 | any | rating | order | catalog | — | — | SPECIFIED | core+consumer | P2 |
-| Q-DE | §6.1–6.3 | DE (+/P) | 2024 + 2026 | Swiss/RR | mutual games | mini-table | catalog+ADR-008 | TEC DE | VERIFIED (2024) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (ruleset-gated; no semantic delta; /P SPECIFIED) | core | P1 |
-| Q-ART16 | §§15.3/16 | categories/adj/dummy/cuts | 2024 + 2026 | Swiss | kinds | classify | data-sem §3 | Manual 01–06 | VERIFIED (2024) + PENDING (2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTATION_PENDING (caps) | core | P0 |
-| Q-DUMMY26 | §16.4.1–2 | dummy caps | 2026 | Swiss | sched-opp adj | Q-ART16 | diff D13 | Manual NEW | PENDING ×6 | SPECIFIED | core | P0 |
-| Q-RR152 | §15.2 | RR forfeit scope | 2026 | RR/pre-paired | mode flag | sets | diff D12 | — | — | SPECIFIED | core | P1 |
+| Q-TPN | §7.8 | TPN/R | 2026 | any | pairing nos | order | catalog | — | unit (terminal ordering) | IMPLEMENTED (ascending terminal; reverse consumer-side) | core+consumer | P2 |
+| Q-ARO | §10.1 | ARO (+/C1/C2/M1/M2) | 2024 + 2026 | Swiss | OTB ratings | half-up | catalog | — | unit | 2024: IMPLEMENTED (base+C1) · 2026: IMPLEMENTED (same sets; C2/M1/M2 SPECIFIED) | core | P1 |
+| Q-TPR | §10.2+RR8.1a | TPR | 2024 + 2026 | Swiss | OTB frac | table | catalog | TEC TPR | VERIFIED (2024) + unit (2026 parity) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same sets) | core | P1 |
+| Q-PTP | §10.3+RR8.1b | PTP | 2024 + 2026 | Swiss | OTB scores | full scale | catalog | — | VERIFIED (2024) + unit (2026 parity) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same sets) | core | P1 |
+| Q-APRO | §10.4 | APRO | 2024 + 2026 | Swiss | opp TPR | half-up | catalog | TEC APRO | VERIFIED (2024) + unit (2026 parity) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same sets) | core | P1 |
+| Q-APPO | §10.5 | APPO | 2024 + 2026 | Swiss | opp PTP | half-up | catalog | — | VERIFIED (2024) + unit (2026 parity) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same sets) | core | P1 |
+| Q-RTNG | §10.6 | RTNG/R | 2026 | any | rating | order | catalog | — | unit (terminal ordering) | IMPLEMENTED (descending terminal; reverse consumer-side) | core+consumer | P2 |
+| Q-DE | §6.1–6.3 | DE (+/P) | 2024 + 2026 | Swiss/RR | mutual games | mini-table | catalog+ADR-008 | TEC DE | VERIFIED (2024) + VERIFIED (2026 minitable) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same §§6.1–6.3; /P flag; RR forfeit scope) | core | P1 |
+| Q-ART16 | §§15.3/16 | categories/adj/dummy/cuts | 2024 + 2026 | Swiss | kinds | classify | data-sem §3 | Manual 01–06 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
+| Q-DUMMY26 | §16.4.1–2 | dummy caps | 2026 | Swiss | sched-opp adj | Q-ART16 | diff D13 | Manual NEW | VERIFIED ×5 (BH 55/49.5/63/69, C1 50/11.5, SB 37.25) | IMPLEMENTED (F26-1) | core | P0 |
+| Q-RR152 | §15.2 | RR forfeit scope | 2026 | RR/pre-paired | mode flag | sets | diff D12 | — | unit (RR mode) | IMPLEMENTED (F26-1) | core | P1 |
 | Q-RRBAN | Art-8 note | BH RR ban | 2026 | RR | coverage | warn | diff D7 | — | — | SPECIFIED | core+consumer | P2 |
 | Q-FIRSTR | §10 note | first-rating rule | 2026 | any | snapshot | contract | diff D9 | — | contract | IMPLEMENTED-by-construction | consumer | — |
 | Q-SEQ | §§4.1–4.2 | ordered lists + subgroups → lots | all | any | descriptors | ranking | arch-gap §26 | — | ranking tests | IMPLEMENTED+CONSUMER_OWNED (selection) | shared | — |
@@ -61,7 +61,7 @@ vector, unplayed/bye flags) in a team module beside — not inside — the core.
 
 | Req | Source | Behavior | Status | Owner |
 |---|---|---|---|---|
-| G-RR | §§9.2/15.2/Art-8-note | RR regime (Koya home, forfeit scope, BH ban) | SPECIFIED | core (mode flag) |
+| G-RR | §§9.2/15.2/Art-8-note | RR regime (Koya home, forfeit scope, BH ban) | PARTIALLY_IMPLEMENTED (mode flag + §15.2 scope live; Art-8 BH ban documented, not enforced) | core (mode flag) |
 | G-KO | Art 3 + §12/13.3.2 | play-offs + team-KO chains | OUT_OF_SCOPE / CONSUMER_OWNED (play-off format) | consumer |
 | G-PAIR | C.04 §§1.7–1.8 | pairing-time BH/SB/TPN | CONSUMER_OWNED (pairing-core) | pairing-core |
 | I-TRF | TRF26 202/212/192/013/240/320/801/802 | descriptor + data interchange | CONSUMER_OWNED (parser) + core consumes ids | consumer |

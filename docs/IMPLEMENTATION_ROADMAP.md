@@ -19,11 +19,12 @@ criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 | F-RATE | TPR/PTP/APRO/APPO | §§10.2–10.5 + RR 8.1a/b | fide-2024 | IMPLEMENTED | OTB ratings+scores | tables | corpus VERIFIED | — |
 | F-DE | DE group stage 6.1–6.3 | §6 | fide-2024 | IMPLEMENTED | mutual games | mini-table | corpus VERIFIED | — |
 | F-ART16 | Categories/adjusted/dummy/cuts | §§15.3, 16 | fide-2024 | IMPLEMENTED | kinds | classify() | corpus VERIFIED | — |
-| N-DUMMYCAP | §16.4.1/16.4.2 caps | §16.4 (2026) | fide-2026 | SPECIFIED | sched-opp adj | F-ART16 | 6 PENDING shells | **P0** |
-| N-RR15.2 | RR forfeit carve-out | §15.2 (2026) | fide-2026 | SPECIFIED | Swiss/RR mode flag | mode input | PENDING | P1 |
+| N-DUMMYCAP | §16.4.1/16.4.2 caps | §16.4 (2026) | fide-2026 | IMPLEMENTED (F26-1) | sched-opp adj | F-ART16 | 5 VERIFIED corpus | **P0** |
+| N-RR15.2 | RR forfeit carve-out | §15.2 (2026) | fide-2026 | IMPLEMENTED (F26-1) | Swiss/RR mode flag | mode input | unit | P1 |
 | N-STD | Standard Points | §7.7 | fide-2026 | SPECIFIED | sched-opp round scores + scoring table | model ext | PENDING | P1 |
-| N-TPN | Pairing-number order | §7.8 | fide-2026 | SPECIFIED | pairing numbers | ranking key | unit | P2 |
-| N-RTNG | Rating order | §10.6 | fide-2026 | SPECIFIED | rating (have) | ranking key | unit | P2 |
+| N-TPN | Pairing-number order | §7.8 | fide-2026 | IMPLEMENTED (F26-1, ascending terminal) | pairing numbers | ranking key | unit | P2 |
+| N-RTNG | Rating order | §10.6 | fide-2026 | IMPLEMENTED (F26-1, descending terminal) | rating (have) | ranking key | unit | P2 |
+| N-PFLAG | Forfeit-inclusion opt-in (/P) | §6.1.1/MTB26 | fide-2026 | IMPLEMENTED (F26-1) | forfeits_as_played flag | BH/SB/FB/Koya/DE scope | unit | P1 |
 | N-RRBAN | BH round-robin ban | Art 8 note | fide-2026 | SPECIFIED | coverage detect | docs/warn | docs | P2 |
 | N-AOBFB | AOB over Fore BH | §8.2 (2026) | fide-2026 | SPECIFIED | FB values | F-AOB/FB | unit | P2 |
 | N-KOYALIM | Koya limit ±½ | §14.5 | future | DEFERRED | param | F-KOYA | — | P3 |
@@ -36,9 +37,11 @@ criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 ## Order (dependency, not convenience)
 
 1. `fide-2026` skeleton (specified→implemented flag, Swiss/RR mode
-   input, TPN/RTNG terminal keys) + N-DUMMYCAP + corpus activation
-   (6 PENDING → VERIFIED). This is the P0 2026 core: BH/SB parity
-   with the Manual's NEW columns.
+   input, TPN/RTNG terminal keys) + N-DUMMYCAP + N-RR15.2 + N-PFLAG
+   (/P forfeit-inclusion flag) + corpus activation
+   (5 PENDING unplayed shells + 4 PENDING pending.json shells →
+   VERIFIED). This is the P0 2026 core: BH/SB parity
+   with the Manual's NEW columns. DONE in 0.7.0 (Phase F26-1).
 2. N-RR15.2 (RR mode: forfeit scope in §10/Type-B sets) + D9 contract
    wording in adapter docs.
 3. N-STD (model: scheduled-opp scores + scoring table) behind new
@@ -68,11 +71,12 @@ NOT 1.0 blockers (documented rationale above).
 | U8 | WRBC fine print | downloads failed; snippets convergent | none (standard scoring, C.07-referenced) | NON-BLOCKING | docs | none |
 | U9 | ETT26 Handbook-PDF direct bytes | hosts unreachable; content verified via index + TEC table | version labels (DUTCH_2025 vs 2026 cutover) recorded; Handbook governs | NON-BLOCKING | docs | re-fetch on reachability |
 | U10 | THP VCL final text; PIWE chapter | "subject to final VCL"; Manual only outlines | approval-side only; zero core impact | NON-BLOCKING | vendor/FIDE | track per Acceptance Cycle |
+| U11 | EX04 Amit R2–R10 representation (exclusion vs bye-recorded) | Manual NEW BH=69 requires Amit adjusted 4.5 = 0.0+9×0.5, i.e. R2–R10 recorded as trailing zero-byes (16.2.5→draws), mirroring the EX01 Leo stub | corpus encodes trailing zero-byes with an explicit INPUT NOTE; engine implements the recorded-rounds reading (§§16.1–16.3) | NON-BLOCKING (number reproduces the printed official value under the documented representation) | FIDE (class-c clarification) | if FIDE clarifies excluded rounds are absent, Amit adjusted becomes 0.0 and EX04-2026 BH becomes 64.5 — corpus + note must be revisited |
 
 ## Recommended next autonomous phase
 
 Phase F26-1: implement N-DUMMYCAP + Swiss/RR mode (+ ETT192-derived regime flag) + TPN/RTNG keys,
-activate the 6 PENDING shells, extend property/perf tests, cut the next
+activate the PENDING shells, extend property/perf tests, cut the next
 minor release with `fide-2026` status=implemented (Swiss scope).
-Evidence, ownership, API impact, and tests are all settled above —
-no further research required first.
+DONE in 0.7.0 — evidence, ownership, API impact, and tests all landed;
+no further research required first. Next: F26-2 (N-STD + cut-combos).

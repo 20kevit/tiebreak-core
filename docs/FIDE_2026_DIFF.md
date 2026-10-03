@@ -158,16 +158,18 @@ module is ever built (names are then normative ids).
   - *16.4.2 the points awarded for a draw multiplied by the number of
     rounds in the tournament, for all other unplayed rounds
     (categories 16.2.1, 16.2.3 and 16.2.5)."*
-- Verified against all six official worked examples (BH OLD→NEW:
+- Verified against the five encoded official worked examples (BH OLD→NEW:
   57→55, 51→49.5, 64.5→63, 74→69; see corpus
   `tests/corpus/fide2026_unplayed.json`).
 - Engine impact: `fide-2024` (uncapped) is correct and frozen; the caps
-  are the core of a future `fide-2026` ruleset. Implementing them needs
-  the **scheduled opponent's adjusted score** per forfeit round — for
-  `forfeit_win/loss` games the model should carry the scheduled
-  opponent id (already allowed), and the engine must evaluate that
-  opponent's Article 16.3 adjustment including rounds after the
-  encounter.
+  are the core of the `fide-2026` ruleset (IMPLEMENTED in 0.7.0,
+  Phase F26-1). Implementing them needs the **scheduled opponent's
+  adjusted score** per forfeit round — for `forfeit_win/loss` games
+  the model carries the scheduled opponent id, and the engine
+  evaluates that opponent's Article 16.3 adjustment including rounds
+  after the encounter. All five encoded NEW-regime expectations
+  reproduce the Manual's printed numbers (BH 57→55, 51→49.5,
+  64.5→63, 74→69, BH-C1 11.5; SB 37.25 unchanged).
 
 ## D14. §16 header "(Until 28th February 2026)" (EDITORIAL ANOMALY)
 
@@ -183,9 +185,12 @@ against the live Handbook when reachable.
 ## D15. Worked-examples annex (NEW, PRIMARY)
 
 Six official unplayed-game examples (Manual pp.258–261): Laxman
-(BH/SB/BH-C1 with OLD+NEW columns), Examples 01–05 (OLD/NEW BH
-columns), Example 06 (= TEC exercise, BH-C1 11.5). Encoded as corpus
-`tests/corpus/fide2026_unplayed.json` (4 VERIFIED `fide-2024`
-expectations + 6 PENDING `fide-2026` shells). Known example-text
+(BH/SB/BH-C1 with OLD+NEW columns), Examples 01/03/04 (OLD/NEW BH
+columns), Example 06 (= TEC exercise, BH-C1 11.5). (Examples 02/05
+are docs-only: Ex02's wording is recorded in U3, Ex05 is genuinely
+ambiguous per U4.) Encoded as corpus
+`tests/corpus/fide2026_unplayed.json` (5 VERIFIED `fide-2024`
+expectations + 5 VERIFIED `fide-2026` expectations since 0.7.0). Known example-text
 slips recorded there (Ex02 "maximum" vs cap; Ex05 acknowledged
-under-specification; Ex06 "2.5" vestige).
+under-specification; Ex06 "2.5" vestige; EX04 Amit R2–R10
+representation, see roadmap U11).

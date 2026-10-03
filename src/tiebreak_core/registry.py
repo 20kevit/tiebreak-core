@@ -65,6 +65,8 @@ TIEBREAK_FIDE_REF: Dict[str, str] = {
     "apro": "C.07 §10.4 APRO (fide-2024)",
     "appo": "C.07 §10.5 APPO (fide-2024)",
     "direct_encounter": "C.07 §6 DE (legacy standings-level value is a 0.0 stub)",
+    "tpn": "C.07 §7.8 TPN (fide-2026 terminal ranking stage, ascending)",
+    "rtng": "C.07 §10.6 RTNG (fide-2026 terminal ranking stage, descending)",
 }
 
 DEFAULT_CRITERIA: List[str] = [

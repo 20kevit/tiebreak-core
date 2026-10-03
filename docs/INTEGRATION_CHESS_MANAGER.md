@@ -61,9 +61,10 @@ Mixed-ruleset displays must label the producing ruleset per row/table.
   tournament; mixed-ruleset displays labeled per row/table.
 - **Modifiers**: cut/median variants arrive as distinct criterion ids
   today (`buchholz_cut1`, `median_buchholz_2`, …); forfeit-inclusion
-  (`/P`) and Swiss/RR mode arrive as additive strict parameters in
-  F26-1 (SPECIFIED, not yet accepted — passing them today is a typed
-  error, never silent behavior). `OTHER_*` descriptors are never
+  (`/P`), Swiss/RR mode, draw value, and TPN pairing numbers arrive as
+  additive strict parameters under `ruleset="fide-2026"` (live since
+  0.7.0; passing them under other rulesets is a typed error, never
+  silent behavior). `OTHER_*` descriptors are never
   forwarded as calculation ids: the adapter resolves or rejects them
   (strict raises `UnknownCriterionError`; legacy would yield frozen
   `0.0` — do not use legacy for configured lists).

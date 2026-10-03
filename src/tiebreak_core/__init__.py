@@ -8,8 +8,10 @@ Calculation (``calculate``/``calculate_all``) and ordering
 (``ranking.rank_standings``/``order_ids``) are independent. Tournament
 seeding stays outside the core (see ``ranking`` docstring).
 
-Rules versioning: v0.1.0 calculates ``legacy-0.1.0`` only.
-See ``tiebreak_core.rules`` and ``docs/KNOWN_LIMITATIONS.md``.
+Rules versioning: calculations select an explicit ruleset
+(``legacy-0.1.0`` frozen, ``fide-2024`` frozen, ``fide-2026``
+implemented). See ``tiebreak_core.rules`` and
+``docs/KNOWN_LIMITATIONS.md``.
 """
 
 from tiebreak_core.models import (
@@ -90,7 +92,7 @@ from tiebreak_core.rules import (
     is_supported,
 )
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 __fide_reference__ = FIDE_REFERENCE
 __rules_version__ = CALCULATION_RULES_VERSION
 

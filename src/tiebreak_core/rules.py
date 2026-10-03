@@ -30,7 +30,7 @@ FIDE_REFERENCE = (
     "1 Mar 2026). See docs/TIEBREAK_RULES.md and docs/KNOWN_LIMITATIONS.md."
 )
 
-SUPPORTED_RULESETS: Tuple[str, ...] = ("legacy-0.1.0", "fide-2024")
+SUPPORTED_RULESETS: Tuple[str, ...] = ("legacy-0.1.0", "fide-2024", "fide-2026")
 
 ROADMAP_RULESETS: Tuple[str, ...] = ("FIDE_2024", "FIDE_2026")
 
@@ -85,19 +85,34 @@ _RULESETS: Dict[str, RulesetInfo] = {
     ),
     "fide-2026": RulesetInfo(
         id="fide-2026",
-        status="specified",
+        status="implemented",
         description=(
-            "Specified ruleset tracking the FIDE Handbook C.07 edition "
-            "effective from 1 Mar 2026 (verified D1–D15 diff, PENDING "
-            "corpus shells). Implementation pending (Phase F26-1); "
-            "see docs/FIDE_2026_DIFF.md."
+            "FIDE C.07 edition effective 1 Mar 2026 for individual "
+            "tournaments: the full fide-2024 Swiss engine plus the "
+            "§16.4 dummy caps (16.4.1 scheduled-opponent cap for "
+            "forfeits; 16.4.2 draw-points x rounds cap otherwise), an "
+            "explicit swiss/round_robin mode flag (round_robin "
+            "implements the §15.2 forfeit carve-out), and terminal "
+            "ranking stages tpn (§7.8) / rtng (§10.6). "
+            "Out of scope: Standard Points §7.7 (needs "
+            "scheduled-opponent round scores, Phase F26-2), team "
+            "systems §§11–13, Art.16.6 overrides, Koya-limit §14.5. "
+            "Buchholz-family use in round-robins is documented, not "
+            "enforced (Art. 8 note)."
         ),
         fide_reference=(
             "FIDE Handbook C.07 Play-Off and Tie-Break Regulations "
             "(effective from 1 Mar 2026; approved by FIDE Council "
             "02/02/2026)."
         ),
-        criteria=(),
+        criteria=(
+            "buchholz", "buchholz_cut1", "buchholz_cut2",
+            "median_buchholz", "median_buchholz_2", "sonneborn_berger",
+            "sonneborn_berger_cut1", "progressive", "progressive_cut1",
+            "wins", "won", "games_black", "wins_black", "rounds_elected",
+            "aro", "aro_cut1", "aob", "fore_buchholz", "koya",
+            "tpr", "ptp", "apro", "appo",
+        ),
     ),
     "fide-2024": RulesetInfo(
         id="fide-2024",

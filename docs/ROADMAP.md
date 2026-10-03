@@ -4,21 +4,18 @@ Large coherent phases only. Each phase ships code + tests + docs +
 CHANGELOG entry; `main` stays green throughout. Normative source for
 priorities/statuses: `docs/FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 
-## F26-1 — fide-2026 foundation (NEXT)
+## F26-1 — fide-2026 foundation (DONE in 0.7.0)
 
 - Objective: FIDE-correct Swiss calculations under explicit
   `ruleset="fide-2026"`; `fide-2024` outputs byte-identical.
-- Scope: §16.4.1/16.4.2 dummy caps (core); explicit Swiss/RR mode
-  input (ETT192-derived regime flag; RR mode implements the §15.2
-  2026 carve-out); TPN + RTNG terminal keys; forfeit-inclusion flag
-  (DE/P + BH/P + SB/P parsing target); first-rating contract wording.
-- Deliverables: new code paths only; 6 PENDING shells in
-  `tests/corpus/fide2026_unplayed.json` → VERIFIED; property tests
-  (determinism, exactness, DE termination); legacy + fide-2024
-  goldens untouched.
-- Definition of Done: PENDING shells green; full suite green;
-  2000-player bench within budget; CHANGELOG + matrix statuses
-  updated; `fide-2026` status=implemented (Swiss scope).
+- Delivered: §16.4.1/16.4.2 dummy caps; explicit Swiss/RR mode input
+  (RR mode implements the §15.2 2026 carve-out); TPN + RTNG terminal
+  keys; `/P` forfeit-inclusion flag; first-rating contract wording.
+  All 9 PENDING corpus shells → VERIFIED (5 unplayed NEW-regime +
+  ART16 taxonomy + DE minitable + MEDIAN2 + SB-C1); property tests
+  (determinism, permutation invariance, no-mutation, DE termination,
+  2026≤2024 monotonicity); 2000-player fide-2026 bench 0.22s.
+- Follow-up: F26-2 (STD + remaining 2026 deltas) is NEXT.
 
 ## F26-2 — STD + remaining 2026 deltas
 

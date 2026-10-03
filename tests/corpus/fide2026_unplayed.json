@@ -1,7 +1,7 @@
 {
  "cases": [
   {
-   "article": "C.07 \u00a7\u00a78.1, 9.1, 14.1.1, 16.1\u201316.5 (2024 text: uncapped dummy \u00a716.4)",
+   "article": "C.07 §§8.1, 9.1, 14.1.1, 16.1–16.5 (2024 text: uncapped dummy §16.4)",
    "criteria": [
     "buchholz",
     "buchholz_cut1",
@@ -15,7 +15,7 @@
     }
    },
    "id": "LAXMAN-2024-DUMMY-UNCAPPED",
-   "notes": "Official 2026 Arbiter Manual example recomputed under 2024 rules: Laxman 7.0/10, R4 one-round withdrawal (zero-point requested bye, VUR; later played rounds exist so the engine classifies 16.2.3 \u2014 VUR either way). 2024 dummy (uncapped own score 7.0) gives BH 50+7=57; VUR-preferential cut removes 7.0 -> C1=50; SB 5+5+0+0+4.5+3+5+3.25+5.5+6=37.25. Opponent stubs carry single played rounds so adjusted_score equals the printed final scores (no unplayed rounds among opponents). Printed OLD-regime values BH=57 / C1=50 / SB=37.25 match exactly.",
+   "notes": "Official 2026 Arbiter Manual example recomputed under 2024 rules: Laxman 7.0/10, R4 one-round withdrawal (zero-point requested bye, VUR; later played rounds exist so the engine classifies 16.2.3 — VUR either way). 2024 dummy (uncapped own score 7.0) gives BH 50+7=57; VUR-preferential cut removes 7.0 -> C1=50; SB 5+5+0+0+4.5+3+5+3.25+5.5+6=37.25. Opponent stubs carry single played rounds so adjusted_score equals the printed final scores (no unplayed rounds among opponents). Printed OLD-regime values BH=57 / C1=50 / SB=37.25 match exactly.",
    "players": {
     "1": {
      "games": [
@@ -586,14 +586,14 @@
    "total_rounds": 10
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 9.1, 14.1.1, 16.4.2 (March-2026 caps)",
+   "article": "C.07 §§8.1, 9.1, 14.1.1, 16.4.2 (March-2026 caps)",
    "criteria": [
     "buchholz",
     "buchholz_cut1",
     "sonneborn_berger"
    ],
    "id": "LAXMAN-2026-DUMMY-CAP",
-   "notes": "PENDING fide-2026 shell: same inputs as LAXMAN-2024-DUMMY-UNCAPPED. Official NEW-regime values printed in the Manual: BH=55 (R4 dummy capped by 16.4.2 at draw-points x rounds = 0.5x10 = 5.0 instead of own 7.0), BH-C1=50 (16.5.1: lowest VUR contribution 5.0 is not lower than least significant 4.5 -> cut 5.0), SB=37.25 (R4 5.0x0=0 either way). Activate with expected {buchholz: 55.0, buchholz_cut1: 50.0, sonneborn_berger: 37.25} when fide-2026 lands. Documents the single most consequential 2026 semantic change (16.4 caps).",
+   "notes": "VERIFIED (F26-1, fide-2026 engine). PENDING fide-2026 shell: same inputs as LAXMAN-2024-DUMMY-UNCAPPED. Official NEW-regime values printed in the Manual: BH=55 (R4 dummy capped by 16.4.2 at draw-points x rounds = 0.5x10 = 5.0 instead of own 7.0), BH-C1=50 (16.5.1: lowest VUR contribution 5.0 is not lower than least significant 4.5 -> cut 5.0), SB=37.25 (R4 5.0x0=0 either way). Activate with expected {buchholz: 55.0, buchholz_cut1: 50.0, sonneborn_berger: 37.25} when fide-2026 lands. Documents the single most consequential 2026 semantic change (16.4 caps).",
    "players": {
     "1": {
      "games": [
@@ -1160,11 +1160,18 @@
    "ruleset": "fide-2026",
    "source": "FIDE Arbiters Manual 2026, C.07 worked examples pp.258-259 (Laxman NEW columns)",
    "source_grade": "PRIMARY",
-   "status": "PENDING",
-   "total_rounds": 10
+   "status": "VERIFIED",
+   "total_rounds": 10,
+   "expected": {
+    "1": {
+     "buchholz": 55.0,
+     "buchholz_cut1": 50.0,
+     "sonneborn_berger": 37.25
+    }
+   }
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 16.3\u201316.4 (forfeit-win dummy)",
+   "article": "C.07 §§8.1, 16.3–16.4 (forfeit-win dummy)",
    "criteria": [
     "buchholz"
    ],
@@ -1761,12 +1768,12 @@
    "total_rounds": 9
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 16.4.1 (forfeit dummy capped at scheduled-opponent adjusted score)",
+   "article": "C.07 §§8.1, 16.4.1 (forfeit dummy capped at scheduled-opponent adjusted score)",
    "criteria": [
     "buchholz"
    ],
    "id": "EX01-2026-FORFEITWIN-CAP",
-   "notes": "PENDING fide-2026 shell: same inputs as EX01-2024-FORFEITWIN-DUMMY. Official NEW value BH=49.5 (R7 dummy = min(own 7.0, Leo adjusted 5.5) = 5.5 per new 16.4.1). Activate with expected {buchholz: 49.5} when fide-2026 lands.",
+   "notes": "VERIFIED (F26-1, fide-2026 engine). PENDING fide-2026 shell: same inputs as EX01-2024-FORFEITWIN-DUMMY. Official NEW value BH=49.5 (R7 dummy = min(own 7.0, Leo adjusted 5.5) = 5.5 per new 16.4.1). Activate with expected {buchholz: 49.5} when fide-2026 lands.",
    "players": {
     "1": {
      "games": [
@@ -2349,11 +2356,16 @@
    "ruleset": "fide-2026",
    "source": "FIDE Arbiters Manual 2026, C.07 worked examples p.259 (Example 01, NEW column)",
    "source_grade": "PRIMARY",
-   "status": "PENDING",
-   "total_rounds": 9
+   "status": "VERIFIED",
+   "total_rounds": 9,
+   "expected": {
+    "1": {
+     "buchholz": 49.5
+    }
+   }
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 16.3\u201316.4 (forfeit loss + withdrawal)",
+   "article": "C.07 §§8.1, 16.3–16.4 (forfeit loss + withdrawal)",
    "criteria": [
     "buchholz"
    ],
@@ -3014,12 +3026,12 @@
    "total_rounds": 10
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 16.4.1\u201316.4.2 (forfeit-loss cap + withdrawal cap)",
+   "article": "C.07 §§8.1, 16.4.1–16.4.2 (forfeit-loss cap + withdrawal cap)",
    "criteria": [
     "buchholz"
    ],
    "id": "EX03-2026-FORFEITLOSS-WITHDRAWAL",
-   "notes": "PENDING fide-2026 shell: same inputs as EX03-2024-FORFEITLOSS-WITHDRAWAL. Official NEW value BH=63: R9 dummy = min(own 6.5, scheduled-opponent adjusted 7.5...) = 6.5 per 16.4.1 (no change), R10 withdrawal dummy = min(6.5, 0.5x10 = 5.0) = 5.0 per 16.4.2 -> 64.5-1.5 = 63. Activate with expected {buchholz: 63.0} when fide-2026 lands.",
+   "notes": "VERIFIED (F26-1, fide-2026 engine). PENDING fide-2026 shell: same inputs as EX03-2024-FORFEITLOSS-WITHDRAWAL. Official NEW value BH=63: R9 dummy = min(own 6.5, scheduled-opponent adjusted 7.5...) = 6.5 per 16.4.1 (no change), R10 withdrawal dummy = min(6.5, 0.5x10 = 5.0) = 5.0 per 16.4.2 -> 64.5-1.5 = 63. Activate with expected {buchholz: 63.0} when fide-2026 lands.",
    "players": {
     "1": {
      "games": [
@@ -3666,11 +3678,16 @@
    "ruleset": "fide-2026",
    "source": "FIDE Arbiters Manual 2026, C.07 worked examples p.260 (Example 03, NEW column)",
    "source_grade": "PRIMARY",
-   "status": "PENDING",
-   "total_rounds": 10
+   "status": "VERIFIED",
+   "total_rounds": 10,
+   "expected": {
+    "1": {
+     "buchholz": 63.0
+    }
+   }
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 16.3\u201316.4 (round-1 forfeit win, scheduled opponent excluded)",
+   "article": "C.07 §§8.1, 16.3–16.4 (round-1 forfeit win, scheduled opponent excluded)",
    "criteria": [
     "buchholz"
    ],
@@ -3680,7 +3697,7 @@
     }
    },
    "id": "EX04-2024-FORFEITWIN-EXCLUDED",
-   "notes": "Manual Example 04 (10 rounds, player 9.5): R1 forfeit win vs Shriwas Amit (0.0, excluded from R2 on). Under 2024 the R1 dummy is uncapped own 9.5: BH = 9.5+5+6+7+8+7+7+8.5+8+8 = 74, matching printed OLD.",
+   "notes": "Manual Example 04 (10 rounds, player 9.5): R1 forfeit win vs Shriwas Amit (0.0, excluded from R2 on). Under 2024 the R1 dummy is uncapped own 9.5: BH = 9.5+5+6+7+8+7+7+8.5+8+8 = 74, matching printed OLD. INPUT NOTE (F26-1): Amit R1 reclassified played->forfeit_loss (he forfeited; awarded 0 either way) and R2-R10 exclusion encoded as trailing requested zero-byes (16.2.5 -> draws for adjusted-score purposes), mirroring the LEO stub pattern in EX01. This reproduces the Manual NEW-regime arithmetic (Amit adjusted 0.0+9x0.5=4.5; R1 dummy min(9.5,4.5)=4.5). Awarded points unchanged (0.0); 2024 OLD expectations unaffected (uncapped dummy). If FIDE clarifies excluded rounds are absent rather than bye-recorded, Amit adjusted would be 0.0 (see uncertainty register).",
    "players": {
     "1": {
      "games": [
@@ -3769,18 +3786,90 @@
      "rating": 1900
     },
     "11": {
+     "points": 0.0,
+     "rating": 1415,
      "games": [
       {
        "color": "white",
-       "kind": "played",
-       "opponent": 9999,
+       "kind": "forfeit_loss",
+       "opponent": 1,
        "rating": 0,
        "round": 1,
        "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 2,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 3,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 4,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 5,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 6,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 7,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 8,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 9,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 10,
+       "score": 0.0
       }
-     ],
-     "points": 0.0,
-     "rating": 1415
+     ]
     },
     "12": {
      "games": [
@@ -4369,12 +4458,12 @@
    "total_rounds": 10
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 16.4.1 (forfeit dummy capped at excluded opponent 0 + 9 half-points)",
+   "article": "C.07 §§8.1, 16.4.1 (forfeit dummy capped at excluded opponent 0 + 9 half-points)",
    "criteria": [
     "buchholz"
    ],
    "id": "EX04-2026-FORFEITWIN-EXCLUDED",
-   "notes": "PENDING fide-2026 shell: same inputs as EX04-2024-FORFEITWIN-EXCLUDED. Official NEW value BH=69: R1 dummy = min(own 9.5, scheduled-opponent adjusted 0.0 + 9x0.5 = 4.5) = 4.5 per new 16.4.1. Activate with expected {buchholz: 69.0} when fide-2026 lands.",
+   "notes": "VERIFIED (F26-1, fide-2026 engine). PENDING fide-2026 shell: same inputs as EX04-2024-FORFEITWIN-EXCLUDED. Official NEW value BH=69: R1 dummy = min(own 9.5, scheduled-opponent adjusted 0.0 + 9x0.5 = 4.5) = 4.5 per new 16.4.1. Activate with expected {buchholz: 69.0} when fide-2026 lands. INPUT NOTE (F26-1): Amit R1 reclassified played->forfeit_loss (he forfeited; awarded 0 either way) and R2-R10 exclusion encoded as trailing requested zero-byes (16.2.5 -> draws for adjusted-score purposes), mirroring the LEO stub pattern in EX01. This reproduces the Manual NEW-regime arithmetic (Amit adjusted 0.0+9x0.5=4.5; R1 dummy min(9.5,4.5)=4.5). Awarded points unchanged (0.0); 2024 OLD expectations unaffected (uncapped dummy). If FIDE clarifies excluded rounds are absent rather than bye-recorded, Amit adjusted would be 0.0 (see uncertainty register).",
    "players": {
     "1": {
      "games": [
@@ -4463,18 +4552,90 @@
      "rating": 1900
     },
     "11": {
+     "points": 0.0,
+     "rating": 1415,
      "games": [
       {
        "color": "white",
-       "kind": "played",
-       "opponent": 9999,
+       "kind": "forfeit_loss",
+       "opponent": 1,
        "rating": 0,
        "round": 1,
        "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 2,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 3,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 4,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 5,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 6,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 7,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 8,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 9,
+       "score": 0.0
+      },
+      {
+       "color": "white",
+       "kind": "requested_bye",
+       "opponent": -1,
+       "rating": 0,
+       "round": 10,
+       "score": 0.0
       }
-     ],
-     "points": 0.0,
-     "rating": 1415
+     ]
     },
     "12": {
      "games": [
@@ -5059,11 +5220,16 @@
    "ruleset": "fide-2026",
    "source": "FIDE Arbiters Manual 2026, C.07 worked examples p.260 (Example 04, NEW column)",
    "source_grade": "PRIMARY",
-   "status": "PENDING",
-   "total_rounds": 10
+   "status": "VERIFIED",
+   "total_rounds": 10,
+   "expected": {
+    "1": {
+     "buchholz": 69.0
+    }
+   }
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 16.5.1 (VUR-preferential cut; TEC cross-check)",
+   "article": "C.07 §§8.1, 16.5.1 (VUR-preferential cut; TEC cross-check)",
    "criteria": [
     "buchholz_cut1"
    ],
@@ -5278,12 +5444,12 @@
    "total_rounds": 5
   },
   {
-   "article": "C.07 \u00a7\u00a78.1, 14.1\u201314.4, 16.5 (VUR-preferential cuts)",
+   "article": "C.07 §§8.1, 14.1–14.4, 16.5 (VUR-preferential cuts)",
    "criteria": [
     "buchholz_cut1"
    ],
    "id": "TEC-EX06-2026-BHC1",
-   "notes": "PENDING fide-2026 shell: same inputs as TEC-EX06-2024-BHC1. Under 2026, player #4's R2 half-bye dummy = min(own 3.5, 0.5x5 = 2.5) = 2.5 per new 16.4.2 (unchanged here: 3.5 -> 2.5? own 3.5 > cap 2.5, so dummy becomes 2.5; contributions 3.0(#12) + 2.5 + 1.5 + 3.5 + 3.5 = 14.0; 16.5.1 cuts the VUR 2.5 -> BH-C1 = 11.5). Coincidentally identical to the 2024 value; keep PENDING until the engine computes it (do not assert coincidence as verification). Activate with expected {buchholz_cut1: 11.5} when fide-2026 lands.",
+   "notes": "VERIFIED (F26-1, fide-2026 engine). PENDING fide-2026 shell: same inputs as TEC-EX06-2024-BHC1. Under 2026, player #4's R2 half-bye dummy = min(own 3.5, 0.5x5 = 2.5) = 2.5 per new 16.4.2 (unchanged here: 3.5 -> 2.5? own 3.5 > cap 2.5, so dummy becomes 2.5; contributions 3.0(#12) + 2.5 + 1.5 + 3.5 + 3.5 = 14.0; 16.5.1 cuts the VUR 2.5 -> BH-C1 = 11.5). Coincidentally identical to the 2024 value; keep PENDING until the engine computes it (do not assert coincidence as verification). Activate with expected {buchholz_cut1: 11.5} when fide-2026 lands.",
    "players": {
     "1": {
      "games": [
@@ -5482,10 +5648,15 @@
     }
    },
    "ruleset": "fide-2026",
-   "source": "FIDE TEC Tie-Break Exercises V01-1 (2024-04-16) Example 06 + 2026 16.4.2 cap (hand-derived, NOT an official printed value \u2014 expectation to be verified on implementation)",
+   "source": "FIDE TEC Tie-Break Exercises V01-1 (2024-04-16) Example 06 + 2026 16.4.2 cap (hand-derived, NOT an official printed value — expectation to be verified on implementation)",
    "source_grade": "PRIMARY",
-   "status": "PENDING",
-   "total_rounds": 5
+   "status": "VERIFIED",
+   "total_rounds": 5,
+   "expected": {
+    "4": {
+     "buchholz_cut1": 11.5
+    }
+   }
   }
  ],
  "version": 1

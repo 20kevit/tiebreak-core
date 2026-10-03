@@ -10,7 +10,7 @@ behave differently (typed errors instead of silent ``0.0``).
 What is validated (core needs only — no tournament-management rules):
   - criterion ids resolve (else ``UnknownCriterionError``)
   - ruleset is supported (else ``UnsupportedRulesetError``;
-    ``"fide-2026"`` is specified but NOT implemented (Phase F26-1)
+    ``legacy-0.1.0``/``fide-2024``/``fide-2026``)
   - scores are 0 / 0.5 / 1 (else ``InvalidGameRecordError``)
   - colors are "white" / "black" (else ``InvalidGameRecordError``)
   - round numbers are ints >= 0 (else ``InvalidGameRecordError``)
@@ -221,27 +221,64 @@ def _require_total_rounds(total_rounds: int) -> None:
         )
 
 
+def _require_fide2026_only_kwargs(ruleset: str, mode: str,
+                                  draw_points: float,
+                                  forfeits_as_played: bool = False,
+                                  pairing_numbers=None) -> None:
+    """fide-2026 extras (mode/draw_points/forfeits_as_played/
+    pairing_numbers) are meaningless elsewhere: fail fast instead of
+    silently ignoring them."""
+    if ruleset != "fide-2026" and (mode != "swiss" or draw_points != 0.5
+                                  or forfeits_as_played is not False
+                                  or pairing_numbers is not None):
+        raise InvalidPlayerDataError(
+            f"mode/draw_points/forfeits_as_played/pairing_numbers are "
+            f"fide-2026 parameters; got mode={mode!r} "
+            f"draw_points={draw_points!r} "
+            f"forfeits_as_played={forfeits_as_played!r} "
+            f"pairing_numbers={pairing_numbers!r} under ruleset "
+            f"{ruleset!r}")
+
+
 def calculate_strict(
     player: PlayerTiebreakData,
     all_players: Mapping[int, PlayerTiebreakData],
     criterion: str,
     total_rounds: int = 0,
     ruleset: str = "legacy-0.1.0",
+    mode: str = "swiss",
+    draw_points: float = 0.5,
+    forfeits_as_played: bool = False,
 ) -> float:
     """Validated single-criterion calculation.
 
     Under ``legacy-0.1.0`` values are identical to the legacy path
-    (delegation). Under ``fide-2024`` the FIDE-2024 engine computes
-    independently (see tiebreak_core.fide2024).
+    (delegation). Under ``fide-2024``/``fide-2026`` the respective FIDE
+    engine computes independently (see ``tiebreak_core.fide2024`` /
+    ``tiebreak_core.fide2026``). ``mode``/``draw_points``/
+    ``forfeits_as_played`` apply to ``fide-2026`` only (round-robin
+    regime flag + §16.4.2 draw value + MTB26 ``/P`` forfeit-inclusion
+    opt-in).
     """
     require_ruleset(ruleset)
     if ruleset == "fide-2024":
         from tiebreak_core import fide2024 as _fide
+        _require_fide2026_only_kwargs(ruleset, mode, draw_points,
+                                      forfeits_as_played)
         _require_total_rounds(total_rounds)
         validate_player(player)
         players = validate_players(all_players)
         _fide.validate_inputs(players, total_rounds)
         return _fide.calculate(player, players, criterion, total_rounds)
+    if ruleset == "fide-2026":
+        from tiebreak_core import fide2026 as _fide26
+        _require_total_rounds(total_rounds)
+        validate_player(player)
+        players = validate_players(all_players)
+        _fide26.validate_inputs(players, total_rounds)
+        return _fide26.calculate(player, players, criterion,
+                                 total_rounds, mode, draw_points,
+                                 forfeits_as_played)
     require_criteria([criterion])
     _require_total_rounds(total_rounds)
     validate_player(player)
@@ -255,11 +292,16 @@ def calculate_all_strict(
     criteria: Sequence[str],
     total_rounds: int = 0,
     ruleset: str = "legacy-0.1.0",
+    mode: str = "swiss",
+    draw_points: float = 0.5,
+    forfeits_as_played: bool = False,
 ) -> Dict[str, float]:
     """Validated multi-criterion calculation (ruleset-dispatched)."""
     require_ruleset(ruleset)
     if ruleset == "fide-2024":
         from tiebreak_core import fide2024 as _fide
+        _require_fide2026_only_kwargs(ruleset, mode, draw_points,
+                                      forfeits_as_played)
         _require_total_rounds(total_rounds)
         validate_player(player)
         players = validate_players(all_players)
@@ -268,6 +310,17 @@ def calculate_all_strict(
             _fide.require_supported(criterion)
         return _fide.calculate_all(player, players, list(criteria),
                                    total_rounds)
+    if ruleset == "fide-2026":
+        from tiebreak_core import fide2026 as _fide26
+        _require_total_rounds(total_rounds)
+        validate_player(player)
+        players = validate_players(all_players)
+        _fide26.validate_inputs(players, total_rounds)
+        for criterion in criteria:
+            _fide26.require_supported(criterion)
+        return _fide26.calculate_all(player, players, list(criteria),
+                                     total_rounds, mode, draw_points,
+                                     forfeits_as_played)
     checked_criteria = require_criteria(criteria)
     _require_total_rounds(total_rounds)
     validate_player(player)
@@ -281,11 +334,18 @@ def rank_standings_strict(
     total_rounds: int = 0,
     deterministic_keys: Mapping[int, int] | None = None,
     ruleset: str = "legacy-0.1.0",
+    mode: str = "swiss",
+    draw_points: float = 0.5,
+    pairing_numbers: Mapping[int, int] | None = None,
+    forfeits_as_played: bool = False,
 ) -> StandingsResult:
     """Validated ranking (ruleset-dispatched ordering)."""
     require_ruleset(ruleset)
     if ruleset == "fide-2024":
         from tiebreak_core import fide2024 as _fide
+        _require_fide2026_only_kwargs(ruleset, mode, draw_points,
+                                      forfeits_as_played,
+                                      pairing_numbers)
         _require_total_rounds(total_rounds)
         checked_players = validate_players(players)
         _fide.validate_inputs(checked_players, total_rounds)
@@ -293,6 +353,18 @@ def rank_standings_strict(
         _validate_keys(deterministic_keys)
         return _fide.rank_standings(checked_players, list(criteria),
                                     total_rounds, deterministic_keys)
+    if ruleset == "fide-2026":
+        from tiebreak_core import fide2026 as _fide26
+        _require_total_rounds(total_rounds)
+        checked_players = validate_players(players)
+        _fide26.validate_inputs(checked_players, total_rounds)
+        _fide26.check_ranking_criteria(criteria)
+        _validate_keys(deterministic_keys)
+        return _fide26.rank_standings(checked_players, list(criteria),
+                                      total_rounds, deterministic_keys,
+                                      mode, draw_points,
+                                      pairing_numbers,
+                                      forfeits_as_played)
     checked_criteria = require_criteria(criteria)
     _require_total_rounds(total_rounds)
     checked_players = validate_players(players)

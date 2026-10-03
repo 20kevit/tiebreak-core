@@ -95,11 +95,30 @@ class TestUnknownCriterion:
 
 
 class TestRuleset:
-    def test_fide_2026_specified_not_implemented(self):
-        players = fixture()
-        with pytest.raises(UnsupportedRulesetError):
-            calculate_all_strict(
-                players[1], players, ["buchholz"], 3, ruleset="fide-2026")
+    def test_fide_2026_implemented_strict_roundtrip(self):
+        from tiebreak_core.models import GameRecord, PlayerTiebreakData
+        players = {
+            1: PlayerTiebreakData(
+                player_id=1, rating=2000, points=1.5,
+                games=[GameRecord(opponent_id=2, opponent_rating=1500,
+                                  score=1.0, color="white",
+                                  round_number=1, kind="played"),
+                       GameRecord(opponent_id=-1, opponent_rating=0,
+                                  score=0.5, color="white",
+                                  round_number=2, kind="requested_bye")]),
+            2: PlayerTiebreakData(
+                player_id=2, rating=1500, points=0.5,
+                games=[GameRecord(opponent_id=1, opponent_rating=2000,
+                                  score=0.0, color="black",
+                                  round_number=1, kind="played"),
+                       GameRecord(opponent_id=-1, opponent_rating=0,
+                                  score=0.5, color="black",
+                                  round_number=2, kind="requested_bye")]),
+        }
+        res = rank_standings_strict(players, ["buchholz"], 2,
+                                   ruleset="fide-2026")
+        assert res.rules_version == "fide-2026"
+        assert [p.player_id for p in res.players] == [1, 2]
 
     def test_unknown_ruleset_rejected(self):
         with pytest.raises(UnsupportedRulesetError):

@@ -9,6 +9,46 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [0.7.0] — 2026-10-03
+
+Phase F26-1: `fide-2026` implemented (Swiss scope + RR mode; suite
+197 passed, 0 skipped; frozen outputs byte-identical):
+
+- New engine `tiebreak_core.fide2026` (ruleset `fide-2026`,
+  status implemented): the full fide-2024 Swiss core plus the March-2026
+  §16.4 dummy caps — 16.4.1 scheduled-opponent cap for forfeit rounds,
+  16.4.2 draw-points × rounds cap otherwise. All five encoded official
+  NEW-regime expectations reproduce the Manual's printed numbers
+  (BH 57→55, 51→49.5, 64.5→63, 74→69, BH-C1 50/11.5, SB 37.25).
+- Explicit `mode="swiss"|"round_robin"` regime flag implementing the
+  §15.2 round-robin forfeit carve-out (D12); `draw_points=0.5`
+  (§16.4.2 draw value); `forfeits_as_played=False` (MTB26 `/P`
+  opt-in for BH/SB/FB/Koya/DE; Type-B and rating sets unaffected);
+  terminal ranking stages `tpn` (§7.8, ascending, needs
+  `pairing_numbers`) and `rtng` (§10.6, descending). Strict surface
+  dispatches all of them; non-2026 rulesets reject them with typed
+  errors (never silent behavior).
+- Corpus: all 9 PENDING shells → VERIFIED (5 unplayed NEW-regime +
+  ART16 taxonomy + DE minitable + MEDIAN2 + SB-C1, the latter upgraded
+  SECONDARY→PRIMARY on the retrieved article text). EX04 Amit stub
+  completed (R1 forfeit loss + R2–R10 trailing zero-byes, mirroring
+  the EX01 Leo pattern) with an explicit input note; residual
+  exclusion-vs-bye ambiguity recorded as roadmap U11.
+- Tests: new F26-1 suite (caps, Swiss 2024≡2026 parity on
+  fully-played events, 2026≤2024 monotonicity on 30 random Swiss
+  events, RR carve-out, terminals, /P scope, properties:
+  determinism, permutation invariance, no-mutation, DE termination
+  incl. a 30-player all-draw group, adversarial all-tied field).
+  `tests/test_benchmarks.py` gains a 2000-player fide-2026 ranking
+  (0.22s via once-per-standings shared context; the naive
+  per-(player, criterion) rebuild was quadratic and timed out).
+- Docs: requirements matrix per-ruleset states flipped to
+  2026-IMPLEMENTED (exact scope retained: STD, /C2-/Cn-/Mn-combos,
+  Koya limits, team, 16.6 still out); modifiers/MTB26/adapter/API/
+  roadmap/PERFORMANCE updated; `fide-2024` outputs unchanged.
+- FIDE-status honesty: specification implemented + official-example
+  verification; no FIDE approval/acceptance claimed.
+
 ## [0.6.0] — 2026-10-03
 
 Pre-development readiness gate (no calculation change; frozen outputs

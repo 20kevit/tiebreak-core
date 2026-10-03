@@ -59,8 +59,13 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
     value remains a 0.0 stub (frozen).
 15. Art.16.6 local overrides — no competition-regulation input contract;
     unsupported by design until a consumer requires it.
-16. March-2026 edition — the engine implements the fully-retrieved 2024
-    text as ruleset `fide-2024`; `fide-2026` is specified (verified word-diff D1–D15 in `docs/FIDE_2026_DIFF.md`,
-    corpus PENDING shells in `tests/corpus/fide2026_unplayed.json`,
-    build order in `docs/IMPLEMENTATION_ROADMAP.md`). No `fide-2024`
-    output changes with the 2026 specification (proven by the suite).
+16. March-2026 edition — implemented as ruleset `fide-2026` (0.7.0,
+    Phase F26-1): §16.4 dummy caps, Swiss/RR mode flag (§15.2
+    carve-out), TPN/RTNG terminal stages, `/P` forfeit-inclusion flag;
+    verified against the Manual's NEW-regime columns (see
+    `docs/FIDE_2026_DIFF.md` D13/D15 and the VERIFIED corpus).
+    Still out of scope: Standard Points §7.7 (model extension),
+    /C2-/Cn-/Mn-combos beyond the named ids, Koya limits §14.5, team
+    systems, Art.16.6 overrides. The `fide-2024` engine is frozen and
+    byte-identical (proven by the suite + 2024-vs-2026 parity tests
+    on fully-played events).

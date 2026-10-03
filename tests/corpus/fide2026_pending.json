@@ -1,167 +1,574 @@
 {
-  "version": 1,
-  "cases": [
-    {
-      "id": "FIDE2026-ART16-TAXONOMY",
-      "ruleset": "fide-2026",
-      "status": "PENDING",
-      "source": "FIDE Handbook C.07 (effective 1 Mar 2026), Article 16: five unplayed-round categories (16.2.1 pairing-allocated/full-point byes; 16.2.2 forfeit wins; 16.2.3 requested byes followed by a non-VUR round; 16.2.4 forfeit losses; 16.2.5 trailing requested byes) + VUR concept (16.1) + virtual-opponent draws-forth (16.4) + cut exception (16.5)",
-      "source_grade": "PRIMARY",
-      "article": "C.07 §16",
-      "notes": "Shell only. Requires the unplayed-game input taxonomy (new GameKind fields) before expectations can be encoded. The legacy single-sentinel (-1) model cannot express these categories. Input example (taxonomy only, no expectations): R1 played win; R2 pairing bye; R3 forfeit win vs scheduled opponent 3; R4 requested half-bye; R5 trailing requested zero-bye (cf. §16.2.5). Expectations require the Phase-2 engine.",
-      "players": {
-        "1": {
-          "rating": 2000,
-          "points": 3.5,
-          "games": [
-            {
-              "opponent": 2,
-              "score": 1.0,
-              "color": "white",
-              "round": 1,
-              "rating": 1900,
-              "kind": "played"
-            },
-            {
-              "opponent": -1,
-              "score": 1.0,
-              "color": "white",
-              "round": 2,
-              "rating": 0,
-              "kind": "pairing_bye"
-            },
-            {
-              "opponent": 3,
-              "score": 1.0,
-              "color": "black",
-              "round": 3,
-              "rating": 1800,
-              "kind": "forfeit_win"
-            },
-            {
-              "opponent": -1,
-              "score": 0.5,
-              "color": "white",
-              "round": 4,
-              "rating": 0,
-              "kind": "requested_bye"
-            },
-            {
-              "opponent": -1,
-              "score": 0.0,
-              "color": "black",
-              "round": 5,
-              "rating": 0,
-              "kind": "requested_bye"
-            }
-          ]
-        },
-        "2": {
-          "rating": 1900,
-          "points": 0.0,
-          "games": []
-        },
-        "3": {
-          "rating": 1800,
-          "points": 2.0,
-          "games": []
-        }
+ "version": 1,
+ "cases": [
+  {
+   "id": "FIDE2026-ART16-TAXONOMY",
+   "ruleset": "fide-2026",
+   "status": "VERIFIED",
+   "source": "FIDE Handbook C.07 (effective 1 Mar 2026), Article 16: five unplayed-round categories (16.2.1 pairing-allocated/full-point byes; 16.2.2 forfeit wins; 16.2.3 requested byes followed by a non-VUR round; 16.2.4 forfeit losses; 16.2.5 trailing requested byes) + VUR concept (16.1) + virtual-opponent draws-forth (16.4) + cut exception (16.5)",
+   "source_grade": "PRIMARY",
+   "article": "C.07 §16",
+   "notes": "VERIFIED (F26-1, fide-2026 engine; taxonomy GAME_KINDS + classify() + 16.4 caps). Derivation: R1 played win vs #2 (adj 0.0, empty context record); R2 pairing bye (16.2.1, cap min(3.5,0.5x5=2.5)=2.5); R3 forfeit win vs #3 (16.2.2, cap min(3.5, adj(#3)=0.0 from the empty context record)=0.0); R4 requested half-bye (no later participated round -> 16.2.5, cap 2.5, VUR); R5 trailing zero-bye (16.2.5, cap 2.5, VUR). BH=0+2.5+0+2.5+2.5=7.5; C1 cuts lowest VUR 2.5 -> 5.0; SB=0+2.5+0+1.25+0=3.75. Consumers needing a nonzero scheduled-opponent cap must reconstruct that opponent history (cf. EX01 Leo stub). Original shell text (taxonomy without expectations) retained in git history.",
+   "players": {
+    "1": {
+     "rating": 2000,
+     "points": 3.5,
+     "games": [
+      {
+       "opponent": 2,
+       "score": 1.0,
+       "color": "white",
+       "round": 1,
+       "rating": 1900,
+       "kind": "played"
+      },
+      {
+       "opponent": -1,
+       "score": 1.0,
+       "color": "white",
+       "round": 2,
+       "rating": 0,
+       "kind": "pairing_bye"
+      },
+      {
+       "opponent": 3,
+       "score": 1.0,
+       "color": "black",
+       "round": 3,
+       "rating": 1800,
+       "kind": "forfeit_win"
+      },
+      {
+       "opponent": -1,
+       "score": 0.5,
+       "color": "white",
+       "round": 4,
+       "rating": 0,
+       "kind": "requested_bye"
+      },
+      {
+       "opponent": -1,
+       "score": 0.0,
+       "color": "black",
+       "round": 5,
+       "rating": 0,
+       "kind": "requested_bye"
       }
+     ]
     },
-    {
-      "id": "FIDE2026-DE-MINITABLE",
-      "ruleset": "fide-2026",
-      "status": "PENDING",
-      "source": "FIDE Handbook C.07 (effective 1 Mar 2026), §6 Direct Encounter: mini-standings over tied participants who met, reapplied to subsets until resolved",
-      "source_grade": "PRIMARY",
-      "article": "C.07 §6 DE",
-      "notes": "Shell only. Requires the group-context ranking architecture (criterion -> group context -> derived subset -> recursive calculation). Legacy standings-level DE stub (0.0) is unrelated. Input example: three players tied on 2.0 who all met (1 beats 2, draws 3; 2 beats 3): mini-table scores are 1.5/1.0/0.5, resolving the tie under §6. Group-context engine pending.",
-      "players": {
-        "1": {
-          "rating": 2000,
-          "points": 2.0,
-          "games": [
-            {
-              "opponent": 2,
-              "score": 1.0,
-              "color": "white",
-              "round": 1,
-              "rating": 1900,
-              "kind": "played"
-            },
-            {
-              "opponent": 3,
-              "score": 0.5,
-              "color": "black",
-              "round": 2,
-              "rating": 1800,
-              "kind": "played"
-            }
-          ]
-        },
-        "2": {
-          "rating": 1900,
-          "points": 2.0,
-          "games": [
-            {
-              "opponent": 1,
-              "score": 0.0,
-              "color": "black",
-              "round": 1,
-              "rating": 2000,
-              "kind": "played"
-            },
-            {
-              "opponent": 3,
-              "score": 1.0,
-              "color": "white",
-              "round": 3,
-              "rating": 1800,
-              "kind": "played"
-            }
-          ]
-        },
-        "3": {
-          "rating": 1800,
-          "points": 2.0,
-          "games": [
-            {
-              "opponent": 1,
-              "score": 0.5,
-              "color": "white",
-              "round": 2,
-              "rating": 2000,
-              "kind": "played"
-            },
-            {
-              "opponent": 2,
-              "score": 0.0,
-              "color": "black",
-              "round": 3,
-              "rating": 1900,
-              "kind": "played"
-            }
-          ]
-        }
-      }
+    "2": {
+     "rating": 1900,
+     "points": 0.0,
+     "games": []
     },
-    {
-      "id": "FIDE-MEDIAN2",
-      "ruleset": "fide-2026",
-      "status": "PENDING",
-      "source": "FIDE Handbook C.07 pre-2023 §4.3 ('Buchholz reduced by the two highest and two lowest scores'); retained as Median Buchholz 2 in later editions (§14)",
-      "source_grade": "PRIMARY",
-      "article": "C.07 §14 BH-M2",
-      "notes": "Definition verified; implementation pending as an additive criterion. Fully-played-event expectations can be hand-computed once implemented."
-    },
-    {
-      "id": "FIDE-SB-CUT-VARIANTS",
-      "ruleset": "fide-2026",
-      "status": "PENDING",
-      "source": "FIDE Handbook C.07 §9.1 + §14 modifiers (SB-C1/SB-C2); cut-exception interaction per §16.5",
-      "source_grade": "SECONDARY",
-      "article": "C.07 §9.1 + §14 (SB cut modifiers)",
-      "notes": "Shell only. SECONDARY grade: cut-variant semantics confirmed via @echecs/sonneborn-berger docs and chesspairings.org guide, but full Handbook article text for the cut exception was not machine-retrieved in this mission. Do not implement from secondary sources alone."
+    "3": {
+     "rating": 1800,
+     "points": 2.0,
+     "games": []
     }
-  ]
+   },
+   "total_rounds": 5,
+   "criteria": [
+    "buchholz",
+    "buchholz_cut1",
+    "sonneborn_berger"
+   ],
+   "expected": {
+    "1": {
+     "buchholz": 7.5,
+     "buchholz_cut1": 5.0,
+     "sonneborn_berger": 3.75
+    }
+   }
+  },
+  {
+   "id": "FIDE2026-DE-MINITABLE",
+   "ruleset": "fide-2026",
+   "status": "VERIFIED",
+   "source": "FIDE Handbook C.07 (effective 1 Mar 2026), §6 Direct Encounter: mini-standings over tied participants who met, reapplied to subsets until resolved",
+   "source_grade": "PRIMARY",
+   "article": "C.07 §6 DE",
+   "notes": "VERIFIED (F26-1, fide-2026 group stage, C.07 s.6 unchanged in 2026 per diff D4). The original 3-player mutual core is verbatim (mini-table 1.5/1.0/0.5 -> order 1,2,3 per s.6.2); coherence extension (F26-1): each tied player needed recorded rounds summing to 2.0 (strict points-coherence gate), so context players #4 (0.5), #5 (0.0), #6 (0.5) supply the balancing games. Players #4/#6 never met -> s.6.3 unresolvable -> deterministic fallback keeps 4 before 6; #5 last. Original shell text retained in git history.",
+   "players": {
+    "1": {
+     "rating": 2000,
+     "points": 2.0,
+     "games": [
+      {
+       "opponent": 2,
+       "score": 1.0,
+       "color": "white",
+       "round": 1,
+       "rating": 0,
+       "kind": "played"
+      },
+      {
+       "opponent": 3,
+       "score": 0.5,
+       "color": "black",
+       "round": 2,
+       "rating": 0,
+       "kind": "played"
+      },
+      {
+       "opponent": 4,
+       "score": 0.5,
+       "color": "white",
+       "round": 4,
+       "rating": 0,
+       "kind": "played"
+      }
+     ]
+    },
+    "2": {
+     "rating": 1900,
+     "points": 2.0,
+     "games": [
+      {
+       "opponent": 1,
+       "score": 0.0,
+       "color": "black",
+       "round": 1,
+       "rating": 0,
+       "kind": "played"
+      },
+      {
+       "opponent": 3,
+       "score": 1.0,
+       "color": "white",
+       "round": 3,
+       "rating": 0,
+       "kind": "played"
+      },
+      {
+       "opponent": 4,
+       "score": 1.0,
+       "color": "black",
+       "round": 4,
+       "rating": 0,
+       "kind": "played"
+      }
+     ]
+    },
+    "3": {
+     "rating": 1800,
+     "points": 2.0,
+     "games": [
+      {
+       "opponent": 1,
+       "score": 0.5,
+       "color": "white",
+       "round": 2,
+       "rating": 0,
+       "kind": "played"
+      },
+      {
+       "opponent": 2,
+       "score": 0.0,
+       "color": "black",
+       "round": 3,
+       "rating": 0,
+       "kind": "played"
+      },
+      {
+       "opponent": 5,
+       "score": 1.0,
+       "color": "white",
+       "round": 4,
+       "rating": 0,
+       "kind": "played"
+      },
+      {
+       "opponent": 6,
+       "score": 0.5,
+       "color": "black",
+       "round": 5,
+       "rating": 0,
+       "kind": "played"
+      }
+     ]
+    },
+    "4": {
+     "rating": 1700,
+     "points": 0.5,
+     "games": [
+      {
+       "opponent": 2,
+       "score": 0.0,
+       "color": "white",
+       "round": 4,
+       "rating": 0,
+       "kind": "played"
+      },
+      {
+       "opponent": 1,
+       "score": 0.5,
+       "color": "black",
+       "round": 4,
+       "rating": 0,
+       "kind": "played"
+      }
+     ]
+    },
+    "5": {
+     "rating": 1600,
+     "points": 0.0,
+     "games": [
+      {
+       "opponent": 3,
+       "score": 0.0,
+       "color": "black",
+       "round": 4,
+       "rating": 0,
+       "kind": "played"
+      }
+     ]
+    },
+    "6": {
+     "rating": 1500,
+     "points": 0.5,
+     "games": [
+      {
+       "opponent": 3,
+       "score": 0.5,
+       "color": "white",
+       "round": 5,
+       "rating": 0,
+       "kind": "played"
+      }
+     ]
+    }
+   },
+   "total_rounds": 5,
+   "criteria": [
+    "direct_encounter"
+   ],
+   "deterministic_keys": {
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6
+   },
+   "expected_order": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    5
+   ]
+  },
+  {
+   "id": "FIDE-MEDIAN2",
+   "ruleset": "fide-2026",
+   "status": "VERIFIED",
+   "source": "FIDE Handbook C.07 pre-2023 §4.3 ('Buchholz reduced by the two highest and two lowest scores'); retained as Median Buchholz 2 in later editions (§14)",
+   "source_grade": "PRIMARY",
+   "article": "C.07 §14 BH-M2",
+   "notes": "VERIFIED (F26-1, fide-2026; BH-M2 s.14.4 + cut family on five fully-played opponents 0.0/0.5/1.0/1.5/2.0, so 2024==2026 by construction). Hand computation: BH=5.0; C1=5.0-0.0; C2=5.0-0.0-0.5; M1=5.0-0.0-2.0; M2=5.0-0.0-0.5-2.0-1.5=1.0 (trims the two lowest and two highest). Fully-played 2-game stubs keep every record coherent. Original definition-shell text retained in git history.",
+   "total_rounds": 5,
+   "criteria": [
+    "buchholz",
+    "buchholz_cut1",
+    "buchholz_cut2",
+    "median_buchholz",
+    "median_buchholz_2"
+   ],
+   "expected": {
+    "1": {
+     "buchholz": 5.0,
+     "buchholz_cut1": 5.0,
+     "buchholz_cut2": 4.5,
+     "median_buchholz": 3.0,
+     "median_buchholz_2": 1.0
+    }
+   },
+   "players": {
+    "1": {
+     "rating": 2000,
+     "points": 2.5,
+     "games": [
+      {
+       "opponent": 11,
+       "score": 0.5,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 12,
+       "score": 0.5,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 13,
+       "score": 0.5,
+       "color": "white",
+       "round": 3,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 14,
+       "score": 0.5,
+       "color": "white",
+       "round": 4,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 15,
+       "score": 0.5,
+       "color": "white",
+       "round": 5,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    },
+    "11": {
+     "rating": 1500,
+     "points": 0.0,
+     "games": [
+      {
+       "opponent": 9999,
+       "score": 0.0,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 0.0,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    },
+    "12": {
+     "rating": 1500,
+     "points": 0.5,
+     "games": [
+      {
+       "opponent": 9999,
+       "score": 0.5,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 0.0,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    },
+    "13": {
+     "rating": 1500,
+     "points": 1.0,
+     "games": [
+      {
+       "opponent": 9999,
+       "score": 0.5,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 0.5,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    },
+    "14": {
+     "rating": 1500,
+     "points": 1.5,
+     "games": [
+      {
+       "opponent": 9999,
+       "score": 1.0,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 0.5,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    },
+    "15": {
+     "rating": 1500,
+     "points": 2.0,
+     "games": [
+      {
+       "opponent": 9999,
+       "score": 1.0,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 1.0,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "FIDE-SB-CUT-VARIANTS",
+   "ruleset": "fide-2026",
+   "status": "VERIFIED",
+   "source": "FIDE Council 2024_FC2_18, PLAY-OFF AND TIE-BREAK REGULATIONS, s.9.1 SB + s.14.1.1.d SB-C1 (cut exception s.16.5); verified unchanged in the March-2026 edition (diff D1-D15: s.14.x word-identical)",
+   "source_grade": "PRIMARY",
+   "article": "C.07 §9.1 + §14 (SB cut modifiers)",
+   "notes": "VERIFIED (F26-1, fide-2026; SB-C1 s.14.1.1.d). Grade upgraded SECONDARY->PRIMARY: the cut semantics come from the retrieved 2024_FC2_18 article text (not secondary guides), and the 2026 diff verifies s.14.x word-identical. Hand computation on fully-played rounds (2024==2026): SB=2.0x1+1.0x1+3.0x0.5=4.5, elements [2.0,1.0,1.5], no VURs -> cut least 1.0 -> SB-C1=3.5. Original caution-shell text retained in git history.",
+   "total_rounds": 3,
+   "criteria": [
+    "sonneborn_berger",
+    "sonneborn_berger_cut1"
+   ],
+   "expected": {
+    "1": {
+     "sonneborn_berger": 4.5,
+     "sonneborn_berger_cut1": 3.5
+    }
+   },
+   "players": {
+    "1": {
+     "rating": 2000,
+     "points": 2.5,
+     "games": [
+      {
+       "opponent": 21,
+       "score": 1.0,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 22,
+       "score": 1.0,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 23,
+       "score": 0.5,
+       "color": "white",
+       "round": 3,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    },
+    "21": {
+     "rating": 1500,
+     "points": 2.0,
+     "games": [
+      {
+       "opponent": 9999,
+       "score": 1.0,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 1.0,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    },
+    "22": {
+     "rating": 1500,
+     "points": 1.0,
+     "games": [
+      {
+       "opponent": 9999,
+       "score": 0.5,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 0.5,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    },
+    "23": {
+     "rating": 1500,
+     "points": 3.0,
+     "games": [
+      {
+       "opponent": 9999,
+       "score": 1.0,
+       "color": "white",
+       "round": 1,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 1.0,
+       "color": "white",
+       "round": 2,
+       "rating": 1500,
+       "kind": "played"
+      },
+      {
+       "opponent": 9999,
+       "score": 1.0,
+       "color": "white",
+       "round": 3,
+       "rating": 1500,
+       "kind": "played"
+      }
+     ]
+    }
+   }
+  }
+ ]
 }

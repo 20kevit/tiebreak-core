@@ -21,11 +21,13 @@ class TestRulesetMetadata:
         assert "buchholz" in info.criteria
         assert "direct_encounter" in info.criteria
 
-    def test_fide_2026_is_specified_not_implemented(self):
+    def test_fide_2026_is_implemented_swiss_scope(self):
         info = describe_ruleset("fide-2026")
-        assert info.status == "specified"
+        assert info.status == "implemented"
         assert "2026" in info.fide_reference
-        assert not is_supported("fide-2026")
+        assert is_supported("fide-2026")
+        assert "buchholz" in info.criteria
+        assert "sonneborn_berger_cut1" in info.criteria
 
     def test_unknown_ruleset_rejected(self):
         with pytest.raises(UnsupportedRulesetError):
@@ -36,9 +38,11 @@ class TestRulesetMetadata:
         assert {"legacy-0.1.0", "fide-2024", "fide-2026"} <= ids
 
     def test_supported_set(self):
-        assert set(SUPPORTED_RULESETS) == {"legacy-0.1.0", "fide-2024"}
+        assert set(SUPPORTED_RULESETS) == {"legacy-0.1.0", "fide-2024",
+                                           "fide-2026"}
         assert is_supported("legacy-0.1.0")
         assert is_supported("fide-2024")
+        assert is_supported("fide-2026")
 
     def test_fide_2024_is_implemented(self):
         info = describe_ruleset("fide-2024")
