@@ -562,8 +562,8 @@ def average_opponents_buchholz(player: PlayerTiebreakData,
                                total_rounds: int) -> float:
     """AOB §8.2: average of OTB opponents' (fide-2024) Buchholz.
 
-    Rounded to 1 decimal (documented presentation choice; FIDE states no
-    rounding for AOB). Empty set → 0.0.
+    Exact average (no rounding — FIDE states none, and ranking sorts
+    on this value; consumers format for display). Empty set → 0.0.
     """
     ctx = _require_context(all_players, total_rounds)
     adj = _adj_table(all_players, ctx)
@@ -573,7 +573,7 @@ def average_opponents_buchholz(player: PlayerTiebreakData,
         return 0.0
     bhs = [sum(c.value for c in _buchholz_contribs(
         all_players[oid].points, ctx[oid], adj)) for oid in opp_ids]
-    return round(sum(bhs) / len(bhs), 1)
+    return sum(bhs) / len(bhs)
 
 
 def fore_buchholz(player: PlayerTiebreakData,

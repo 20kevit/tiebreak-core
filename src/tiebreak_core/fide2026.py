@@ -590,7 +590,7 @@ def average_opponents_fore_buchholz(
 
     The default ``aob`` id averages BH (final); this additive id
     averages FB (e.g. computed live before the final round). Rounded
-    to 1 decimal (same documented presentation choice as AOB).
+    to 1 decimal (documented presentation value for this id).
     Empty set → 0.0.
     """
     ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
@@ -672,10 +672,10 @@ def average_opponents_buchholz(
         _pre: _Precomputed | None = None) -> float:
     """AOB §8.2: average of OTB opponents' (fide-2026) Buchholz.
 
-    Rounded to 1 decimal (documented presentation choice; FIDE states
-    no rounding for AOB). Empty set → 0.0. An FB-based variant (D8
-    "(or Fore Buchholz)") would be a new criterion id, not a silent
-    change — this id averages BH.
+    Exact average (no rounding — FIDE states none, and ranking sorts
+    on this value; consumers format for display). Empty set → 0.0.
+    An FB-based variant (D8 "(or Fore Buchholz)") would be a new
+    criterion id, not a silent change — this id averages BH.
     """
     ctx, adj = _use_pre(all_players, total_rounds, mode, draw_points,
                         _pre)
@@ -687,7 +687,7 @@ def average_opponents_buchholz(
     eff = _regular_mode(mode, forfeits_as_played)
     bhs = [_buchholz_core(shared[oid], ctx, adj, eff, draw_points,
                            total_rounds) for oid in opp_ids]
-    return round(sum(bhs) / len(bhs), 1)
+    return sum(bhs) / len(bhs)
 
 
 # --- Type-B / progressive / Koya (D12-aware; Swiss legs mirror 2024). ---

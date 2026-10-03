@@ -76,7 +76,7 @@ EXPECTED = {
         "median_buchholz": 6.0, "median_buchholz_2": 2.0,
         "sonneborn_berger": 7.75, "sonneborn_berger_cut1": 6.0,
         "progressive": 11.0, "progressive_cut1": 10.0, "koya": 0.0,
-        "aro": 1800, "aro_cut1": 1850, "aob": 12.7, "fore_buchholz": 13.5,
+        "aro": 1800, "aro_cut1": 1850, "aob": 12.666666666666666, "fore_buchholz": 13.5,
         "wins": 3.0, "won": 2.0, "games_black": 0.0, "wins_black": 0.0,
         "rounds_elected": 4.0},
     2: {"buchholz": 14.5, "buchholz_cut1": 13.0, "buchholz_cut2": 12.5,
@@ -102,7 +102,7 @@ EXPECTED = {
         "median_buchholz": 6.0, "median_buchholz_2": 2.0,
         "sonneborn_berger": 0.25, "sonneborn_berger_cut1": 0.25,
         "progressive": 2.0, "progressive_cut1": 2.0, "koya": 0.0,
-        "aro": 1900, "aro_cut1": 1950, "aob": 13.7, "fore_buchholz": 11.5,
+        "aro": 1900, "aro_cut1": 1950, "aob": 13.666666666666666, "fore_buchholz": 11.5,
         "wins": 0.0, "won": 0.0, "games_black": 3.0, "wins_black": 0.0,
         "rounds_elected": 3.0},
 }

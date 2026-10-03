@@ -656,6 +656,80 @@ class TestStandardPoints:
             calculate_strict(pl[1], pl, "std", 5, ruleset="fide-2024")
 
 
+class TestAobExactRanking:
+    """F3 discriminator (§8.2 states no rounding): two players whose
+    exact AOB values differ but round to the same tenth.
+
+    Player 2: 4 OTB opps with BHs [2.5, 2.0, 2.0, 2.0] -> exact 2.125.
+    Player 1: 8 OTB opps with BHs [2.5, 2.0 x7] -> exact 2.0625.
+    Both display 2.1, but exact ranking must put player 2 first
+    (player 1 has the lower id, so a rounded tie would order [1, 2]).
+    """
+
+    def fixture(self):
+        return {
+            2: P(2, 1500, 2.0, [(21, 1.0, "white", 1, "played"),
+                                 (22, 1.0, "black", 2, "played"),
+                                 (23, 0.0, "white", 3, "played"),
+                                 (24, 0.0, "black", 4, "played")]),
+            21: P(21, 1500, 0.5, [(2, 0.0, "black", 1, "played"),
+                                   (29, 0.5, "white", 2, "played")]),
+            22: P(22, 1500, 0.0, [(2, 0.0, "white", 2, "played")]),
+            23: P(23, 1500, 1.0, [(2, 1.0, "black", 3, "played")]),
+            24: P(24, 1500, 1.0, [(2, 1.0, "white", 4, "played")]),
+            29: P(29, 1500, 0.5, [(21, 0.5, "black", 2, "played")]),
+            1: P(1, 1500, 2.0, [(11, 1.0, "white", 1, "played"),
+                                 (12, 1.0, "black", 2, "played"),
+                                 (13, 0.0, "white", 3, "played"),
+                                 (14, 0.0, "black", 4, "played"),
+                                 (15, 0.0, "white", 5, "played"),
+                                 (16, 0.0, "black", 6, "played"),
+                                 (17, 0.0, "white", 7, "played"),
+                                 (18, 0.0, "black", 8, "played")]),
+            11: P(11, 1500, 0.5, [(1, 0.0, "black", 1, "played"),
+                                   (19, 0.5, "white", 2, "played")]),
+            12: P(12, 1500, 0.0, [(1, 0.0, "white", 2, "played")]),
+            13: P(13, 1500, 1.0, [(1, 1.0, "black", 3, "played")]),
+            14: P(14, 1500, 1.0, [(1, 1.0, "white", 4, "played")]),
+            15: P(15, 1500, 1.0, [(1, 1.0, "black", 5, "played")]),
+            16: P(16, 1500, 1.0, [(1, 1.0, "white", 6, "played")]),
+            17: P(17, 1500, 1.0, [(1, 1.0, "black", 7, "played")]),
+            18: P(18, 1500, 1.0, [(1, 1.0, "white", 8, "played")]),
+            19: P(19, 1500, 0.5, [(11, 0.5, "black", 2, "played")]),
+        }
+
+    def test_exact_values_and_shared_display(self):
+        from tiebreak_core import calculate_strict
+        pl = self.fixture()
+        for ruleset in ("fide-2024", "fide-2026"):
+            a = calculate_strict(pl[2], pl, "aob", 8, ruleset=ruleset)
+            b = calculate_strict(pl[1], pl, "aob", 8, ruleset=ruleset)
+            assert a == 2.125, (ruleset, a)
+            assert b == 2.0625, (ruleset, b)
+            assert round(a, 1) == round(b, 1) == 2.1
+
+    def test_ranking_uses_exact_values(self):
+        from tiebreak_core import rank_standings_strict
+        pl = self.fixture()
+        for ruleset in ("fide-2024", "fide-2026"):
+            res = rank_standings_strict(pl, ["aob"], 8, ruleset=ruleset)
+            order = [p.player_id for p in res.players]
+            # Exact: player 2 (2.125) ahead of player 1 (2.0625).
+            # Rounded 2.1/2.1 would tie and fall back to id order.
+            assert order[0] == 2, (ruleset, order[:4])
+            assert order[1] == 1, (ruleset, order[:4])
+
+    def test_aob_fb_unchanged(self):
+        # Out of scope guard: AOB/FB keeps its established behavior
+        # (documented 1dp presentation value) — this mission changes
+        # `aob` only.
+        from tiebreak_core import calculate_strict
+        pl = self.fixture()
+        got = calculate_strict(pl[2], pl, "aob_fb", 8,
+                               ruleset="fide-2026")
+        assert got == round(got, 1)
+
+
 class TestTerminals:
     def test_tpn_orders_ascending(self):
         pl = {1: P(1, 2200, 2.0, []), 2: P(2, 2300, 2.0, []),
