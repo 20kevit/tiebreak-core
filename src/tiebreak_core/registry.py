@@ -60,6 +60,10 @@ TIEBREAK_FIDE_REF: Dict[str, str] = {
     "fore_buchholz": "C.07 §8.3 FB (fide-2024)",
     "won": "C.07 §7.2 WON (fide-2024; legacy 'wins' counts all 1.0)",
     "rounds_elected": "C.07 §7.6 REP (fide-2024)",
+    "tpr": "C.07 §10.2 TPR (fide-2024)",
+    "ptp": "C.07 §10.3 PTP (fide-2024)",
+    "apro": "C.07 §10.4 APRO (fide-2024)",
+    "appo": "C.07 §10.5 APPO (fide-2024)",
     "direct_encounter": "C.07 §6 DE (legacy standings-level value is a 0.0 stub)",
 }
 

@@ -29,6 +29,10 @@ TIEBREAK_NAMES_FA = {
     "fore_buchholz": "فور بوخهلتس",
     "won": "بردهای داخل صفحه",
     "rounds_elected": "راندهای انتخاب‌شده",
+    "tpr": "TPR",
+    "ptp": "PTP",
+    "apro": "APRO",
+    "appo": "APPO",
     "direct_encounter": "رویارویی مستقیم",
 }
 

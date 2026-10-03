@@ -239,7 +239,12 @@ def validate_inputs(players: Mapping[int, PlayerTiebreakData],
                     f"pairing_bye/forfeit_win/forfeit_loss/requested_bye/"
                     f"absent first")
         recorded = sum(float(g.score) for g in pdata.games)
-        if not math.isclose(recorded, pdata.points, abs_tol=1e-9):
+        # Empty records are context-only (opponent scores without their
+        # histories): nothing to reconstruct, points taken as given.
+        # Non-empty records must be coherent — PS gap-filling and the
+        # §16.4 dummy rule build on per-round scores.
+        if pdata.games and not math.isclose(recorded, pdata.points,
+                                            abs_tol=1e-9):
             from tiebreak_core.errors import InvalidPlayerDataError
             raise InvalidPlayerDataError(
                 f"player {pid}: points {pdata.points} != sum of recorded "
@@ -554,6 +559,231 @@ def koya(player: PlayerTiebreakData,
     return total
 
 
+def _rated_otb_games(player: PlayerTiebreakData,
+                     all_players: Mapping[int, PlayerTiebreakData]
+                     ) -> List[Tuple[float, int]]:
+    """(score, opponent rating) for rated over-the-board games."""
+    out: List[Tuple[float, int]] = []
+    for game in player.games:
+        if normalize_kind(game) != PLAYED:
+            continue
+        opp = all_players.get(game.opponent_id)
+        if opp is None or opp.rating <= 0:
+            continue
+        out.append((float(game.score), opp.rating))
+    return out
+
+
+def _dp_for_fraction(points: float, games: int) -> int:
+    """Rating difference for a fractional score (§8.1a table).
+
+    The fraction is rounded half-up to hundredths first (documented
+    interpretation — FIDE specifies the table granularity, not the
+    rounding direction; half-up matches §10.1's "0.5 rounded up").
+    """
+    if games <= 0:
+        return 0
+    hundredths = int(math.floor(points / games * 100 + 0.5))
+    hundredths = min(100, max(0, hundredths))
+    return _DP_BY_HUNDREDTH[hundredths]
+
+
+def _pd_for_rating(own: int, opp: int) -> float:
+    """Scoring probability for ``own`` vs ``opp`` (§8.1b table).
+
+    Full rating scale (no ±400 cut — explicit in §10.3, applied
+    throughout the rating family here).
+    """
+    diff = own - opp
+    magnitude = abs(diff)
+    for lo, hi, high, low in _PD_RANGES:
+        if lo <= magnitude <= hi:
+            return high if diff >= 0 else low
+    return 1.0 if diff >= 0 else 0.0  # unreachable; defensive
+
+
+def tournament_performance(player: PlayerTiebreakData,
+                           all_players: Mapping[int, PlayerTiebreakData],
+                           total_rounds: int) -> float:
+    """TPR §10.2: rounded ARO + table rating difference.
+
+    ARO here is the §10.1 quantity (0.5 rounded up); the fraction is
+    points in rated OTB games over their count. No rated OTB games →
+    0.0 (documented edge, consistent with ARO).
+    """
+    _require_context(all_players, total_rounds)
+    games = _rated_otb_games(player, all_players)
+    if not games:
+        return 0.0
+    aro = _fide_round_half_up(sum(r for _, r in games) / len(games))
+    points = sum(s for s, _ in games)
+    return float(aro + _dp_for_fraction(points, len(games)))
+
+
+def perfect_performance(player: PlayerTiebreakData,
+                        all_players: Mapping[int, PlayerTiebreakData],
+                        total_rounds: int) -> float:
+    """PTP §10.3: lowest rating with expected score ≥ tournament score.
+
+    Expected score sums §8.1b probabilities over rated OTB opponents;
+    the target is points scored in those games (documented
+    interpretation — FIDE is silent on unplayed handling for PTP, which
+    is not Art.16-managed; comparing OTB points against OTB-based
+    expectation is the coherent reading). Zero target → 800 below the
+    lowest rated opponent (per spec). No rated OTB games → 0.0.
+    Found by binary search (expected score is monotone in rating).
+    """
+    _require_context(all_players, total_rounds)
+    games = _rated_otb_games(player, all_players)
+    if not games:
+        return 0.0
+    target = sum(s for s, _ in games)
+    lowest = min(r for _, r in games)
+    if target <= 0:
+        return float(lowest - 800)
+
+    def expected(rating: int) -> float:
+        return sum(_pd_for_rating(rating, opp) for _, opp in games)
+
+    lo = lowest - 800  # expected ≈ 0 < target (target > 0)
+    hi = max(r for _, r in games) + 800  # expected = n ≥ target
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if expected(mid) >= target:
+            hi = mid
+        else:
+            lo = mid + 1
+    return float(lo)
+
+
+def _average_opponent_metric(
+        player: PlayerTiebreakData,
+        all_players: Mapping[int, PlayerTiebreakData],
+        total_rounds: int, metric) -> float:
+    """Mean of ``metric`` over OTB opponents (§§10.4–10.5 shape)."""
+    ctx = _require_context(all_players, total_rounds)
+    opps = [r.opponent_id for r in ctx[player.player_id]
+            if r.kind == PLAYED and r.opponent_id in all_players]
+    if not opps:
+        return 0.0
+    vals = [metric(all_players[oid], all_players, total_rounds)
+            for oid in opps]
+    return float(_fide_round_half_up(sum(vals) / len(vals)))
+
+
+def apro(player: PlayerTiebreakData,
+         all_players: Mapping[int, PlayerTiebreakData],
+         total_rounds: int) -> float:
+    """APRO §10.4: average of OTB opponents' TPR, 0.5 rounded up."""
+    return _average_opponent_metric(player, all_players, total_rounds,
+                                    tournament_performance)
+
+
+def appo(player: PlayerTiebreakData,
+         all_players: Mapping[int, PlayerTiebreakData],
+         total_rounds: int) -> float:
+    """APPO §10.5: average of OTB opponents' PTP, 0.5 rounded up."""
+    return _average_opponent_metric(player, all_players, total_rounds,
+                                    perfect_performance)
+
+
+# ------------------------------------------------------------------
+# Official FIDE rating tables (embedded verbatim data).
+#
+# _DP_BY_HUNDREDTH: fractional score p (as integer hundredths 0..100)
+#   -> rating difference dp. Source: FIDE Rating Regulations §8.1a
+#   (table of conversion from fractional score into rating differences;
+#   extracted from the official 2022 PDF, "FIDE Rating Regulations
+#   effective from 1 January 2022"; table stable across editions —
+#   identical values confirmed in the 2024 rapid/blitz excerpts).
+# _PD_RANGES: (lo, hi, PD_H, PD_L) rating-difference bands. Source:
+#   same document, §8.1b (conversion of difference in rating into
+#   scoring probability). Full 0..735 coverage verified on extraction.
+# ------------------------------------------------------------------
+
+_DP_BY_HUNDREDTH: Dict[int, int] = {
+    0: -800, 1: -677, 2: -589, 3: -538,
+    4: -501, 5: -470, 6: -444, 7: -422,
+    8: -401, 9: -383, 10: -366, 11: -351,
+    12: -336, 13: -322, 14: -309, 15: -296,
+    16: -284, 17: -273, 18: -262, 19: -251,
+    20: -240, 21: -230, 22: -220, 23: -211,
+    24: -202, 25: -193, 26: -184, 27: -175,
+    28: -166, 29: -158, 30: -149, 31: -141,
+    32: -133, 33: -125, 34: -117, 35: -110,
+    36: -102, 37: -95, 38: -87, 39: -80,
+    40: -72, 41: -65, 42: -57, 43: -50,
+    44: -43, 45: -36, 46: -29, 47: -21,
+    48: -14, 49: -7, 50: 0, 51: 7,
+    52: 14, 53: 21, 54: 29, 55: 36,
+    56: 43, 57: 50, 58: 57, 59: 65,
+    60: 72, 61: 80, 62: 87, 63: 95,
+    64: 102, 65: 110, 66: 117, 67: 125,
+    68: 133, 69: 141, 70: 149, 71: 158,
+    72: 166, 73: 175, 74: 184, 75: 193,
+    76: 202, 77: 211, 78: 220, 79: 230,
+    80: 240, 81: 251, 82: 262, 83: 273,
+    84: 284, 85: 296, 86: 309, 87: 322,
+    88: 336, 89: 351, 90: 366, 91: 383,
+    92: 401, 93: 422, 94: 444, 95: 470,
+    96: 501, 97: 538, 98: 589, 99: 677,
+    100: 800,
+}
+
+_PD_RANGES: Tuple[Tuple[int, int, float, float], ...] = (
+    (0, 3, 0.5, 0.5),
+    (4, 10, 0.51, 0.49),
+    (11, 17, 0.52, 0.48),
+    (18, 25, 0.53, 0.47),
+    (26, 32, 0.54, 0.46),
+    (33, 39, 0.55, 0.45),
+    (40, 46, 0.56, 0.44),
+    (47, 53, 0.57, 0.43),
+    (54, 61, 0.58, 0.42),
+    (62, 68, 0.59, 0.41),
+    (69, 76, 0.6, 0.4),
+    (77, 83, 0.61, 0.39),
+    (84, 91, 0.62, 0.38),
+    (92, 98, 0.63, 0.37),
+    (99, 106, 0.64, 0.36),
+    (107, 113, 0.65, 0.35),
+    (114, 121, 0.66, 0.34),
+    (122, 129, 0.67, 0.33),
+    (130, 137, 0.68, 0.32),
+    (138, 145, 0.69, 0.31),
+    (146, 153, 0.7, 0.3),
+    (154, 162, 0.71, 0.29),
+    (163, 170, 0.72, 0.28),
+    (171, 179, 0.73, 0.27),
+    (180, 188, 0.74, 0.26),
+    (189, 197, 0.75, 0.25),
+    (198, 206, 0.76, 0.24),
+    (207, 215, 0.77, 0.23),
+    (216, 225, 0.78, 0.22),
+    (226, 235, 0.79, 0.21),
+    (236, 245, 0.8, 0.2),
+    (246, 256, 0.81, 0.19),
+    (257, 267, 0.82, 0.18),
+    (268, 278, 0.83, 0.17),
+    (279, 290, 0.84, 0.16),
+    (291, 302, 0.85, 0.15),
+    (303, 315, 0.86, 0.14),
+    (316, 328, 0.87, 0.13),
+    (329, 344, 0.88, 0.12),
+    (345, 357, 0.89, 0.11),
+    (358, 374, 0.9, 0.1),
+    (375, 391, 0.91, 0.09),
+    (392, 411, 0.92, 0.08),
+    (412, 432, 0.93, 0.07),
+    (433, 456, 0.94, 0.06),
+    (457, 484, 0.95, 0.05),
+    (485, 517, 0.96, 0.04),
+    (518, 559, 0.97, 0.03),
+    (560, 619, 0.98, 0.02),
+    (620, 735, 0.99, 0.01),
+    (736, 10**9, 1.0, 0.0),
+)
+
 # ------------------------------------------------------------------
 # Registry, dispatcher, ranking
 # ------------------------------------------------------------------
@@ -578,6 +808,10 @@ FIDE2024_IDS: Tuple[str, ...] = (
     "aob",
     "fore_buchholz",
     "koya",
+    "tpr",
+    "ptp",
+    "apro",
+    "appo",
 )
 
 FIDE2024_REGISTRY = {
@@ -600,6 +834,10 @@ FIDE2024_REGISTRY = {
     "aob": average_opponents_buchholz,
     "fore_buchholz": fore_buchholz,
     "koya": koya,
+    "tpr": tournament_performance,
+    "ptp": perfect_performance,
+    "apro": apro,
+    "appo": appo,
 }
 
 #: Legacy ids with *different* fide-2024 semantics (same id, ruleset
@@ -607,8 +845,6 @@ FIDE2024_REGISTRY = {
 REDEFINED_IDS: Tuple[str, ...] = (
     "koya", "aro", "wins", "wins_black", "games_black", "progressive",
 )
-
-_UNIMPLEMENTED = ("arpo", "buchholz_sum")
 
 #: Group-level (non-scalar) ranking stages.
 GROUP_CRITERIA: Tuple[str, ...] = ("direct_encounter",)

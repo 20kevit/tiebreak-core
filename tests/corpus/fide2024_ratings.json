@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "FIDE2024-RATINGS-TPR-PTP",
+      "ruleset": "fide-2024",
+      "status": "VERIFIED",
+      "source": "C.07 \u00a7\u00a710.1\u201310.5 (2024_FC2_18, PRIMARY full text) + FIDE Rating Regulations \u00a7\u00a78.1a/8.1b tables (official 2022 PDF, PRIMARY full extraction). TPR(X/Y/Z) and PTP(X) hand-derived; remainder brute-force cross-verified.",
+      "source_grade": "PRIMARY",
+      "article": "C.07 \u00a7\u00a710.1\u201310.5",
+      "notes": "X: ARO 1800, p .50->dp 0 -> TPR 1800; PTP 1799 (R=1798 gives 1.49). Y: 2/2 -> dp 800 -> 2450. Z: 0/3 -> dp -800 -> 867. A: p .375->.38 (half-up)->dp -87 -> 1638; PTP 1599. B: 1800/1812. C: p .833->.83->dp 273 -> 2106; PTP 2133. APRO/APPO(X): (1638+1800+2106)/3 and (1599+1812+2133)/3 = 1848.",
+      "total_rounds": 4,
+      "criteria": [
+        "tpr",
+        "ptp",
+        "apro",
+        "appo"
+      ],
+      "players": {
+        "1": {
+          "rating": 2000,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1800,
+              "kind": "played"
+            },
+            {
+              "opponent": 5,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 1700,
+              "kind": "played"
+            },
+            {
+              "opponent": 6,
+              "score": 0.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1900,
+              "kind": "played"
+            }
+          ]
+        },
+        "2": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 3,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1800,
+              "kind": "played"
+            }
+          ]
+        },
+        "3": {
+          "rating": 1500,
+          "points": 0.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 0.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1800,
+              "kind": "played"
+            },
+            {
+              "opponent": 5,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1700,
+              "kind": "played"
+            }
+          ]
+        },
+        "4": {
+          "rating": 1800,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "white",
+              "round": 1,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 6,
+              "score": 0.5,
+              "color": "white",
+              "round": 4,
+              "rating": 1900,
+              "kind": "played"
+            }
+          ]
+        },
+        "5": {
+          "rating": 1700,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 6,
+              "score": 0.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": 1,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "6": {
+          "rating": 1900,
+          "points": 2.5,
+          "games": [
+            {
+              "opponent": 5,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1700,
+              "kind": "played"
+            },
+            {
+              "opponent": 1,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 0.5,
+              "color": "white",
+              "round": 4,
+              "rating": 1800,
+              "kind": "played"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "1": {
+          "tpr": 1800.0,
+          "ptp": 1799.0,
+          "apro": 1848.0,
+          "appo": 1848.0
+        },
+        "2": {
+          "tpr": 2450.0
+        },
+        "3": {
+          "tpr": 867.0
+        },
+        "4": {
+          "tpr": 1638.0,
+          "ptp": 1599.0
+        },
+        "5": {
+          "tpr": 1800.0,
+          "ptp": 1812.0
+        },
+        "6": {
+          "tpr": 2106.0,
+          "ptp": 2133.0
+        }
+      }
+    }
+  ]
+}

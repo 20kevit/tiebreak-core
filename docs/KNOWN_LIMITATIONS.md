@@ -50,8 +50,10 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
 
 12. Team systems (§§11–13) — not modeled (different domain objects:
     matches, boards, MP/GP). Requested only if a team consumer appears.
-13. TPR/PTP/APRO/APPO (§§10.2–10.5) — rating conversion tables not
-    retrieved; requesting them raises `UnsupportedCriterionError`.
+13. TPR/PTP/APRO/APPO (§§10.2–10.5) — IMPLEMENTED under fide-2024
+    from the fully-extracted official §§8.1a/8.1b tables (101 + 51
+    entries, verified). Documented interpretations: p rounded half-up
+    to hundredths; PTP target = OTB points; TPR built on rounded ARO.
 14. Direct Encounter (§6) — IMPLEMENTED under fide-2024 as a
     group-level ranking stage (see ADR-008). Legacy standings-level
     value remains a 0.0 stub (frozen).

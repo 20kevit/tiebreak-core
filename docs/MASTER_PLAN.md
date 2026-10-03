@@ -24,7 +24,7 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 - `fide-2026` calculations: reserved, not implemented (needs full
   Article 16 text + taxonomy first).
 - Direct Encounter: standings-level stub under legacy.
-- Rating-based family incomplete (ARPO simplified; no TPR/PTP/APPO/RTNG).
+- Rating-based family complete under fide-2024 (TPR/PTP/APRO/APPO ✓); legacy ARPO stays frozen; RTNG + team systems deferred.
 - Cut variants (SB-C1/PS-C1/ARO-C1), AOB, ForeBH: pending.
 - No serialization format (none needed yet — do not invent one).
 - GitHub publication pending credentials (sole external blocker).
@@ -38,9 +38,9 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 | SB / PS / Wins / B-family | legacy ✓ + fide-2024 ✓ (cuts, OTB) | done |
 | DE | legacy stub + fide-2024 group stage ✓ | done (team EDE future) |
 | Koya | legacy (Swiss-applied) + fide-2024 (max-possible threshold) | done (RR-gating documented) |
-| ARO / ARPO | legacy (simplified dp); fide-2024 ARO/ARO-C1 ✓ | TPR family pending tables |
+| ARO / ARPO | legacy (simplified dp, frozen); fide-2024 ARO/ARO-C1 ✓ | TPR family done (TPR/PTP/APRO/APPO ✓) |
 | Art.16 taxonomy | ✓ input foundation | done (engine done) |
-| TPR/PTP/APPO/RTNG/AOB/FB | AOB/FB ✓; TPR family pending | Phase 4 or deferred w/ rationale |
+| TPR/PTP/APPO/RTNG/AOB/FB | AOB/FB/TPR/PTP/APRO/APPO ✓ | RTNG + team systems deferred w/ rationale |
 
 ## Release strategy
 

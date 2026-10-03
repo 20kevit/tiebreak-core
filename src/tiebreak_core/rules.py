@@ -106,9 +106,11 @@ _RULESETS: Dict[str, RulesetInfo] = {
             "Article 16 unplayed-round management (categories, adjusted "
             "scores, dummy rule, cut exception), Cut/Median modifiers, "
             "SB-C1/PS-C1/ARO-C1, AOB, Fore Buchholz, over-the-board "
-            "Type-B semantics, Koya threshold on maximum possible score. "
-            "Out of scope: team systems, TPR/PTP/APRO/APPO (rating "
-            "tables), Direct Encounter, Art.16.6 overrides."
+            "Type-B semantics, Koya threshold on maximum possible score, "
+            "rating family (TPR/PTP/APRO/APPO from the official §8.1a/§8.1b "
+            "tables). "
+            "Out of scope: team systems, Direct Encounter (Phase 3), "
+            "Art.16.6 overrides."
         ),
         fide_reference=(
             "FIDE Council document 2024_FC2_18, PLAY-OFF AND TIE-BREAK "
@@ -120,6 +122,7 @@ _RULESETS: Dict[str, RulesetInfo] = {
             "sonneborn_berger_cut1", "progressive", "progressive_cut1",
             "wins", "won", "games_black", "wins_black", "rounds_elected",
             "aro", "aro_cut1", "aob", "fore_buchholz", "koya",
+            "tpr", "ptp", "apro", "appo",
         ),
     ),
 }

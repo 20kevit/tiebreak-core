@@ -38,11 +38,12 @@ round-robin forfeit inclusion remain future work.
 
 ## Phase 4 — Rating-based family + remaining FIDE systems
 
-- Objective: ARO-C1, APRO/APPO/PTP/TPR/RTNG, AOB, ForeBH, REP/STD/TPN,
-  team systems (if demanded) — each with verified definition or
-  documented gap (never fabricated formulas).
-- Definition of Done: capability matrix (MASTER_PLAN) all-green or
-  explicitly deferred with rationale.
+DONE (2026-10-03, under fide-2024): TPR/PTP/APRO/APPO (§§10.2–10.5)
+from fully-extracted official §§8.1a/8.1b tables, with documented
+interpretations. See `tests/test_ratings.py`, corpus
+`fide2024_ratings.json`. Remaining: team systems (deferred — no team
+consumer; needs MP/GP domain objects) and Koya RR-gating policy
+(threshold already on maximum-possible; scope decision is caller-side).
 
 ## Phase 5 — Consumer adoption + 1.0 release
 

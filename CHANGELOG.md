@@ -23,6 +23,11 @@ Added:
   `UnsupportedCriterionError`. Strict path dispatches per ruleset;
   uncategorized `-1` rounds are rejected under fide-2024. Corpus case
   `FIDE2024-SWISS5-ART16` (VERIFIED, hand-computed). See ADR-007.
+- Rating family under fide-2024 (`tpr`, `ptp`, `apro`, `appo`,
+  §§10.2–10.5) from fully-extracted official §§8.1a/8.1b tables, with
+  documented interpretations (half-up fraction rounding, OTB-points PTP
+  target, TPR on rounded ARO). Corpus case `FIDE2024-RATINGS-TPR-PTP`
+  (VERIFIED: hand derivations + brute-force cross-checks).
 - Direct Encounter (§6) as a group-level ranking stage under fide-2024:
   mini-standings (played games only, forfeit exclusion, repeated-meeting
   averages with exact arithmetic), subset reapplication (§6.2), Swiss
