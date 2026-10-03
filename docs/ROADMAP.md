@@ -1,54 +1,54 @@
-# Roadmap
+# Roadmap (actionable; history preserved below)
 
 Large coherent phases only. Each phase ships code + tests + docs +
-CHANGELOG entry; `main` stays green throughout.
+CHANGELOG entry; `main` stays green throughout. Normative source for
+priorities/statuses: `docs/FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 
-## Phase 1 — Unplayed-game taxonomy (input foundation for fide-2026)
+## F26-1 — fide-2026 foundation (NEXT)
 
-- Objective: represent what `-1` conflates today.
-- Scope: new explicit game-kind fields (pairing-allocated bye,
-  full-point bye, forfeit win/loss, requested half/zero bye, withdrawal
-  rounds, missing opponent), validated on the strict path; legacy `-1`
-  inputs keep working via a documented default-kind mapping.
-- Deliverables: domain model extension, validation, unit tests,
-  corpus PENDING→VERIFIED shells for Art.16 categories (no Art.16
-  arithmetic yet).
-- Definition of Done: taxonomy documented in DOMAIN_MODEL, old inputs
-  byte-compatible, new fields exercised by tests.
+- Objective: FIDE-correct Swiss calculations under explicit
+  `ruleset="fide-2026"`; `fide-2024` outputs byte-identical.
+- Scope: §16.4.1/16.4.2 dummy caps (core); explicit Swiss/RR mode
+  input (ETT192-derived regime flag; RR mode implements the §15.2
+  2026 carve-out); TPN + RTNG terminal keys; forfeit-inclusion flag
+  (DE/P + BH/P + SB/P parsing target); first-rating contract wording.
+- Deliverables: new code paths only; 6 PENDING shells in
+  `tests/corpus/fide2026_unplayed.json` → VERIFIED; property tests
+  (determinism, exactness, DE termination); legacy + fide-2024
+  goldens untouched.
+- Definition of Done: PENDING shells green; full suite green;
+  2000-player bench within budget; CHANGELOG + matrix statuses
+  updated; `fide-2026` status=implemented (Swiss scope).
 
-## Phase 2 — fide-2026 calculation engine (SPECIFIED 2026-10-03, build: Phase F26-1)
+## F26-2 — STD + remaining 2026 deltas
 
-- Objective: FIDE-correct calculations under explicit `ruleset="fide-2026"`.
-- Scope (all verified this mission — no further research needed):
-  §16.4.1/16.4.2 dummy caps (core), §15.2 RR forfeit carve-out
-  (+ explicit Swiss/RR mode input), STD (§7.7, needs scheduled-opp
-  scores), TPN/RTNG terminal keys, Art-8 RR-ban note, AOB-FB variant,
-  first-rating contract. Full delta: `docs/FIDE_2026_DIFF.md` (D1–D15).
-- Deliverables: new code paths only; activate the 6 PENDING shells in
-  `tests/corpus/fide2026_unplayed.json`; legacy + fide-2024 goldens untouched.
-- Definition of Done: corpus `fide-2026` cases pass; full suite green.
-  Build order + 1.0 gate: `docs/IMPLEMENTATION_ROADMAP.md`.
+- Objective: close the specified-but-unbuilt 2026 surface.
+- Scope: STD (§7.7: scheduled-opp round scores + TRF-013 scoring-table
+  inputs); AOB-FB variant id; Art-8 RR-ban warning; PS-C2/SB-C2/
+  ARO-C2/M1/M2 + FB/ARO cut-combos (MTB26 machine rows);
+  Koya-limit ±½ machinery (§14.5).
+- Definition of Done: matrix shows no SPECIFIED individual-Swiss
+  rows; corpus extended from TEC chapters; suite green.
 
-## Phase 3 — Direct Encounter architecture
+## Team-domain future (on demand — no team consumer today)
 
-DONE (2026-10-03, under fide-2024): §6 mini-standings with subset
-reapplication (§6.2) and Swiss conditional ranking (§6.3) as a
-group-level ranking stage; forfeit exclusion (§6.1.1, Swiss scope);
-repeated-meeting averaging (§6.1.2, exact arithmetic). See ADR-008,
-`tests/test_direct.py`, corpus `fide2024_direct.json`. Team EDE and
-round-robin forfeit inclusion remain future work.
+- Objective: TeamMatch domain beside (not inside) the core.
+- Scope: match/MP/GP/board-vector records; §§11–13 codes;
+  §13.3.2 chains; SSSC normaliser; team EDE; team DE/P.
+- Definition of Done: deferred until a consumer requires it;
+  must NOT stretch `GameRecord` (gap analysis).
 
-## Phase 4 — Rating-based family + remaining FIDE systems
+## Differential validation + performance + conformance prep
 
-DONE (2026-10-03, under fide-2024): TPR/PTP/APRO/APPO (§§10.2–10.5)
-from fully-extracted official §§8.1a/8.1b tables, with documented
-interpretations. See `tests/test_ratings.py`, corpus
-`fide2024_ratings.json`. Remaining: team systems (deferred — no team
-consumer; needs MP/GP domain objects) and Koya RR-gating policy
-(threshold already on maximum-possible; scope decision is caller-side).
+- Objective: PTC-style differential harness (echecsjs/Gacrux oracles,
+  RTG-seeded generation), perf budgets (100→2000 players, recursive
+  DE, rating recursion, long sequences), consumer per-tournament
+  `fide-2026` opt-in, 1.0 gate per roadmap.
+- Definition of Done: 1.0 definition met
+  (`IMPLEMENTATION_ROADMAP.md`).
 
-## Phase 5 — Consumer adoption + 1.0 release
+## History (completed phases — do not re-plan)
 
-- Objective: chess-manager per-tournament ruleset selection,
-  pairing-core narrow-contract adoption where needed, 1.0 release.
-- Definition of Done: clean-install pins, integration tests, tag.
+- Phase 1 (taxonomy), Phase 3 (DE stage), Phase 4 (rating family):
+  DONE under fide-2024 (see git history + matrix).
+- 0.4.0 research mission, 0.5.0 documentation closure: DONE.

@@ -37,3 +37,16 @@ full text IS retrieved (FIDE Council doc 2024_FC2_18, 653 lines).
 - Honest provenance at the cost of a less fashionable ruleset name.
   Chess-manager adoption should select per-tournament; historical events
   stay on `legacy-0.1.0`.
+
+## Status note (2026-10-03, reconciliation mission — not a rewrite)
+
+Two premises above are now superseded, the decisions stand:
+
+- "rating conversion tables not retrieved" — superseded: §§8.1a/8.1b
+  extracted verbatim and TPR/PTP/APRO/APPO implemented under fide-2024
+  (release 0.3.0). The exclusion decision is spent.
+- "Direct Encounter (needs group-context ranking — roadmap Phase 3)" —
+  superseded: DE group stage implemented under fide-2024 (release 0.3.0,
+  ADR-008). The deferral is spent.
+- "`fide-2026` stays reserved" → now SPECIFIED (verified D1–D15 diff,
+  PENDING corpus shells); implementation pending Phase F26-1.

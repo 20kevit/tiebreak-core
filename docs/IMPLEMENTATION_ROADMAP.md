@@ -49,30 +49,25 @@ green + chess-manager per-tournament adoption + perf budgets met.
 Team systems, Koya-limit machinery, and 16.6 overrides are explicitly
 NOT 1.0 blockers (documented rationale above).
 
-## Uncertainty register
+## Uncertainty register (classified: ID / Question / Evidence / Impact / Blocking / Owner / Action)
 
-1. §16 header "(Until 28th February 2026)" contradicts its March-2026
-   body — treated as stale editorial; re-verify vs live Handbook.
-2. 02/02/2026 approving instrument number/URL — UNVERIFIED (dates
-   themselves are RETRIEVED).
-3. Manual Ex02 "maximum between own score and 50%" vs cap semantics —
-   example wording slip; numbers consistent with cap reading.
-4. Manual Ex05 acknowledges under-specified unpaired-round scoring —
-   genuinely ambiguous; needs FIDE clarification, stays docs-only.
-5. Ex06 "2.5" intermediate vs 2024 dummy 3.5 — draft vestige; totals
-   coincide at 11.5 either way.
-6. STD unplayed-vs-draw-value mapping for exotic scoring tables —
-   unspecified by FIDE; needs organiser regulation input.
-7. SSSC normaliser edge cases (truncation, custom values) — implement
-   from Handbook text if a team module is ever built.
-8. WRBC PDF fine print — MEDIUM confidence (downloads failed);
-   substance convergent across snippets; no tiebreak-core impact
-   (standard scoring, C.07-referenced).
+| ID | Question | Evidence | Impact | Blocking | Owner | Action |
+|---|---|---|---|---|---|---|
+| U1 | §16 header "(Until 28th February 2026)" vs March-2026 body | Manual p.257 vs live Handbook title (no qualifier) | none on calculations (body + examples unambiguous) | NON-BLOCKING | core docs | re-verify on Handbook reachability |
+| U2 | 02/02/2026 instrument number/URL | no indexed doc.fide.com record found | none (dates VERIFIED independently) | NON-BLOCKING | docs | record when published |
+| U3 | Manual Ex02 "maximum" vs cap wording | numbers fit cap reading | none | NON-BLOCKING | corpus notes | none (recorded) |
+| U4 | Manual Ex05 unpaired-round scoring genuinely ambiguous | official text punts ("might be ZPB/HPB/FPB") | Ex05 stays docs-only | NON-BLOCKING for F26-1 | FIDE (class-c clarification) | none in-repo |
+| U5 | Ex06 "2.5" vestige | totals coincide at 11.5 | none | NON-BLOCKING | corpus notes | none (recorded) |
+| U6 | STD exotic-table mapping | unspecified by FIDE | STD phase needs organiser input contract | BLOCKS N-STD only (P1), not F26-1 core | consumer contract | specify scoring-table input in F26-2 |
+| U7 | SSSC normaliser edges | Handbook text only | team module only | NON-BLOCKING (team deferred) | future team module | implement from text if built |
+| U8 | WRBC fine print | downloads failed; snippets convergent | none (standard scoring, C.07-referenced) | NON-BLOCKING | docs | none |
+| U9 | ETT26 Handbook-PDF direct bytes | hosts unreachable; content verified via index + TEC table | version labels (DUTCH_2025 vs 2026 cutover) recorded; Handbook governs | NON-BLOCKING | docs | re-fetch on reachability |
+| U10 | THP VCL final text; PIWE chapter | "subject to final VCL"; Manual only outlines | approval-side only; zero core impact | NON-BLOCKING | vendor/FIDE | track per Acceptance Cycle |
 
 ## Recommended next autonomous phase
 
-Phase F26-1: implement N-DUMMYCAP + Swiss/RR mode + TPN/RTNG keys,
-activate the 6 PENDING shells, extend property/perf tests, cut
-release 0.4.0 with `fide-2026` status=implemented (Swiss scope).
+Phase F26-1: implement N-DUMMYCAP + Swiss/RR mode (+ ETT192-derived regime flag) + TPN/RTNG keys,
+activate the 6 PENDING shells, extend property/perf tests, cut the next
+minor release with `fide-2026` status=implemented (Swiss scope).
 Evidence, ownership, API impact, and tests are all settled above —
 no further research required first.

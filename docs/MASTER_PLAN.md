@@ -29,7 +29,7 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 - Rating-based family complete under fide-2024 (TPR/PTP/APRO/APPO ✓); legacy ARPO stays frozen; RTNG + team systems deferred.
 - Cut variants (SB-C1/PS-C1/ARO-C1), AOB, ForeBH: pending.
 - No serialization format (none needed yet — do not invent one).
-- GitHub publication pending credentials (sole external blocker).
+- GitHub publication: working (remote `github-tiebreak`, `main` pushes succeed; releases 0.4.0/0.5.0 pushed 2026-10-03). No tags cut for 0.4.0/0.5.0 (tags exist only to v0.3.0) — tag policy is an owner decision, not a blocker.
 
 ## Capability matrix (target)
 

@@ -9,6 +9,27 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [0.5.1] — 2026-10-03
+
+Documentation reconciliation (no calculation change; suite green):
+
+- Corrected the false "ETT26 does not exist" conclusion: ETT26 exists as
+  C.02.03 Annex C (Tournament Type Code Table for TRF field 192).
+  TEC-table extraction + Handbook indexed text verified; 192→regime
+  mapping documented; TRF-parser/ETT-lookup ownership fixed consumer-side.
+- C.02.01/03/04 hierarchy reconciled from current sources (framework vs
+  software vs register); C.07 reachability re-checked (hosts still
+  unreachable; fallback + date/instrument split retained); MTB26
+  descriptor→core-request boundary specified (`OTHER_*` never a FIDE
+  criterion; modifiers semantic; order consumer-controlled).
+- Stale claims fixed (publication status, ADR-007 premises with status
+  note, roadmap phases F26-1/F26-2/team/differential, `reserved` =
+  specified-pending-implementation everywhere); TPR interpretation
+  labeled derived; VIRTUAL-sentinel vs FIDE-dummy terminology note;
+  team rows carry THP-mandatory YES + deferral reason; uncertainty
+  register classified blocking/non-blocking (only N-STD blocks its own
+  P1 phase; nothing blocks F26-1).
+
 ## [0.5.0] — 2026-10-03
 
 Final documentation closure (no calculation change; suite green,

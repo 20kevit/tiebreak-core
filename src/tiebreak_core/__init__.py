@@ -90,7 +90,7 @@ from tiebreak_core.rules import (
     is_supported,
 )
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 __fide_reference__ = FIDE_REFERENCE
 __rules_version__ = CALCULATION_RULES_VERSION
 
