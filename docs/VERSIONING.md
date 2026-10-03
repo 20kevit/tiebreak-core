@@ -17,7 +17,7 @@ Three version axes exist. They are independent — do not confuse them.
 ## 2. Ruleset version (frozen behavior pins)
 
 `tiebreak_core.rules` / `StandingsResult.rules_version`.
-Examples: `legacy-0.1.0` (implemented, frozen), `fide-2026` (reserved = specified, implementation pending).
+Examples: `legacy-0.1.0` (implemented, frozen), `fide-2026` (specified, implementation pending).
 
 Rules:
 

@@ -60,8 +60,7 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
 15. Art.16.6 local overrides — no competition-regulation input contract;
     unsupported by design until a consumer requires it.
 16. March-2026 edition — the engine implements the fully-retrieved 2024
-    text as ruleset `fide-2024`; `fide-2026` is reserved but now fully
-    SPECIFIED (verified word-diff D1–D15 in `docs/FIDE_2026_DIFF.md`,
+    text as ruleset `fide-2024`; `fide-2026` is specified (verified word-diff D1–D15 in `docs/FIDE_2026_DIFF.md`,
     corpus PENDING shells in `tests/corpus/fide2026_unplayed.json`,
     build order in `docs/IMPLEMENTATION_ROADMAP.md`). No `fide-2024`
     output changes with the 2026 specification (proven by the suite).

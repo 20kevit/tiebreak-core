@@ -14,7 +14,7 @@ failure. `missing == 0` is forbidden unless the article says so:
 | Uncategorized `-1` round (fide-2024) | `InvalidGameRecordError` | strict gate |
 | Unknown criterion (strict) | `UnknownCriterionError` | fail-fast |
 | Unsupported criterion for ruleset | `UnsupportedCriterionError` | `arpo`/`buchholz_sum`/scalar-DE under fide-2024 |
-| Unsupported ruleset | `UnsupportedRulesetError` | `fide-2026` (reserved = specified, not yet calculable) |
+| Unsupported ruleset | `UnsupportedRulesetError` | `fide-2026` (specified, not yet calculable) |
 
 Ratings snapshot: the core receives ONE rating per player, defined as
 the tournament-start (first) list — this satisfies the 2026
@@ -48,7 +48,7 @@ mid-tournament re-ratings; the adapter contract states this.
 | PS/WIN/WON/BPG/BWG/REP | — (own-record/OTB) | — | — | no (RR-mode §15.2 excepted) |
 | ARO/TPR/PTP/APRO/APPO | OTB-only sets; 2026 RR: forfeits excluded (§15.2) | — | ARO-C1 | no |
 | DE | forfeit exclusion §6.1.1 (Swiss) | — | — | no |
-| STD (2026) | needs scheduled-opp scores + draw-value table | unplayed-vs-draw comparison | — | TBD (SPECIFIED) |
+| STD (2026) | needs scheduled-opp scores + draw-value table | unplayed-vs-draw comparison | — | SPECIFIED (§7.7; draw-value rule needs organiser scoring table — U6, blocks N-STD only) |
 
 Game-kind → category mapping (implemented `classify()`): `played`→—;
 `pairing_bye`→16.2.1; `forfeit_win`→16.2.2; `forfeit_loss`→16.2.4;

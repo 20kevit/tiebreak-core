@@ -16,7 +16,7 @@ uncertainty register (`IMPLEMENTATION_ROADMAP.md`), never hidden.
    (clarifications) → Aug-2024 (to 28 Feb 2026) → Mar-2026 (current).
    History: `FIDE_RULESET_HISTORY.md`. Package rulesets:
    `legacy-0.1.0` (frozen), `fide-2024` (implemented), `fide-2026`
-   (reserved → specified this mission).
+   (specified; implementation pending Phase F26-1).
 3. **Criteria**: 15 individual + DE stage + 4 rating derivatives
    implemented; STD/TPN/RTNG specified; team out-of-scope. See catalog.
 4. **Inputs per criterion**: `FIDE_CRITERIA_CATALOG.md` (formula +

@@ -9,6 +9,26 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [0.6.0] — 2026-10-03
+
+Pre-development readiness gate (no calculation change; frozen outputs
+byte-identical, suite green):
+
+- Ruleset state vocabulary corrected in code and docs: `fide-2026`
+  status is now `specified` (was `reserved`) in `RulesetInfo`,
+  error messages, and all documents — "specified, implementation
+  pending (Phase F26-1)". Strict refusal behavior unchanged
+  (`UnsupportedRulesetError`); affected tests updated.
+- Requirements matrix now carries per-ruleset states (`2024:
+  IMPLEMENTED · 2026: IMPLEMENTATION_PENDING`) so 2024 implementation
+  can never be read as 2026 implementation; roadmap matrix scope-noted.
+- Integration contract gains the modifiers clause (distinct ids today;
+  `/P` + mode flags as additive F26-1 parameters; `OTHER_*` never
+  forwarded); README lists all three rulesets with states.
+- TPR fraction-rounding and empty-set zero labeled as documented
+  interpretations; VIRTUAL-sentinel vs FIDE-dummy terminology note;
+  ETT26/192 regime mapping in format variants + inventory + master spec.
+
 ## [0.5.1] — 2026-10-03
 
 Documentation reconciliation (no calculation change; suite green):

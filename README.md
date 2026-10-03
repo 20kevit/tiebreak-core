@@ -6,8 +6,10 @@ Zero runtime dependencies, stdlib only, Python `>=3.10`, MIT.
 
 - Deterministic: same input + same ruleset → same output.
 - Rulesets are explicit and inspectable: `legacy-0.1.0` (frozen
-  behavior-preserving extraction) and reserved `fide-2026`
-  (see `src/tiebreak_core/rules.py`, `docs/VERSIONING.md`).
+  behavior-preserving extraction), `fide-2024` (implemented, frozen),
+  and specified-but-unimplemented `fide-2026` (implementation pending,
+  Phase F26-1 — see `src/tiebreak_core/rules.py`, `docs/VERSIONING.md`,
+  `docs/FIDE_2026_DIFF.md`).
 - Reference: FIDE Handbook C.07 (see `docs/TIEBREAK_RULES.md`,
   `docs/FIDE_SOURCES.md`).
 - Relationship: `chess-manager → tiebreak-core ← pairing-core callers`

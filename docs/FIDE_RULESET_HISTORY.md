@@ -86,7 +86,7 @@ Deltas vs Apr-2024 are editorial only:
 - Art 14.5 Koya language; Art 16.1.2 "available-to-play round"
   deleted in favour of "non-VUR"; 16.2.3/16.2.5 reworded.
 
-## Mar-2026 — current (basis of reserved `fide-2026`)
+## Mar-2026 — current (basis of specified `fide-2026`)
 
 Source: full text via FIDE Arbiters' Manual 2026 (RETRIEVED);
 announcement `fide.com/…-effective-march-1-2026` (RETRIEVED).

@@ -2,6 +2,11 @@
 
 ## Requirements matrix
 
+Scope note: `F-*` rows are fide-2024 scope (frozen, VERIFIED) — they do
+NOT imply fide-2026 implementation. Every 2026 counterpart is an `N-*`
+row below (SPECIFIED, PENDING corpus). Per-ruleset states for each
+criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
+
 | ID | Feature | FIDE source | Ruleset | Status | Inputs | Deps | Tests | Priority |
 |---|---|---|---|---|---|---|---|---|
 | F-BH | BH + C1/C2/M1/M2 | §§8.1, 14.1–14.4, 16 | fide-2024 | IMPLEMENTED | games+kinds+total | R-ADJ/R-DUMMY24/R-VURCUT | corpus VERIFIED | — |
@@ -30,7 +35,7 @@
 
 ## Order (dependency, not convenience)
 
-1. `fide-2026` skeleton (reserved→implemented flag, Swiss/RR mode
+1. `fide-2026` skeleton (specified→implemented flag, Swiss/RR mode
    input, TPN/RTNG terminal keys) + N-DUMMYCAP + corpus activation
    (6 PENDING → VERIFIED). This is the P0 2026 core: BH/SB parity
    with the Manual's NEW columns.

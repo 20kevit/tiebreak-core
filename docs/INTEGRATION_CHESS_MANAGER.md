@@ -59,5 +59,13 @@ Mixed-ruleset displays must label the producing ruleset per row/table.
   arbiter-facing messages / 4xx); legacy never raises (frozen).
 - **Version compatibility**: additive ids only; `fide-2026` opt-in per
   tournament; mixed-ruleset displays labeled per row/table.
+- **Modifiers**: cut/median variants arrive as distinct criterion ids
+  today (`buchholz_cut1`, `median_buchholz_2`, …); forfeit-inclusion
+  (`/P`) and Swiss/RR mode arrive as additive strict parameters in
+  F26-1 (SPECIFIED, not yet accepted — passing them today is a typed
+  error, never silent behavior). `OTHER_*` descriptors are never
+  forwarded as calculation ids: the adapter resolves or rejects them
+  (strict raises `UnknownCriterionError`; legacy would yield frozen
+  `0.0` — do not use legacy for configured lists).
 - Chess-manager code itself is NOT modified by this repository
   (external state; concurrent work respected).
