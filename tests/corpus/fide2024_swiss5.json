@@ -8,7 +8,7 @@
       "source": "FIDE Council document 2024_FC2_18 (approved 29/07/2024, applied 1 Aug 2024), Articles 7/8/9/14/16; expectations hand-computed from the article mechanics (see tests/test_fide2024.py for the full derivation)",
       "source_grade": "PRIMARY",
       "article": "C.07 \u00a7\u00a77, 8.1\u20138.3, 9.1\u20139.2, 10.1, 14.1\u201314.4, 16.1\u201316.5",
-      "notes": "4 players, 5 rounds: pairing bye (P1 R2, P3 R5), requested half-byes (P1 R4 early, P4 R2 early), requested zero-byes (P4 R4 early, P2 R5 trailing/withdrawn -> 16.2.5), forfeit-free. Exercises 16.3 adjusted scores (P2 adj 2.0 vs raw 1.5), 16.4 dummy rule, 16.5 VUR-preferential cuts (BH-C1 P1 cuts 3.0 not 0.5; SB-C1 higher-of rule), OTB-only Type-B semantics, ARO 0.5-up rounding, gap-filled PS, FB final-round draws.",
+      "notes": "4 players, 5 rounds: pairing bye (P1 R2, P3 R5), requested half-byes (P1 R4 early, P4 R2 early), requested zero-byes (P4 R4 early, P2 R5 trailing/withdrawn -> 16.2.5), forfeit-free. Exercises 16.3 adjusted scores (P2 adj 2.0 vs raw 1.5), 16.4 dummy rule, 16.5 VUR-preferential cuts (BH-C1 P1 cuts 3.0 not 0.5; SB-C1 opponent-score cut (higher-of with VUR)), OTB-only Type-B semantics, ARO 0.5-up rounding, gap-filled PS, FB final-round draws. CORRECTION (0.9.0, F1): P2 SB-C1 2.75->2.25. Lowest opponent-score basis is R3 (adj 0.5, product 0.5); VUR-min 0 does not overrule per 16.5.1 higher-of. Former value cut the least product (0) per the superseded reading. CORRECTION (0.9.0, F3): AOB expectations now exact means (38/3, 41/3); FIDE states no rounding and ranking sorts on the exact value. Former 1dp values were presentation-rounded.",
       "total_rounds": 5,
       "criteria": [
         "buchholz",
@@ -246,7 +246,7 @@
           "median_buchholz": 8.5,
           "median_buchholz_2": 3.5,
           "sonneborn_berger": 2.75,
-          "sonneborn_berger_cut1": 2.75,
+          "sonneborn_berger_cut1": 2.25,
           "progressive": 4.0,
           "progressive_cut1": 4.0,
           "koya": 0.5,
@@ -301,6 +301,443 @@
           "games_black": 3.0,
           "wins_black": 0.0,
           "rounds_elected": 3.0
+        }
+      }
+    },
+    {
+      "id": "TEC-SB-C1-STEPHAN-MARIA",
+      "ruleset": "fide-2024",
+      "status": "VERIFIED",
+      "source": "FIDE TEC Tie-Break Exercises (tec.fide.com), SB-C1 worked table: Stephan SB 7.25 -> SB-C1 5.75; Maria SB 5.75 -> SB-C1 4.25",
+      "source_grade": "PRIMARY",
+      "article": "C.07 14.1.1.d + 16.5.1",
+      "notes": "Official discriminator for the SB-C1 cut rule: the cut follows the lowest-SCORED opponent, not the least product. Stephan: bases [2.5,2.5,1.5,4.0,2.0], products [1.25,2.5,1.5,0,2.0]; lowest basis 1.5 (R3) -> cut 1.5 -> 5.75 (least-product rule would cut 0 -> 7.25). Maria: bases [3.5,3.5,2.5,dummy 2.5,1.5], products [1.75,0,0,2.5,1.5]; lowest basis 1.5 (R5) -> cut 1.5 -> 4.25; no VURs (forfeit win is not VUR). Elos for Bruno/Charline from the same-exercise prior table; other ratings are context-only (SB uses scores).",
+      "total_rounds": 5,
+      "criteria": [
+        "sonneborn_berger",
+        "sonneborn_berger_cut1"
+      ],
+      "expected": {
+        "16": {
+          "sonneborn_berger": 7.25,
+          "sonneborn_berger_cut1": 5.75
+        },
+        "11": {
+          "sonneborn_berger": 5.75,
+          "sonneborn_berger_cut1": 4.25
+        }
+      },
+      "players": {
+        "16": {
+          "rating": 1500,
+          "points": 3.5,
+          "games": [
+            {
+              "opponent": 8,
+              "score": 0.5,
+              "color": "white",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 11,
+              "score": 1.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 7,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "black",
+              "round": 4,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 15,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "8": {
+          "rating": 1500,
+          "points": 2.5,
+          "games": [
+            {
+              "opponent": 16,
+              "score": 0.5,
+              "color": "black",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 5,
+              "rating": 0,
+              "kind": "played"
+            }
+          ]
+        },
+        "11": {
+          "rating": 1500,
+          "points": 2.5,
+          "games": [
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "white",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 16,
+              "score": 0.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 5,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 9,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1500,
+              "kind": "forfeit_win"
+            },
+            {
+              "opponent": 7,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "7": {
+          "rating": 1500,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 16,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 11,
+              "score": 0.0,
+              "color": "black",
+              "round": 5,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "2": {
+          "rating": 2150,
+          "points": 4.0,
+          "games": [
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 16,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "15": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 16,
+              "score": 0.0,
+              "color": "black",
+              "round": 5,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        },
+        "3": {
+          "rating": 2100,
+          "points": 3.5,
+          "games": [
+            {
+              "opponent": 11,
+              "score": 0.5,
+              "color": "black",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 5,
+              "rating": 0,
+              "kind": "played"
+            }
+          ]
+        },
+        "5": {
+          "rating": 1500,
+          "points": 2.5,
+          "games": [
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 11,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 5,
+              "rating": 0,
+              "kind": "played"
+            }
+          ]
+        },
+        "9": {
+          "rating": 1500,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 1,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.0,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 9999,
+              "score": 0.5,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "played"
+            },
+            {
+              "opponent": 11,
+              "score": 0.0,
+              "color": "black",
+              "round": 4,
+              "rating": 1500,
+              "kind": "forfeit_loss"
+            },
+            {
+              "opponent": 9999,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 0,
+              "kind": "played"
+            }
+          ]
+        },
+        "9999": {
+          "rating": 0,
+          "points": 0.0,
+          "games": []
         }
       }
     }

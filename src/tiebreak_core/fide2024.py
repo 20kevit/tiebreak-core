@@ -161,6 +161,54 @@ def _sb_contribs(own_points: float, own_rounds: List[ClassifiedRound],
     return out
 
 
+@dataclass(frozen=True)
+class _SBElement:
+    """One SB element with its §14.1.1.d opponent-score basis.
+
+    ``basis`` is the opponent score the product belongs to (adjusted
+    opponent score for played rounds, dummy score for unplayed
+    rounds); ``value`` is the product (basis × round score).
+    """
+
+    basis: float
+    value: float
+    from_vur: bool
+
+
+def _sb_scored(own_points: float, own_rounds: List[ClassifiedRound],
+               adj: Mapping[int, float]) -> List[_SBElement]:
+    """SB elements carrying their opponent-score basis (§14.1.1.d)."""
+    out: List[_SBElement] = []
+    for r in own_rounds:
+        if r.kind == PLAYED:
+            basis = adj[r.opponent_id]
+            out.append(_SBElement(basis, basis * r.score, False))
+        else:
+            out.append(_SBElement(own_points, own_points * r.score,
+                                  r.is_vur))
+    return out
+
+
+def _sb_c1_victim_index(elements: List[_SBElement]) -> int:
+    """Index of the SB-C1 cut element (§14.1.1.d + §16.5.1).
+
+    The §14.1.1.d candidate is the product of an opponent with the
+    lowest opponent-score basis (lowest product among those on ties —
+    TEC: a win vs a two-point opponent is cut before a draw vs a
+    three-point opponent). §16.5.1 cuts the higher of that value and
+    the lowest VUR product. First index wins on full ties, so the
+    choice is deterministic. Callers guarantee ``len >= 2``.
+    """
+    low_basis = min(e.basis for e in elements)
+    d_val = min(e.value for e in elements if e.basis == low_basis)
+    vur_vals = [e.value for e in elements if e.from_vur]
+    if vur_vals and min(vur_vals) > d_val:
+        return next(i for i, e in enumerate(elements)
+                    if e.from_vur and e.value == min(vur_vals))
+    return next(i for i, e in enumerate(elements)
+                if e.basis == low_basis and e.value == d_val)
+
+
 def _cut_least_exception(values: List[_Contribution]) -> float:
     """Cut one least-significant value with the §16.5.1 VUR exception.
 
@@ -354,18 +402,20 @@ def sonneborn_berger(player: PlayerTiebreakData,
 def sonneborn_berger_cut1(player: PlayerTiebreakData,
                           all_players: Mapping[int, PlayerTiebreakData],
                           total_rounds: int) -> float:
-    """SB-C1 §14.1.1.d with §16.5.1 (cut higher of lowest-VUR/lowest)."""
+    """SB-C1 §14.1.1.d with §16.5.1 (cut higher of lowest-VUR/least).
+
+    The §14.1.1.d candidate is the product of the opponent with the
+    lowest opponent score (lowest product among those on ties) — not
+    the least product overall.
+    """
     ctx = _require_context(all_players, total_rounds)
     adj = _adj_table(all_players, ctx)
-    contribs = _sb_contribs(player.points, ctx[player.player_id], adj)
-    if len(contribs) < 2:
-        return sum(c.value for c in contribs)
-    vur = [c.value for c in contribs if c.from_vur]
-    least = min(c.value for c in contribs)
-    cut = max(min(vur), least) if vur else least
-    remaining = list(contribs)
-    remaining.remove(next(c for c in remaining if c.value == cut))
-    return sum(c.value for c in remaining)
+    elements = _sb_scored(player.points, ctx[player.player_id], adj)
+    if len(elements) < 2:
+        return sum(e.value for e in elements)
+    remaining = list(elements)
+    remaining.pop(_sb_c1_victim_index(remaining))
+    return sum(e.value for e in remaining)
 
 
 def progressive(player: PlayerTiebreakData,

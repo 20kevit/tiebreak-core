@@ -81,7 +81,12 @@ EXPECTED = {
         "rounds_elected": 4.0},
     2: {"buchholz": 14.5, "buchholz_cut1": 13.0, "buchholz_cut2": 12.5,
         "median_buchholz": 8.5, "median_buchholz_2": 3.5,
-        "sonneborn_berger": 2.75, "sonneborn_berger_cut1": 2.75,
+        # P2 SB-C1 = 2.25 (corrected 0.9.0): products R1 0 (basis 3.5),
+        # R2 0 (basis 4.5), R3 0.5 (basis 0.5), R4 2.25 (basis 4.5),
+        # R5 VUR 0. §14.1.1.d cuts the product of the lowest-score
+        # opponent (R3, 0.5); VUR-min 0 does not overrule. The former
+        # 2.75 cut the least product (0) instead — wrong per 14.1.1.d.
+        "sonneborn_berger": 2.75, "sonneborn_berger_cut1": 2.25,
         "progressive": 4.0, "progressive_cut1": 4.0, "koya": 0.5,
         "aro": 1825, "aro_cut1": 1867, "aob": 12.5, "fore_buchholz": 14.5,
         "wins": 1.0, "won": 1.0, "games_black": 2.0, "wins_black": 0.0,
@@ -182,6 +187,32 @@ class TestBoundaries:
         from tiebreak_core import calculate
         players = event()
         assert calculate(players[1], players, "buchholz") == 12.0
+
+    def test_sb_c1_cuts_lowest_scored_opponent(self):
+        # F1 discriminator (§14.1.1.d): win vs 2.0 (product 2.0) +
+        # draw vs 3.0 (product 1.5). The least product is 1.5, but
+        # the cut must remove the 2.0 (lowest-scored opponent).
+        players = {
+            1: PlayerTiebreakData(1, 2000, 1.5, [
+                g(2, 1.0, "white", 1, 1900, "played"),
+                g(3, 0.5, "black", 2, 1800, "played")]),
+            2: PlayerTiebreakData(2, 1900, 2.0, [
+                g(1, 0.0, "black", 1, 2000, "played"),
+                g(9, 1.0, "white", 2, 0, "played"),
+                g(9, 1.0, "white", 3, 0, "played")]),
+            3: PlayerTiebreakData(3, 1800, 3.0, [
+                g(1, 0.5, "white", 2, 2000, "played"),
+                g(9, 1.0, "white", 1, 0, "played"),
+                g(9, 1.0, "white", 3, 0, "played"),
+                g(9, 0.5, "white", 4, 0, "played")]),
+            9: PlayerTiebreakData(9, 1500, 0.0, []),
+        }
+        got = calculate_all_strict(players[1], players,
+                                   ["sonneborn_berger",
+                                    "sonneborn_berger_cut1"], 4,
+                                   ruleset="fide-2024")
+        assert got["sonneborn_berger"] == pytest.approx(3.5)
+        assert got["sonneborn_berger_cut1"] == pytest.approx(1.5)
 
 
 class TestRegistry:

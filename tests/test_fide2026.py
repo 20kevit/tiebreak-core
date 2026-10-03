@@ -216,9 +216,12 @@ class TestSwissParity:
                         games.append((-1, 0.0, "white", r, "requested_bye"))
                 pl[pid] = P(pid, 1500, pts, games)
             for pid in pl:
-                for crit in ("buchholz", "buchholz_cut1", "buchholz_cut2",
-                             "median_buchholz", "median_buchholz_2",
-                             "sonneborn_berger", "sonneborn_berger_cut1",
+                # Uncut sums only: caps lower every dummy element, so
+                # 2026 <= 2024 element-wise. Cut/median variants are
+                # excluded: capped dummies can change WHICH element is
+                # cut (selection effect), so no ordering theorem holds
+                # there — cuts are pinned by hand-derived + TEC cases.
+                for crit in ("buchholz", "sonneborn_berger",
                              "fore_buchholz", "aob"):
                     assert f26.calculate(pl[pid], pl, crit, rounds) <= \
                         f24.calculate(pl[pid], pl, crit, rounds), \
@@ -348,6 +351,72 @@ class TestForfeitInclusionFlag:
                                        mode="round_robin")
         assert ([p.player_id for p in res.players]
                 == [p.player_id for p in res_rr.players])
+
+
+class TestSbCutIdentification:
+    """F1 discriminators (§14.1.1.d): cuts follow the lowest-SCORED
+    opponent, never the least product.
+
+    Fixture: win vs 2.0 (product 2.0) + draw vs 3.0 (product 1.5).
+    The least product (1.5) must survive; the 2.0 is cut.
+    """
+
+    def fixture(self):
+        return {
+            1: P(1, 2000, 1.5, [(2, 1.0, "white", 1, "played"),
+                                 (3, 0.5, "black", 2, "played")]),
+            2: P(2, 1500, 2.0, [(1, 0.0, "black", 1, "played"),
+                                 (9, 1.0, "white", 2, "played"),
+                                 (9, 1.0, "white", 3, "played")]),
+            3: P(3, 1500, 3.0, [(1, 0.5, "white", 2, "played"),
+                                 (9, 1.0, "white", 1, "played"),
+                                 (9, 1.0, "white", 3, "played"),
+                                 (9, 0.5, "white", 4, "played")]),
+            9: P(9, 0, 0.0, []),
+        }
+
+    def test_sb_c1_cuts_lowest_scored_opponent(self):
+        from tiebreak_core import calculate_all_strict
+        pl = self.fixture()
+        got = calculate_all_strict(pl[1], pl,
+                                   ["sonneborn_berger",
+                                    "sonneborn_berger_cut1"], 4,
+                                   ruleset="fide-2026")
+        assert got["sonneborn_berger"] == 3.5
+        assert got["sonneborn_berger_cut1"] == 1.5
+
+    def test_sb_c2_reapplies_opponent_score_cut(self):
+        from tiebreak_core import calculate_all_strict
+        # R1 win vs 4.0 (4.0), R2 loss vs 5.0 (0.0), R3 draw vs 1.0
+        # (0.5). C1 cuts R3 (lowest basis 1.0) -> 4.0; C2 reapplies
+        # (lowest remaining basis 4.0) -> 0.0. Least-product logic
+        # would cut 0.0 first and keep 4.5/4.0 instead.
+        pl = {
+            1: P(1, 2000, 1.5, [(2, 1.0, "white", 1, "played"),
+                                 (3, 0.0, "black", 2, "played"),
+                                 (4, 0.5, "white", 3, "played")]),
+            2: P(2, 1500, 4.0, [(1, 0.0, "black", 1, "played"),
+                                 (9, 1.0, "white", 2, "played"),
+                                 (9, 1.0, "white", 3, "played"),
+                                 (9, 1.0, "white", 4, "played"),
+                                 (9, 1.0, "white", 5, "played")]),
+            3: P(3, 1500, 5.0, [(1, 1.0, "white", 2, "played"),
+                                 (9, 1.0, "black", 1, "played"),
+                                 (9, 1.0, "black", 3, "played"),
+                                 (9, 1.0, "black", 4, "played"),
+                                 (9, 1.0, "black", 5, "played")]),
+            4: P(4, 1500, 1.0, [(1, 0.5, "black", 3, "played"),
+                                 (9, 0.5, "white", 1, "played")]),
+            9: P(9, 0, 0.0, []),
+        }
+        got = calculate_all_strict(pl[1], pl,
+                                   ["sonneborn_berger",
+                                    "sonneborn_berger_cut1",
+                                    "sonneborn_berger_cut2"], 5,
+                                   ruleset="fide-2026")
+        assert got == {"sonneborn_berger": 4.5,
+                       "sonneborn_berger_cut1": 4.0,
+                       "sonneborn_berger_cut2": 0.0}
 
 
 class TestCutCombosAndAobFb:

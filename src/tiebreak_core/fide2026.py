@@ -76,6 +76,7 @@ pinned by differential tests, not by delegation.
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
 from fractions import Fraction
 from typing import Dict, List, Mapping, Sequence, Tuple
 
@@ -292,6 +293,58 @@ def _sb_contribs(own_points: float,
     return out
 
 
+@dataclass(frozen=True)
+class _SBElement:
+    """One SB element with its §14.1.1.d opponent-score basis.
+
+    ``basis`` is the opponent score the product belongs to (adjusted
+    opponent score for regular games, capped dummy score otherwise);
+    ``value`` is the product (basis × round score).
+    """
+
+    basis: float
+    value: float
+    from_vur: bool
+
+
+def _sb_scored(own_points: float,
+               own_rounds: List[_f24.ClassifiedRound],
+               adj: Mapping[int, float], mode: str,
+               draw_points: float,
+               total_rounds: int) -> List[_SBElement]:
+    """SB elements carrying their opponent-score basis (§14.1.1.d)."""
+    out: List[_SBElement] = []
+    for r in own_rounds:
+        sched = r.opponent_id != -1 and r.opponent_id in adj
+        if _is_regular_game(r.kind, mode, sched):
+            basis = adj[r.opponent_id]
+            out.append(_SBElement(basis, basis * r.score, False))
+        else:
+            dummy = _dummy_value(r, own_points, adj, draw_points,
+                                 total_rounds)
+            out.append(_SBElement(dummy, dummy * r.score, r.is_vur))
+    return out
+
+
+def _sb_c1_victim_index(elements: List[_SBElement]) -> int:
+    """Index of the SB-C1 cut element (§14.1.1.d + §16.5.1).
+
+    The §14.1.1.d candidate is the product of an opponent with the
+    lowest opponent-score basis (lowest product among those on ties).
+    §16.5.1 cuts the higher of that value and the lowest VUR product.
+    First index wins on full ties, so the choice is deterministic.
+    Callers guarantee ``len >= 2``.
+    """
+    low_basis = min(e.basis for e in elements)
+    d_val = min(e.value for e in elements if e.basis == low_basis)
+    vur_vals = [e.value for e in elements if e.from_vur]
+    if vur_vals and min(vur_vals) > d_val:
+        return next(i for i, e in enumerate(elements)
+                    if e.from_vur and e.value == min(vur_vals))
+    return next(i for i, e in enumerate(elements)
+                if e.basis == low_basis and e.value == d_val)
+
+
 # ------------------------------------------------------------------
 # Scalar calculators. Bodies mirror fide-2024 wherever the 2026 text
 # is word-identical (verified diff D1–D15); only the dummy legs and
@@ -412,16 +465,13 @@ def sonneborn_berger_cut1(player: PlayerTiebreakData,
     ctx, adj = _use_pre(all_players, total_rounds, mode, draw_points,
                         _pre)
     eff = _regular_mode(mode, forfeits_as_played)
-    contribs = _sb_contribs(player.points, ctx[player.player_id], adj,
-                            eff, draw_points, total_rounds)
-    if len(contribs) < 2:
-        return sum(c.value for c in contribs)
-    vur = [c.value for c in contribs if c.from_vur]
-    least = min(c.value for c in contribs)
-    cut = max(min(vur), least) if vur else least
-    remaining = list(contribs)
-    remaining.remove(next(c for c in remaining if c.value == cut))
-    return sum(c.value for c in remaining)
+    elements = _sb_scored(player.points, ctx[player.player_id], adj,
+                          eff, draw_points, total_rounds)
+    if len(elements) < 2:
+        return sum(e.value for e in elements)
+    remaining = list(elements)
+    remaining.pop(_sb_c1_victim_index(remaining))
+    return sum(e.value for e in remaining)
 
 
 def sonneborn_berger_cut2(player: PlayerTiebreakData,
@@ -433,22 +483,19 @@ def sonneborn_berger_cut2(player: PlayerTiebreakData,
     """SB-C2: SB with the §16.5.2 reapplied double cut.
 
     MTB26 ``/C2`` combo on the SB base. Each cut follows the SB-C1
-    higher-of rule (§14.1.1.d + §16.5.1), reapplied to the remainder
-    (§16.5.2); keeps ≥1 element. Documented interpretation (no
+    rule (§14.1.1.d opponent-score identification + §16.5.1
+    higher-of), reapplied to the remainder (§16.5.2); keeps ≥1 element. Documented interpretation (no
     official SB-C2 example): one iteration is exactly SB-C1.
     """
     ctx, adj = _use_pre(all_players, total_rounds, mode, draw_points,
                         _pre)
     eff = _regular_mode(mode, forfeits_as_played)
-    contribs = _sb_contribs(player.points, ctx[player.player_id], adj,
-                            eff, draw_points, total_rounds)
-    remaining = list(contribs)
+    elements = _sb_scored(player.points, ctx[player.player_id], adj,
+                          eff, draw_points, total_rounds)
+    remaining = list(elements)
     for _ in range(min(2, max(0, len(remaining) - 1))):
-        vur = [c.value for c in remaining if c.from_vur]
-        least = min(c.value for c in remaining)
-        cut = max(min(vur), least) if vur else least
-        remaining.remove(next(c for c in remaining if c.value == cut))
-    return sum(c.value for c in remaining)
+        remaining.pop(_sb_c1_victim_index(remaining))
+    return sum(e.value for e in remaining)
 
 
 def fore_buchholz(player: PlayerTiebreakData,
