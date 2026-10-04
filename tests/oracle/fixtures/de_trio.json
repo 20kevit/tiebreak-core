@@ -1,0 +1,154 @@
+{
+ "players": {
+  "1": {
+   "rating": 2000,
+   "points": 2.0,
+   "games": [
+    {
+     "opponent": 2,
+     "score": 1.0,
+     "color": "white",
+     "round": 1,
+     "rating": 1500,
+     "kind": "played"
+    },
+    {
+     "opponent": 3,
+     "score": 0.5,
+     "color": "black",
+     "round": 2,
+     "rating": 1500,
+     "kind": "played"
+    },
+    {
+     "opponent": 4,
+     "score": 0.5,
+     "color": "black",
+     "round": 4,
+     "rating": 1500,
+     "kind": "played"
+    }
+   ]
+  },
+  "2": {
+   "rating": 1900,
+   "points": 2.0,
+   "games": [
+    {
+     "opponent": 1,
+     "score": 0.0,
+     "color": "black",
+     "round": 1,
+     "rating": 1500,
+     "kind": "played"
+    },
+    {
+     "opponent": 3,
+     "score": 1.0,
+     "color": "white",
+     "round": 3,
+     "rating": 1500,
+     "kind": "played"
+    },
+    {
+     "opponent": 4,
+     "score": 1.0,
+     "color": "white",
+     "round": 5,
+     "rating": 1500,
+     "kind": "played"
+    }
+   ]
+  },
+  "3": {
+   "rating": 1800,
+   "points": 2.0,
+   "games": [
+    {
+     "opponent": 1,
+     "score": 0.5,
+     "color": "white",
+     "round": 2,
+     "rating": 1500,
+     "kind": "played"
+    },
+    {
+     "opponent": 2,
+     "score": 0.0,
+     "color": "black",
+     "round": 3,
+     "rating": 1500,
+     "kind": "played"
+    },
+    {
+     "opponent": 5,
+     "score": 1.0,
+     "color": "white",
+     "round": 4,
+     "rating": 1500,
+     "kind": "played"
+    },
+    {
+     "opponent": 6,
+     "score": 0.5,
+     "color": "black",
+     "round": 5,
+     "rating": 1500,
+     "kind": "played"
+    }
+   ]
+  },
+  "4": {
+   "rating": 1700,
+   "points": 0.5,
+   "games": [
+    {
+     "opponent": 1,
+     "score": 0.5,
+     "color": "white",
+     "round": 4,
+     "rating": 1500,
+     "kind": "played"
+    },
+    {
+     "opponent": 2,
+     "score": 0.0,
+     "color": "black",
+     "round": 5,
+     "rating": 1500,
+     "kind": "played"
+    }
+   ]
+  },
+  "5": {
+   "rating": 1600,
+   "points": 0.0,
+   "games": [
+    {
+     "opponent": 3,
+     "score": 0.0,
+     "color": "black",
+     "round": 4,
+     "rating": 1500,
+     "kind": "played"
+    }
+   ]
+  },
+  "6": {
+   "rating": 1500,
+   "points": 0.5,
+   "games": [
+    {
+     "opponent": 3,
+     "score": 0.5,
+     "color": "white",
+     "round": 5,
+     "rating": 1500,
+     "kind": "played"
+    }
+   ]
+  }
+ },
+ "total_rounds": 5,
+ "mode": "swiss"
+}

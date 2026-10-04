@@ -419,6 +419,42 @@ class TestSbCutIdentification:
                        "sonneborn_berger_cut2": 0.0}
 
 
+    def test_tie_prefers_vur_on_equal_values(self):
+        # VUR-min (R4: 0) ties the d-value (R2: basis 1.0, product 0).
+        # The tie must break toward the VUR element: C1 removes R4,
+        # so C2's higher-of sees VUR 0.75 > 0 and removes R3.
+        # d-target preference would remove R2 first and stall at 2.25.
+        pl = {
+            1: P(1, 2000, 1.5, [(2, 0.0, "white", 1, "played"),
+                                 (3, 0.0, "black", 2, "played"),
+                                 (-1, 0.5, "white", 3, "requested_bye"),
+                                 (4, 0.0, "black", 4, "forfeit_loss"),
+                                 (-1, 1.0, "white", 5, "pairing_bye")]),
+            2: P(2, 1500, 3.5, [(1, 1.0, "black", 1, "played"),
+                                 (9, 1.0, "white", 2, "played"),
+                                 (9, 1.0, "white", 3, "played"),
+                                 (9, 0.5, "white", 4, "played")]),
+            3: P(3, 1500, 1.0, [(1, 1.0, "white", 2, "played"),
+                                 (9, 0.0, "black", 1, "played"),
+                                 (9, 0.0, "black", 3, "played"),
+                                 (9, 0.0, "black", 4, "played")]),
+            4: P(4, 1500, 2.0, [(1, 1.0, "white", 4, "played"),
+                                 (9, 1.0, "black", 1, "played")]),
+            9: P(9, 0, 0.0, []),
+        }
+        from tiebreak_core import calculate_all_strict
+        for ruleset in ("fide-2024", "fide-2026"):
+            got = calculate_all_strict(pl[1], pl,
+                                       ["sonneborn_berger",
+                                        "sonneborn_berger_cut1"], 5,
+                                       ruleset=ruleset)
+            assert got == {"sonneborn_berger": 2.25,
+                           "sonneborn_berger_cut1": 2.25}, ruleset
+        got = calculate_all_strict(pl[1], pl, ["sonneborn_berger_cut2"],
+                                   5, ruleset="fide-2026")
+        assert got == {"sonneborn_berger_cut2": 1.5}
+
+
 class TestCutCombosAndAobFb:
     """F26-2 MTB26 combos: SB-C2, ARO-C2, FB-C1/C2, AOB/FB.
 

@@ -200,16 +200,21 @@ def _sb_c1_victim_index(elements: List[_SBElement]) -> int:
     """Index of the SB-C1 cut element (§14.1.1.d + §16.5.1).
 
     The §14.1.1.d candidate is the product of an opponent with the
-    lowest opponent-score basis (lowest product among those on ties —
+    lowest opponent-score basis (    lowest product among those on ties —
     TEC: a win vs a two-point opponent is cut before a draw vs a
     three-point opponent). §16.5.1 cuts the higher of that value and
-    the lowest VUR product. First index wins on full ties, so the
-    choice is deterministic. Callers guarantee ``len >= 2``.
+    the lowest VUR product. Value ties break toward a VUR element;
+    first index wins within the chosen class, so the choice is
+    deterministic. Callers guarantee ``len >= 2``.
     """
     low_basis = min(e.basis for e in elements)
     d_val = min(e.value for e in elements if e.basis == low_basis)
     vur_vals = [e.value for e in elements if e.from_vur]
-    if vur_vals and min(vur_vals) > d_val:
+    # Value ties break toward the VUR element (consistent with the BH
+    # cut helpers and the §16.5 purpose of removing VUR contributions;
+    # §16.5.1 only orders values, and equal values cut the same total
+    # for a single cut — the choice matters for reapplied cuts).
+    if vur_vals and min(vur_vals) >= d_val:
         return next(i for i, e in enumerate(elements)
                     if e.from_vur and e.value == min(vur_vals))
     return next(i for i, e in enumerate(elements)

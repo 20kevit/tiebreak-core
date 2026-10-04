@@ -332,13 +332,14 @@ def _sb_c1_victim_index(elements: List[_SBElement]) -> int:
     The §14.1.1.d candidate is the product of an opponent with the
     lowest opponent-score basis (lowest product among those on ties).
     §16.5.1 cuts the higher of that value and the lowest VUR product.
-    First index wins on full ties, so the choice is deterministic.
+    Value ties break toward a VUR element; first index wins within
+    the chosen class, so the choice is deterministic.
     Callers guarantee ``len >= 2``.
     """
     low_basis = min(e.basis for e in elements)
     d_val = min(e.value for e in elements if e.basis == low_basis)
     vur_vals = [e.value for e in elements if e.from_vur]
-    if vur_vals and min(vur_vals) > d_val:
+    if vur_vals and min(vur_vals) >= d_val:
         return next(i for i, e in enumerate(elements)
                     if e.from_vur and e.value == min(vur_vals))
     return next(i for i, e in enumerate(elements)
