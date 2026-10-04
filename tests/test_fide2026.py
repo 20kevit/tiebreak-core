@@ -848,6 +848,65 @@ class TestAobExactRanking:
         assert order[1] == 1, order[:4]
 
 
+class TestKoyaLimits:
+    """§14.5 threshold offsets (MTB26 /L): threshold = rounds/2 + delta.
+
+    TEC Koya table (rr_8x7-style 6-RR in corpus TEC-KOYA-RR-6):
+    Alyx base (delta 0) counts #2/#3 only -> 2.0; delta -1.0 admits
+    the 1.5-scores too -> full 3.5 (cf. TEC: contributions become
+    the score). Positive deltas exclude.
+    """
+
+    def test_limit_shifts_qualification(self):
+        from tiebreak_core import calculate_strict
+        pl = TestRoundRobinMode().rr_event()
+        # rr_event: 3 rounds -> base threshold 1.5.
+        base = calculate_strict(pl[1], pl, "koya", 3, ruleset="fide-2026",
+                                mode="round_robin")
+        assert base == 1.0
+        up = calculate_strict(pl[1], pl, "koya", 3, ruleset="fide-2026",
+                              mode="round_robin", koya_limit=0.5)
+        assert up <= base
+        down = calculate_strict(pl[1], pl, "koya", 3, ruleset="fide-2026",
+                                mode="round_robin", koya_limit=-0.5)
+        assert down >= base
+
+    def test_limit_validation(self):
+        from tiebreak_core import calculate_strict
+        pl = TestRoundRobinMode().rr_event()
+        for bad in (0.3, True, float("inf"), "0.5"):
+            with pytest.raises(InvalidPlayerDataError):
+                calculate_strict(pl[1], pl, "koya", 3,
+                                 ruleset="fide-2026", koya_limit=bad)
+
+    def test_limit_rejected_outside_koya(self):
+        from tiebreak_core import calculate_strict, rank_standings_strict
+        pl = TestRoundRobinMode().rr_event()
+        with pytest.raises(InvalidPlayerDataError):
+            calculate_strict(pl[1], pl, "buchholz", 3,
+                             ruleset="fide-2026", koya_limit=0.5)
+        with pytest.raises(InvalidPlayerDataError):
+            rank_standings_strict(pl, ["buchholz"], 3,
+                                  ruleset="fide-2026", koya_limit=0.5)
+        with pytest.raises(InvalidPlayerDataError):
+            calculate_strict(pl[1], pl, "koya", 3,
+                             ruleset="legacy-0.1.0", koya_limit=0.5)
+        # Zero limit is a no-op everywhere (legacy frozen path intact).
+        assert calculate_strict(pl[1], pl, "koya", 3,
+                                ruleset="legacy-0.1.0",
+                                koya_limit=0.0) == \
+            calculate_strict(pl[1], pl, "koya", 3,
+                             ruleset="legacy-0.1.0")
+
+    def test_limit_fide2024(self):
+        from tiebreak_core import calculate_strict
+        pl = TestRoundRobinMode().rr_event()
+        got = calculate_strict(pl[1], pl, "koya", 3, ruleset="fide-2024",
+                               koya_limit=-0.5)
+        base = calculate_strict(pl[1], pl, "koya", 3, ruleset="fide-2024")
+        assert got >= base
+
+
 class TestTerminals:
     def test_tpn_orders_ascending(self):
         pl = {1: P(1, 2200, 2.0, []), 2: P(2, 2300, 2.0, []),

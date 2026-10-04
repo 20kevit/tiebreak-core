@@ -623,18 +623,41 @@ def fore_buchholz(player: PlayerTiebreakData,
     return total
 
 
+def _validate_koya_limit(koya_limit: float) -> float:
+    """Validate a §14.5 limit offset (half-point steps).
+
+    The limit moves the 50%-of-maximum threshold up (fewer
+    contributors) or down (more contributors) by half points at a
+    time — non-half values have no FIDE meaning and are rejected.
+    """
+    import math
+    from tiebreak_core.errors import InvalidPlayerDataError
+    if (isinstance(koya_limit, bool)
+            or not isinstance(koya_limit, (int, float))
+            or not math.isfinite(koya_limit)
+            or (koya_limit * 2) != math.floor(koya_limit * 2)):
+        raise InvalidPlayerDataError(
+            f"koya_limit must be a finite multiple of 0.5 "
+            f"(half-point steps per §14.5), got {koya_limit!r}")
+    return float(koya_limit)
+
+
 def koya(player: PlayerTiebreakData,
          all_players: Mapping[int, PlayerTiebreakData],
-         total_rounds: int) -> float:
+         total_rounds: int, koya_limit: float = 0.0) -> float:
     """KS §9.2: points vs opponents on ≥50% of the maximum possible.
 
     Maximum possible = total tournament rounds (1 pt/round). Koya is not
     Art.16-managed, so opponent qualification uses raw final points and
     all real-opponent games count (cf. §15.2 spirit). Documented as
     applied wherever requested (FIDE scopes Koya to round robin).
+
+    ``koya_limit`` (§14.5, MTB26 ``/L``): threshold offset in
+    half-points (positive = fewer contributors, negative = more).
     """
     ctx = _require_context(all_players, total_rounds)
-    threshold = total_rounds / 2
+    _validate_koya_limit(koya_limit)
+    threshold = total_rounds / 2 + koya_limit
     total = 0.0
     for g in player.games:
         if normalize_kind(g) != PLAYED or g.opponent_id not in all_players:
@@ -953,24 +976,35 @@ def require_supported(criterion: str) -> None:
 
 def calculate(player: PlayerTiebreakData,
               all_players: Mapping[int, PlayerTiebreakData],
-              criterion: str, total_rounds: int) -> float:
+              criterion: str, total_rounds: int,
+              koya_limit: float = 0.0) -> float:
     """Single fide-2024 calculation (validated upstream by strict)."""
     require_supported(criterion)
+    if criterion == "koya":
+        return koya(player, dict(all_players), total_rounds, koya_limit)
+    if koya_limit != 0.0:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            f"koya_limit applies to the koya criterion only, got "
+            f"criterion {criterion!r}")
     return FIDE2024_REGISTRY[criterion](player, dict(all_players),
                                         total_rounds)
 
 
 def calculate_all(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
-                  criteria: Sequence[str], total_rounds: int) -> Dict[str, float]:
+                  criteria: Sequence[str], total_rounds: int,
+                  koya_limit: float = 0.0) -> Dict[str, float]:
     """Multi-criterion fide-2024 calculation."""
-    return {c: calculate(player, all_players, c, total_rounds)
+    return {c: calculate(player, all_players, c, total_rounds,
+                         koya_limit)
             for c in criteria}
 
 
 def rank_standings(players: Mapping[int, PlayerTiebreakData],
                    criteria: Sequence[str], total_rounds: int,
                    deterministic_keys: Mapping[int, int] | None = None,
+                   koya_limit: float = 0.0,
                    ) -> StandingsResult:
     """fide-2024 values + staged ordering (points, then criteria in order).
 
@@ -988,7 +1022,8 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
     scalar = [c for c in criteria if c in FIDE2024_REGISTRY]
     shared = dict(players)
     values: Dict[int, Dict[str, float]] = {
-        pid: {c: FIDE2024_REGISTRY[c](shared[pid], shared, total_rounds)
+        pid: {c: calculate(shared[pid], shared, c, total_rounds,
+                           koya_limit)
               for c in scalar}
         for pid in ordered_ids
     }

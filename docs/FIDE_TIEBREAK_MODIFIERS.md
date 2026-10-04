@@ -17,7 +17,7 @@ machine-readable combinations, not separately named FIDE criteria.
 | Median-1 | §14.3 | least then most, in that order | BH-M1 | IMPLEMENTED |
 | Median-2 | §14.4 | two least then two most | BH-M2 | IMPLEMENTED |
 | Median-n (generic) | MTB26 `/Mn` | — | ARO/M1/M2, BH/Mn… | SPECIFIED (machine) |
-| Limit | §14.5 | Koya 50% threshold ±½ steps | KS/L±n | SPECIFIED |
+| Limit | §14.5 | Koya 50% threshold ±½ steps | KS/L±n | IMPLEMENTED (`koya_limit` offset, half-point steps; echecs-differentially validated) |
 | Forfeit inclusion | §6.1.1 (DE), MTB26 `/P` | forfeits count as played vs scheduled opp | DE/P, SB/P, BH/P, FB/P, EDE/P… | IMPLEMENTED (fide-2026 `forfeits_as_played` flag; BH/SB/FB/Koya/DE scope; Type-B + ratings unaffected) |
 | Fore variant | §8.3, MTB26 `/F` | BH computed on final-round draws | AOB/F, FB base/C1/C2, SSSC/F… | IMPLEMENTED (FB base/C1/C2 + AOB/FB id `aob_fb`); SSSC/F OUT_OF_SCOPE (team) |
 | Reverse order | §§7.8/10.6, MTB26 `/R` | descending pairing no. / ascending rating | TPN/R, RTNG/R | SPECIFIED |

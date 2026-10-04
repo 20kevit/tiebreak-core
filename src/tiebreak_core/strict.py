@@ -264,6 +264,16 @@ def _require_fide2026_only_kwargs(ruleset: str, mode: str,
             f"{ruleset!r}")
 
 
+def _require_koya_limit_scope(ruleset: str, koya_limit: float) -> None:
+    """koya_limit (§14.5) exists under fide-2024/fide-2026 only: the
+    frozen legacy Koya has no limit variant — fail fast instead of
+    silently ignoring it."""
+    if ruleset == "legacy-0.1.0" and koya_limit != 0.0:
+        raise InvalidPlayerDataError(
+            f"koya_limit is a fide-2024/fide-2026 (§14.5) parameter; "
+            f"got {koya_limit!r} under ruleset {ruleset!r}")
+
+
 def calculate_strict(
     player: PlayerTiebreakData,
     all_players: Mapping[int, PlayerTiebreakData],
@@ -273,6 +283,7 @@ def calculate_strict(
     mode: str = "swiss",
     draw_points: float = 0.5,
     forfeits_as_played: bool = False,
+    koya_limit: float = 0.0,
 ) -> float:
     """Validated single-criterion calculation.
 
@@ -282,7 +293,8 @@ def calculate_strict(
     ``tiebreak_core.fide2026``). ``mode``/``draw_points``/
     ``forfeits_as_played`` apply to ``fide-2026`` only (round-robin
     regime flag + §16.4.2 draw value + MTB26 ``/P`` forfeit-inclusion
-    opt-in).
+    opt-in). ``koya_limit`` (§14.5 threshold offset, half-point steps)
+    applies under ``fide-2024``/``fide-2026`` for the koya criterion.
     """
     require_ruleset(ruleset)
     if ruleset == "fide-2024":
@@ -292,18 +304,22 @@ def calculate_strict(
         _require_total_rounds(total_rounds)
         validate_player(player)
         players = validate_players(all_players)
+        _require_koya_limit_scope(ruleset, koya_limit)
         _fide.validate_inputs(players, total_rounds)
-        return _fide.calculate(player, players, criterion, total_rounds)
+        return _fide.calculate(player, players, criterion, total_rounds,
+                               koya_limit)
     if ruleset == "fide-2026":
         from tiebreak_core import fide2026 as _fide26
         _require_total_rounds(total_rounds)
         validate_player(player)
         players = validate_players(all_players)
         _fide26.validate_inputs(players, total_rounds)
+        _require_koya_limit_scope(ruleset, koya_limit)
         return _fide26.calculate(player, players, criterion,
                                  total_rounds, mode, draw_points,
-                                 forfeits_as_played)
+                                 forfeits_as_played, koya_limit)
     require_criteria([criterion])
+    _require_koya_limit_scope(ruleset, koya_limit)
     _require_total_rounds(total_rounds)
     validate_player(player)
     players = validate_players(all_players)
@@ -319,6 +335,7 @@ def calculate_all_strict(
     mode: str = "swiss",
     draw_points: float = 0.5,
     forfeits_as_played: bool = False,
+    koya_limit: float = 0.0,
 ) -> Dict[str, float]:
     """Validated multi-criterion calculation (ruleset-dispatched)."""
     require_ruleset(ruleset)
@@ -332,8 +349,9 @@ def calculate_all_strict(
         _fide.validate_inputs(players, total_rounds)
         for criterion in criteria:
             _fide.require_supported(criterion)
+        _require_koya_limit_scope(ruleset, koya_limit)
         return _fide.calculate_all(player, players, list(criteria),
-                                   total_rounds)
+                                   total_rounds, koya_limit)
     if ruleset == "fide-2026":
         from tiebreak_core import fide2026 as _fide26
         _require_total_rounds(total_rounds)
@@ -342,10 +360,12 @@ def calculate_all_strict(
         _fide26.validate_inputs(players, total_rounds)
         for criterion in criteria:
             _fide26.require_supported(criterion)
+        _require_koya_limit_scope(ruleset, koya_limit)
         return _fide26.calculate_all(player, players, list(criteria),
                                      total_rounds, mode, draw_points,
-                                     forfeits_as_played)
+                                     forfeits_as_played, koya_limit)
     checked_criteria = require_criteria(criteria)
+    _require_koya_limit_scope(ruleset, koya_limit)
     _require_total_rounds(total_rounds)
     validate_player(player)
     players = validate_players(all_players)
@@ -362,6 +382,7 @@ def rank_standings_strict(
     draw_points: float = 0.5,
     pairing_numbers: Mapping[int, int] | None = None,
     forfeits_as_played: bool = False,
+    koya_limit: float = 0.0,
 ) -> StandingsResult:
     """Validated ranking (ruleset-dispatched ordering)."""
     require_ruleset(ruleset)
@@ -375,8 +396,10 @@ def rank_standings_strict(
         _fide.validate_inputs(checked_players, total_rounds)
         _fide.check_ranking_criteria(criteria)
         _validate_keys(deterministic_keys)
+        _require_koya_limit_scope(ruleset, koya_limit)
         return _fide.rank_standings(checked_players, list(criteria),
-                                    total_rounds, deterministic_keys)
+                                    total_rounds, deterministic_keys,
+                                    koya_limit)
     if ruleset == "fide-2026":
         from tiebreak_core import fide2026 as _fide26
         _require_total_rounds(total_rounds)
@@ -384,12 +407,14 @@ def rank_standings_strict(
         _fide26.validate_inputs(checked_players, total_rounds)
         _fide26.check_ranking_criteria(criteria)
         _validate_keys(deterministic_keys)
+        _require_koya_limit_scope(ruleset, koya_limit)
         return _fide26.rank_standings(checked_players, list(criteria),
                                       total_rounds, deterministic_keys,
                                       mode, draw_points,
                                       pairing_numbers,
-                                      forfeits_as_played)
+                                      forfeits_as_played, koya_limit)
     checked_criteria = require_criteria(criteria)
+    _require_koya_limit_scope(ruleset, koya_limit)
     _require_total_rounds(total_rounds)
     checked_players = validate_players(players)
     _validate_keys(deterministic_keys)

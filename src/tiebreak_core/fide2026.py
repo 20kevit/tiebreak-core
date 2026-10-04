@@ -859,6 +859,7 @@ def koya(player: PlayerTiebreakData,
          total_rounds: int, mode: str = "swiss",
          draw_points: float = 0.5,
          forfeits_as_played: bool = False,
+         koya_limit: float = 0.0,
          _pre: _Precomputed | None = None) -> float:
     """KS §9.2: points vs opponents on ≥50% of the maximum possible.
 
@@ -866,10 +867,14 @@ def koya(player: PlayerTiebreakData,
     opponent qualification uses raw final points. In RR mode forfeit
     results vs scheduled opponents count (§15.2); the rating-family
     exclusion does not apply here (not Article 10).
+
+    ``koya_limit`` (§14.5, MTB26 ``/L``): threshold offset in
+    half-points (positive = fewer contributors, negative = more;
+    validated half-step by ``fide2024._validate_koya_limit``).
     """
     _use_pre(all_players, total_rounds, mode, draw_points, _pre)
     eff = _regular_mode(mode, forfeits_as_played)
-    threshold = total_rounds / 2
+    threshold = total_rounds / 2 + _f24._validate_koya_limit(koya_limit)
     total = 0.0
     for g in player.games:
         kind = normalize_kind(g)
@@ -1244,10 +1249,19 @@ def calculate(player: PlayerTiebreakData,
               all_players: Mapping[int, PlayerTiebreakData],
               criterion: str, total_rounds: int,
               mode: str = "swiss", draw_points: float = 0.5,
-              forfeits_as_played: bool = False) -> float:
+              forfeits_as_played: bool = False,
+              koya_limit: float = 0.0) -> float:
     """Single fide-2026 calculation (validated upstream by strict)."""
     require_supported(criterion)
     _validate_forfeits_flag(forfeits_as_played)
+    if criterion == "koya":
+        return koya(player, dict(all_players), total_rounds, mode,
+                    draw_points, forfeits_as_played, koya_limit)
+    if koya_limit != 0.0:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            f"koya_limit applies to the koya criterion only, got "
+            f"criterion {criterion!r}")
     return FIDE2026_REGISTRY[criterion](player, dict(all_players),
                                         total_rounds, mode,
                                         draw_points, forfeits_as_played)
@@ -1258,11 +1272,12 @@ def calculate_all(player: PlayerTiebreakData,
                   criteria: Sequence[str], total_rounds: int,
                   mode: str = "swiss",
                   draw_points: float = 0.5,
-                  forfeits_as_played: bool = False) -> Dict[str, float]:
+                  forfeits_as_played: bool = False,
+                  koya_limit: float = 0.0) -> Dict[str, float]:
     """Multi-criterion fide-2026 calculation."""
     _validate_forfeits_flag(forfeits_as_played)
     return {c: calculate(player, all_players, c, total_rounds, mode,
-                         draw_points, forfeits_as_played)
+                         draw_points, forfeits_as_played, koya_limit)
             for c in criteria}
 
 
@@ -1305,6 +1320,7 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
                    mode: str = "swiss", draw_points: float = 0.5,
                    pairing_numbers: Mapping[int, int] | None = None,
                    forfeits_as_played: bool = False,
+                   koya_limit: float = 0.0,
                    ) -> StandingsResult:
     """fide-2026 values + staged ordering (points, then criteria).
 
@@ -1320,6 +1336,10 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
     """
     shared = dict(players)
     _validate_forfeits_flag(forfeits_as_played)
+    if koya_limit != 0.0 and "koya" not in criteria:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            "koya_limit applies to the koya criterion only")
     pre = _precompute(shared, total_rounds, mode, draw_points)
     check_ranking_criteria(criteria)
     keys = deterministic_keys or {}
@@ -1328,9 +1348,13 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
     ordered_ids = sorted(shared, key=lambda pid: keys.get(pid, pid))
     scalar = [c for c in criteria if c in FIDE2026_REGISTRY]
     values: Dict[int, Dict[str, float]] = {
-        pid: {c: FIDE2026_REGISTRY[c](shared[pid], shared, total_rounds,
-                                      mode, draw_points,
-                                      forfeits_as_played, pre)
+        pid: {c: (koya(shared[pid], shared, total_rounds, mode,
+                       draw_points, forfeits_as_played, koya_limit, pre)
+                  if c == "koya"
+                  else FIDE2026_REGISTRY[c](shared[pid], shared,
+                                            total_rounds, mode,
+                                            draw_points,
+                                            forfeits_as_played, pre))
               for c in scalar}
         for pid in ordered_ids
     }

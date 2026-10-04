@@ -184,8 +184,34 @@ def test_edition_coincidence_fide2024(name, criterion):
             f"vs echecs {want}")
 
 
+@pytest.mark.parametrize("limit,oracle_key",
+                         [(-1.0, "koya_limit_m2"),
+                          (-0.5, "koya_limit_m1"),
+                          (0.5, "koya_limit_p1"),
+                          (1.0, "koya_limit_p2")])
+@pytest.mark.parametrize("ruleset", ["fide-2024", "fide-2026"])
+def test_koya_limits_agree_true_rr(limit, oracle_key, ruleset):
+    # True round-robin only (echecs Koya double-counts repeated
+    # meetings; its documented RR-only scope).
+    case = CASES["rr_8x7"]
+    players = _build(case["fixture"]["players"])
+    total = case["fixture"]["total_rounds"]
+    for pid, pdata in players.items():
+        want = _oracle_value(case, pid, oracle_key)
+        got = calculate_strict(pdata, players, "koya", total,
+                               ruleset=ruleset, koya_limit=limit)
+        assert got == pytest.approx(want, abs=1e-9), (
+            f"rr_8x7 player {pid} koya_limit={limit} ({ruleset}): "
+            f"core {got} vs echecs {want}")
+
+
 @pytest.mark.parametrize("criterion", UNSUPPORTED)
 def test_generic_combos_explicitly_unsupported(criterion):
+    players = _build(CASES["fp_6x5"]["fixture"]["players"])
+    pdata = players[1]
+    with pytest.raises(UnknownCriterionError):
+        calculate_strict(pdata, players, criterion, 5,
+                         ruleset="fide-2026")
     players = _build(CASES["fp_6x5"]["fixture"]["players"])
     pdata = players[1]
     with pytest.raises(UnknownCriterionError):

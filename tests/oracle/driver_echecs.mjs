@@ -33,6 +33,10 @@ const SB = require('@echecs/sonneborn-berger');
 const SBC1 = require('@echecs/sonneborn-berger/cut1');
 const SBC2 = require('@echecs/sonneborn-berger/cut2');
 const KO = require('@echecs/koya');
+const KOM1 = require('@echecs/koya/limit-m1');
+const KOM2 = require('@echecs/koya/limit-m2');
+const KOP1 = require('@echecs/koya/limit-p1');
+const KOP2 = require('@echecs/koya/limit-p2');
 const AR = require('@echecs/average-rating');
 const ARC1 = require('@echecs/average-rating/cut1');
 const ARC2 = require('@echecs/average-rating/cut2');
@@ -50,6 +54,8 @@ const FNS = {
   aob: BHAV.tiebreak, aob_fb: BHAVF.tiebreak,
   sonneborn_berger: SB.tiebreak, sonneborn_berger_cut1: SBC1.tiebreak,
   sonneborn_berger_cut2: SBC2.tiebreak, koya: KO.tiebreak,
+  koya_limit_m1: KOM1.tiebreak, koya_limit_m2: KOM2.tiebreak,
+  koya_limit_p1: KOP1.tiebreak, koya_limit_p2: KOP2.tiebreak,
   aro: AR.tiebreak, aro_cut1: ARC1.tiebreak, aro_cut2: ARC2.tiebreak,
   aro_median1: ARM1.tiebreak, aro_median2: ARM2.tiebreak,
   progressive: PS.tiebreak, de_score: DE.directEncounter,
