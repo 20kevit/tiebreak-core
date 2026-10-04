@@ -740,6 +740,937 @@
           "games": []
         }
       }
+    },
+    {
+      "id": "TEC-AOB-FULL-16",
+      "ruleset": "fide-2024",
+      "status": "VERIFIED",
+      "source": "FIDE TEC Tie-Break Exercises, AOB chapter (official BH table + AOB table to 2dp) + PS/Type-B summary table",
+      "source_grade": "PRIMARY",
+      "article": "C.07 7.1-7.6, 8.1-8.2 + PS-C1",
+      "notes": "Full 16-player Swiss event reconstructed mutually from the printed crosstable (all records coherent; Nick R4/R5 post-withdrawal zero-byes per 16.1.1 note; Paul R4 early requested zero-bye). AOB expected are exact means (David 13.375, printed 13.38 at 2dp). Nick BH row printed inconsistently in extraction but the total 11.5 verifies (3.5+2+2+2+2).",
+      "total_rounds": 5,
+      "criteria": [
+        "buchholz",
+        "aob",
+        "progressive",
+        "progressive_cut1",
+        "rounds_elected",
+        "wins",
+        "won",
+        "games_black",
+        "wins_black"
+      ],
+      "expected": {
+        "1": {
+          "buchholz": 12.5,
+          "progressive": 11.0,
+          "progressive_cut1": 10.0,
+          "rounds_elected": 5,
+          "wins": 2,
+          "won": 2,
+          "games_black": 2,
+          "wins_black": 1,
+          "aob": 12.6
+        },
+        "2": {
+          "buchholz": 13.0,
+          "progressive": 13.0,
+          "progressive_cut1": 12.0,
+          "rounds_elected": 5,
+          "wins": 3,
+          "won": 3,
+          "games_black": 3,
+          "wins_black": 1,
+          "aob": 13.6
+        },
+        "3": {
+          "buchholz": 15.5,
+          "progressive": 11.0,
+          "progressive_cut1": 10.5,
+          "rounds_elected": 5,
+          "wins": 2,
+          "won": 2,
+          "games_black": 2,
+          "wins_black": 1,
+          "aob": 13.4
+        },
+        "4": {
+          "buchholz": 15.0,
+          "progressive": 11.5,
+          "progressive_cut1": 10.5,
+          "rounds_elected": 4,
+          "wins": 2,
+          "won": 2,
+          "games_black": 2,
+          "wins_black": 1,
+          "aob": 13.375
+        },
+        "5": {
+          "buchholz": 8.5,
+          "progressive": 5.0,
+          "progressive_cut1": 5.0,
+          "rounds_elected": 5,
+          "wins": 2,
+          "won": 2,
+          "games_black": 2,
+          "wins_black": 0,
+          "aob": 13.4
+        },
+        "6": {
+          "buchholz": 12.0,
+          "progressive": 6.0,
+          "progressive_cut1": 6.0,
+          "rounds_elected": 5,
+          "wins": 3,
+          "won": 2,
+          "games_black": 2,
+          "wins_black": 1,
+          "aob": 13.25
+        },
+        "7": {
+          "buchholz": 14.5,
+          "progressive": 6.0,
+          "progressive_cut1": 5.0,
+          "rounds_elected": 5,
+          "wins": 1,
+          "won": 1,
+          "games_black": 3,
+          "wins_black": 0
+        },
+        "8": {
+          "buchholz": 13.5,
+          "progressive": 8.5,
+          "progressive_cut1": 8.0,
+          "rounds_elected": 5,
+          "wins": 2,
+          "won": 2,
+          "games_black": 2,
+          "wins_black": 0,
+          "aob": 13.0
+        },
+        "9": {
+          "buchholz": 9.0,
+          "progressive": 2.5,
+          "progressive_cut1": 2.5,
+          "rounds_elected": 3,
+          "wins": 1,
+          "won": 0,
+          "games_black": 1,
+          "wins_black": 0
+        },
+        "10": {
+          "buchholz": 13.0,
+          "progressive": 4.0,
+          "progressive_cut1": 4.0,
+          "rounds_elected": 5,
+          "wins": 1,
+          "won": 1,
+          "games_black": 3,
+          "wins_black": 1
+        },
+        "11": {
+          "buchholz": 13.5,
+          "progressive": 5.5,
+          "progressive_cut1": 5.0,
+          "rounds_elected": 5,
+          "wins": 2,
+          "won": 1,
+          "games_black": 2,
+          "wins_black": 0,
+          "aob": 12.75
+        },
+        "12": {
+          "buchholz": 11.5,
+          "progressive": 7.0,
+          "progressive_cut1": 7.0,
+          "rounds_elected": 3,
+          "wins": 2,
+          "won": 0,
+          "games_black": 0,
+          "wins_black": 0,
+          "aob": 15.0
+        },
+        "13": {
+          "buchholz": 14.0,
+          "progressive": 7.0,
+          "progressive_cut1": 6.0,
+          "rounds_elected": 5,
+          "wins": 1,
+          "won": 1,
+          "games_black": 3,
+          "wins_black": 1
+        },
+        "14": {
+          "buchholz": 11.0,
+          "progressive": 6.0,
+          "progressive_cut1": 5.0,
+          "rounds_elected": 3,
+          "wins": 2,
+          "won": 2,
+          "games_black": 2,
+          "wins_black": 1
+        },
+        "15": {
+          "buchholz": 12.0,
+          "progressive": 7.0,
+          "progressive_cut1": 7.0,
+          "rounds_elected": 5,
+          "wins": 2,
+          "won": 2,
+          "games_black": 3,
+          "wins_black": 1
+        },
+        "16": {
+          "buchholz": 12.5,
+          "progressive": 10.5,
+          "progressive_cut1": 10.0,
+          "rounds_elected": 5,
+          "wins": 3,
+          "won": 3,
+          "games_black": 2,
+          "wins_black": 1,
+          "aob": 13.3
+        }
+      },
+      "players": {
+        "1": {
+          "rating": 2200,
+          "points": 3.5,
+          "games": [
+            {
+              "opponent": 9,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1800,
+              "kind": "played"
+            },
+            {
+              "opponent": 13,
+              "score": 0.5,
+              "color": "black",
+              "round": 2,
+              "rating": 1600,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 0.5,
+              "color": "white",
+              "round": 3,
+              "rating": 2150,
+              "kind": "played"
+            },
+            {
+              "opponent": 15,
+              "score": 1.0,
+              "color": "black",
+              "round": 4,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 0.5,
+              "color": "white",
+              "round": 5,
+              "rating": 2050,
+              "kind": "played"
+            }
+          ]
+        },
+        "2": {
+          "rating": 2150,
+          "points": 4.0,
+          "games": [
+            {
+              "opponent": 10,
+              "score": 1.0,
+              "color": "black",
+              "round": 1,
+              "rating": 1750,
+              "kind": "played"
+            },
+            {
+              "opponent": 7,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": 1,
+              "score": 0.5,
+              "color": "black",
+              "round": 3,
+              "rating": 2200,
+              "kind": "played"
+            },
+            {
+              "opponent": 16,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1450,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "black",
+              "round": 5,
+              "rating": 2100,
+              "kind": "played"
+            }
+          ]
+        },
+        "3": {
+          "rating": 2100,
+          "points": 3.5,
+          "games": [
+            {
+              "opponent": 11,
+              "score": 0.5,
+              "color": "white",
+              "round": 1,
+              "rating": 1700,
+              "kind": "played"
+            },
+            {
+              "opponent": 6,
+              "score": 1.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1950,
+              "kind": "played"
+            },
+            {
+              "opponent": 8,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1850,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 0.5,
+              "color": "black",
+              "round": 4,
+              "rating": 2050,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 0.5,
+              "color": "white",
+              "round": 5,
+              "rating": 2150,
+              "kind": "played"
+            }
+          ]
+        },
+        "4": {
+          "rating": 2050,
+          "points": 3.5,
+          "games": [
+            {
+              "opponent": 12,
+              "score": 1.0,
+              "color": "black",
+              "round": 1,
+              "rating": 1650,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "requested_bye"
+            },
+            {
+              "opponent": 13,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1600,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "white",
+              "round": 4,
+              "rating": 2100,
+              "kind": "played"
+            },
+            {
+              "opponent": 1,
+              "score": 0.5,
+              "color": "black",
+              "round": 5,
+              "rating": 2200,
+              "kind": "played"
+            }
+          ]
+        },
+        "5": {
+          "rating": 2000,
+          "points": 2.5,
+          "games": [
+            {
+              "opponent": 13,
+              "score": 0.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1600,
+              "kind": "played"
+            },
+            {
+              "opponent": 15,
+              "score": 0.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 11,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1700,
+              "kind": "played"
+            },
+            {
+              "opponent": 7,
+              "score": 0.5,
+              "color": "black",
+              "round": 4,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": 10,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 1750,
+              "kind": "played"
+            }
+          ]
+        },
+        "6": {
+          "rating": 1950,
+          "points": 3.0,
+          "games": [
+            {
+              "opponent": 14,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 1550,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 0.0,
+              "color": "white",
+              "round": 2,
+              "rating": 2100,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "pairing_bye"
+            },
+            {
+              "opponent": 10,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1750,
+              "kind": "played"
+            },
+            {
+              "opponent": 8,
+              "score": 1.0,
+              "color": "black",
+              "round": 5,
+              "rating": 1850,
+              "kind": "played"
+            }
+          ]
+        },
+        "7": {
+          "rating": 1900,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 15,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "black",
+              "round": 2,
+              "rating": 2150,
+              "kind": "played"
+            },
+            {
+              "opponent": 16,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 1450,
+              "kind": "played"
+            },
+            {
+              "opponent": 5,
+              "score": 0.5,
+              "color": "white",
+              "round": 4,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 11,
+              "score": 0.0,
+              "color": "black",
+              "round": 5,
+              "rating": 1700,
+              "kind": "played"
+            }
+          ]
+        },
+        "8": {
+          "rating": 1850,
+          "points": 2.5,
+          "games": [
+            {
+              "opponent": 16,
+              "score": 0.5,
+              "color": "black",
+              "round": 1,
+              "rating": 1450,
+              "kind": "played"
+            },
+            {
+              "opponent": 14,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1550,
+              "kind": "played"
+            },
+            {
+              "opponent": 3,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 2100,
+              "kind": "played"
+            },
+            {
+              "opponent": 13,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1600,
+              "kind": "played"
+            },
+            {
+              "opponent": 6,
+              "score": 0.0,
+              "color": "white",
+              "round": 5,
+              "rating": 1950,
+              "kind": "played"
+            }
+          ]
+        },
+        "9": {
+          "rating": 1800,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 2200,
+              "kind": "played"
+            },
+            {
+              "opponent": 10,
+              "score": 0.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1750,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 0.5,
+              "color": "white",
+              "round": 3,
+              "rating": 0,
+              "kind": "requested_bye"
+            },
+            {
+              "opponent": 11,
+              "score": 0.0,
+              "color": "black",
+              "round": 4,
+              "rating": 1700,
+              "kind": "forfeit_loss"
+            },
+            {
+              "opponent": -1,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 0,
+              "kind": "pairing_bye"
+            }
+          ]
+        },
+        "10": {
+          "rating": 1750,
+          "points": 1.0,
+          "games": [
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "white",
+              "round": 1,
+              "rating": 2150,
+              "kind": "played"
+            },
+            {
+              "opponent": 9,
+              "score": 1.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1800,
+              "kind": "played"
+            },
+            {
+              "opponent": 15,
+              "score": 0.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1500,
+              "kind": "played"
+            },
+            {
+              "opponent": 6,
+              "score": 0.0,
+              "color": "black",
+              "round": 4,
+              "rating": 1950,
+              "kind": "played"
+            },
+            {
+              "opponent": 5,
+              "score": 0.0,
+              "color": "black",
+              "round": 5,
+              "rating": 2000,
+              "kind": "played"
+            }
+          ]
+        },
+        "11": {
+          "rating": 1700,
+          "points": 2.5,
+          "games": [
+            {
+              "opponent": 3,
+              "score": 0.5,
+              "color": "black",
+              "round": 1,
+              "rating": 2100,
+              "kind": "played"
+            },
+            {
+              "opponent": 16,
+              "score": 0.0,
+              "color": "white",
+              "round": 2,
+              "rating": 1450,
+              "kind": "played"
+            },
+            {
+              "opponent": 5,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 9,
+              "score": 1.0,
+              "color": "white",
+              "round": 4,
+              "rating": 1800,
+              "kind": "forfeit_win"
+            },
+            {
+              "opponent": 7,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 1900,
+              "kind": "played"
+            }
+          ]
+        },
+        "12": {
+          "rating": 1650,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 4,
+              "score": 0.0,
+              "color": "white",
+              "round": 1,
+              "rating": 2050,
+              "kind": "played"
+            },
+            {
+              "opponent": -1,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 0,
+              "kind": "pairing_bye"
+            },
+            {
+              "opponent": 14,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1550,
+              "kind": "forfeit_win"
+            },
+            {
+              "opponent": -1,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "requested_bye"
+            },
+            {
+              "opponent": -1,
+              "score": 0.0,
+              "color": "white",
+              "round": 5,
+              "rating": 0,
+              "kind": "requested_bye"
+            }
+          ]
+        },
+        "13": {
+          "rating": 1600,
+          "points": 1.5,
+          "games": [
+            {
+              "opponent": 5,
+              "score": 1.0,
+              "color": "black",
+              "round": 1,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 1,
+              "score": 0.5,
+              "color": "white",
+              "round": 2,
+              "rating": 2200,
+              "kind": "played"
+            },
+            {
+              "opponent": 4,
+              "score": 0.0,
+              "color": "black",
+              "round": 3,
+              "rating": 2050,
+              "kind": "played"
+            },
+            {
+              "opponent": 8,
+              "score": 0.0,
+              "color": "black",
+              "round": 4,
+              "rating": 1850,
+              "kind": "played"
+            },
+            {
+              "opponent": 14,
+              "score": 0.0,
+              "color": "white",
+              "round": 5,
+              "rating": 1550,
+              "kind": "played"
+            }
+          ]
+        },
+        "14": {
+          "rating": 1550,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 6,
+              "score": 1.0,
+              "color": "white",
+              "round": 1,
+              "rating": 1950,
+              "kind": "played"
+            },
+            {
+              "opponent": 8,
+              "score": 0.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1850,
+              "kind": "played"
+            },
+            {
+              "opponent": 12,
+              "score": 0.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1650,
+              "kind": "forfeit_loss"
+            },
+            {
+              "opponent": -1,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 0,
+              "kind": "requested_bye"
+            },
+            {
+              "opponent": 13,
+              "score": 1.0,
+              "color": "black",
+              "round": 5,
+              "rating": 1600,
+              "kind": "played"
+            }
+          ]
+        },
+        "15": {
+          "rating": 1500,
+          "points": 2.0,
+          "games": [
+            {
+              "opponent": 7,
+              "score": 0.0,
+              "color": "black",
+              "round": 1,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": 5,
+              "score": 1.0,
+              "color": "white",
+              "round": 2,
+              "rating": 2000,
+              "kind": "played"
+            },
+            {
+              "opponent": 10,
+              "score": 1.0,
+              "color": "black",
+              "round": 3,
+              "rating": 1750,
+              "kind": "played"
+            },
+            {
+              "opponent": 1,
+              "score": 0.0,
+              "color": "white",
+              "round": 4,
+              "rating": 2200,
+              "kind": "played"
+            },
+            {
+              "opponent": 16,
+              "score": 0.0,
+              "color": "black",
+              "round": 5,
+              "rating": 1450,
+              "kind": "played"
+            }
+          ]
+        },
+        "16": {
+          "rating": 1450,
+          "points": 3.5,
+          "games": [
+            {
+              "opponent": 8,
+              "score": 0.5,
+              "color": "white",
+              "round": 1,
+              "rating": 1850,
+              "kind": "played"
+            },
+            {
+              "opponent": 11,
+              "score": 1.0,
+              "color": "black",
+              "round": 2,
+              "rating": 1700,
+              "kind": "played"
+            },
+            {
+              "opponent": 7,
+              "score": 1.0,
+              "color": "white",
+              "round": 3,
+              "rating": 1900,
+              "kind": "played"
+            },
+            {
+              "opponent": 2,
+              "score": 0.0,
+              "color": "black",
+              "round": 4,
+              "rating": 2150,
+              "kind": "played"
+            },
+            {
+              "opponent": 15,
+              "score": 1.0,
+              "color": "white",
+              "round": 5,
+              "rating": 1500,
+              "kind": "played"
+            }
+          ]
+        }
+      }
     }
   ]
 }
