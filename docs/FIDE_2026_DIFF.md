@@ -61,8 +61,10 @@ Purpose (FIDE announcement 25 Mar 2026): restore the 1–½–0 framework
 inside events with alternative scoring (e.g. 3–1–0). Required new
 input: the **scheduled opponent's round score** (or the event's
 draw-value table for unplayed rounds) — not derivable from
-`GameRecord.score` alone. Specified as `SPECIFIED`; needs a model
-extension before implementation.
+`GameRecord.score` alone. Implemented in 0.8.0 (`std` criterion +
+optional `GameRecord.opponent_score`; standard 1–½–0 complement when
+`draw_points == 0.5`, typed error for exotic tables without explicit
+scores). Diff text kept as the original 2026-gap analysis.
 
 ## D6. §7.8 Tournament Pairing Number — NEW (terminal)
 
@@ -72,8 +74,10 @@ extension before implementation.
 
 Deterministic lots-replacement at the end of a sequence. Required new
 input: final pairing numbers (not in the current model).
-Ownership: consumer-side sort key; core may offer it as a terminal
-criterion once pairing numbers cross the boundary. `SPECIFIED`.
+Ownership: consumer-side sort key; implemented in 0.7.0 as a
+terminal criterion once pairing numbers cross the boundary
+(`pairing_numbers` strict parameter; `/R` reversal in 1.1.0).
+Diff text kept as the original 2026-gap analysis.
 
 ## D7. Article 8 note — Buchholz banned from round-robins (NEW)
 
@@ -117,7 +121,9 @@ single snapshot — compliant by construction; the contract must say so
 > lowest. Alternatively, they can be sorted in reverse order (i.e. from
 > lowest to highest)."*
 
-Same ownership as TPN (§D6). `SPECIFIED`.
+Same ownership as TPN (§D6). Implemented in 0.7.0 as a terminal
+ranking stage (`rtng`; `/R` reversal in 1.1.0). Diff text kept as
+the original 2026-gap analysis.
 
 ## D11. §13.3.2 — four named EDE+knockout chains (NEW)
 

@@ -11,10 +11,11 @@ Status: IMPLEMENTED (`tests/test_calculators.py`,
 ## Rule tests — every normative FIDE rule
 One test per `FIDE_RULE_INVENTORY.md` row where the rule is
 IMPLEMENTED (e.g. R-VURCUT higher-of for SB-C1; R-DE-AVG exact
-averages; R-DUMMY24 uncapped; R-DUMMY26 caps). SPECIFIED rows without
-an engine (generic /Cn /Mn machine, Koya limits, exotic STD) carry
+averages; R-DUMMY24 uncapped; R-DUMMY26 caps; R-TEAM-* hand-derived
+team cases). SPECIFIED rows without an engine (exotic STD) carry
 no corpus shells by design. Status: IMPLEMENTED for the fide-2024
-subset and the fide-2026 individual scope (0.7.0/0.8.0).
+subset, the fide-2026 individual scope (0.7.0/0.8.0), the generic
+modifier machine and the team domain (1.1.0).
 
 ## Corpus tests — every official worked example
 - TEC Exercises V01-1 (2024-04): BH 13.0 / BH-C1 11.5 fully-played

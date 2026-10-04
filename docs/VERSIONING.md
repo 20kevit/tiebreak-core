@@ -37,6 +37,15 @@ Rules:
 - Post-1.0 rule: published rulesets are frozen. Any future official
   correction ships as a NEW ruleset id (see above); output-changing
   edits to a published ruleset id are forbidden (MAJOR-level breach).
+- Pre-publication correction F4 (1.2.0, sole exception): the DE/EDE
+  mini-table order-dependence fix (see CHANGELOG F4) edited
+  `fide-2024`/`fide-2026` in place because (a) the old behavior
+  contradicted the documented algorithm and determinism contract,
+  (b) every pinned and official value is byte-identical before/after
+  (proven by running the full suite under both implementations), and
+  (c) no PyPI publication and no adopted consumer of 1.x outputs
+  existed yet. After PyPI publication this exception path is closed:
+  the freeze is absolute.
 - `CALCULATION_RULES_VERSION` is the default ruleset the library
   calculates under when no explicit selection is made.
 - New rulesets are MINOR package changes (additive). Removing a

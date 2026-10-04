@@ -64,9 +64,10 @@ same ruleset ⇒ same outputs (determinism tests + 25× repeat pins).
 ## Testing strategy
 
 Unit (every calculator incl. zero/edge) → golden fixtures (frozen) →
-FIDE corpus (`tests/corpus/`, VERIFIED asserted / PENDING skipped) →
-live old-vs-new differential → strict/legacy equivalence → ranking →
-determinism → benchmarks. Every bug becomes a regression test.
+FIDE corpus (`tests/corpus/`, VERIFIED asserted; no pending cases
+remain) → live old-vs-new differential (documented scope skips only)
+→ strict/legacy equivalence → ranking → determinism → examples gate →
+benchmarks. Every bug becomes a regression test.
 
 ## Versioning
 
@@ -150,8 +151,9 @@ chess-manager avoids over-coupling the core to one manager's lifecycle.
 - `rank_standings` builds the shared player lookup ONCE (was: `dict()`
   copy per player). Measured 7-round synthetic: 2000 players 0.349s →
   0.075s; values/order unchanged (goldens pin them).
-- `ruleset="fide-2026"` is a RESERVED name only. No FIDE-2026 code
-  exists; requesting it raises `UnsupportedRulesetError`.
+- `ruleset="fide-2026"` is implemented (current C.07: §16.4 dummy
+  caps, Swiss/RR mode, TPN/RTNG terminals, `/P` flag, STD, generic
+  modifiers, team domain); `fide-2024` and `legacy-0.1.0` are frozen.
 - `pairing-core` and `tiebreak-core` are independent: neither imports
   the other. chess-manager composes both (pairing for rounds, tie-break
   for standings) through thin adapters. No shared tournament-core.

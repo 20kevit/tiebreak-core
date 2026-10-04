@@ -49,7 +49,7 @@ mid-tournament re-ratings; the adapter contract states this.
 | PS/WIN/WON/BPG/BWG/REP | — (own-record/OTB) | — | — | no (RR-mode §15.2 excepted) |
 | ARO/TPR/PTP/APRO/APPO | OTB-only sets; 2026 RR: forfeits excluded (§15.2) | — | ARO-C1 | no |
 | DE | forfeit exclusion §6.1.1 (Swiss) | — | — | no |
-| STD (2026) | needs scheduled-opp scores + draw-value table | unplayed-vs-draw comparison | — | SPECIFIED (§7.7; draw-value rule needs organiser scoring table — U6, blocks N-STD only) |
+| STD (2026) | scheduled-opp scores (`opponent_score` or 1–½–0 complement) + draw value | unplayed-vs-draw comparison | — | IMPLEMENTED standard scope (exotic tables without explicit scores raise — U6) |
 
 Game-kind → category mapping (implemented `classify()`): `played`→—;
 `pairing_bye`→16.2.1; `forfeit_win`→16.2.2; `forfeit_loss`→16.2.4;
@@ -62,15 +62,18 @@ requested/forfeit-loss kinds (§16.1.2).
 
 ## 4. Missing inputs per SPECIFIED criterion (model gaps)
 
-- `std`: scheduled opponent's round score per round + event scoring
-  table (draw value). Neither is in `GameRecord`.
-- `tpn` / `rtng`: final pairing numbers / rating order position.
-  Ratings exist (`PlayerTiebreakData.rating`), so RTNG is a pure
-  ranking-key addition; TPN needs a new input channel.
-- 2026 `16.4.1` cap: scheduled opponent's Art-16.3-adjusted score at
-  the forfeit round — needs the opponent's full round record (already
-  available in-engine via the players map) + post-encounter trailing
-  rounds (available: full record is present). No model change, engine
-  work only.
-- Team criteria: full `TeamMatch` domain (see catalog) — new package
+All historical gaps below are closed; the section is kept as the
+input-contract record:
+
+- `std`: resolved in 0.8.0 — optional `GameRecord.opponent_score` +
+  event draw value (`draw_points`); exotic tables without explicit
+  scores raise (U6).
+- `tpn` / `rtng`: resolved in 0.7.0 — `pairing_numbers` strict
+  parameter for TPN; RTNG reads the rating snapshot; `/R` reversal
+  in 1.1.0.
+- 2026 `16.4.1` cap: resolved in 0.7.0 — scheduled opponent's
+  Art-16.3-adjusted score from the players map (incl. trailing
+  rounds); no model change was needed.
+- Team criteria: resolved in 1.1.0 — full `TeamMatch` domain (see
+  catalog) in `tiebreak_core.team`.
   scope, not a field addition.

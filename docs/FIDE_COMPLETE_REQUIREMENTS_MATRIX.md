@@ -32,7 +32,7 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | Q-APRO | §10.4 | APRO | 2024 + 2026 | Swiss | opp TPR | half-up | catalog | TEC APRO | VERIFIED (2024) + unit (2026 parity) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same sets) | core | P1 |
 | Q-APPO | §10.5 | APPO | 2024 + 2026 | Swiss | opp PTP | half-up | catalog | — | VERIFIED (2024) + unit (2026 parity) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same sets) | core | P1 |
 | Q-RTNG | §10.6 | RTNG/R | 2026 | any | rating | order | catalog | — | unit (terminal ordering) | IMPLEMENTED (descending terminal; reverse consumer-side) | core+consumer | P2 |
-| Q-DE | §6.1–6.3 | DE (+/P) | 2024 + 2026 | Swiss/RR | mutual games | mini-table | catalog+ADR-008 | TEC DE | VERIFIED (2024) + VERIFIED (2026 minitable) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same §§6.1–6.3; /P flag; RR forfeit scope) | core | P1 |
+| Q-DE | §6.1–6.3 | DE (+/P) | 2024 + 2026 | Swiss/RR | mutual games | mini-table | catalog+ADR-008 | TEC DE | VERIFIED (2024) + VERIFIED (2026 minitable) + order-invariance (F4) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same §§6.1–6.3; /P flag; RR forfeit scope; F4 pair-iteration correction in 1.2.0, no pinned value changed) | core | P1 |
 | Q-ART16 | §§15.3/16 | categories/adj/dummy/cuts | 2024 + 2026 | Swiss | kinds | classify | data-sem §3 | Manual 01–06 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-DUMMY26 | §16.4.1–2 | dummy caps | 2026 | Swiss | sched-opp adj | Q-ART16 | diff D13 | Manual NEW | VERIFIED ×5 (BH 55/49.5/63/69, C1 50/11.5, SB 37.25) | IMPLEMENTED (F26-1) | core | P0 |
 | Q-RR152 | §15.2 | RR forfeit scope | 2026 | RR/pre-paired | mode flag | sets | diff D12 | — | unit (RR mode) | IMPLEMENTED (F26-1) | core | P1 |

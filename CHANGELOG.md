@@ -9,6 +9,43 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [1.2.0] — 2026-10-04
+
+Correctness release (additive API + one documented correction).
+
+Correction F4 (P0): the Direct/Extended Direct Encounter mini-tables
+(`fide2024._mini_table`, `fide2026._mini_table`,
+`team._mini_scores`) credited only the first-iterated side of each
+pair, dropping the other side's games whenever group order put it
+second — e.g. A-beats-B ordered `[B, A]` scored `{A: 0, B: 0}`
+instead of `{A: 1, B: 0}`, and a mutual draw scored `{first: 0.5,
+other: 0}` instead of `0.5–0.5`. Same logical tournament in
+different input order could therefore produce different DE tiers
+(determinism breach; contradicts §6.1, §6.1.2 and the modules' own
+docstrings). Pair iteration now credits each side's own games to
+itself. Before/after verified: the entire suite (incl. all official
+corpus values and differential fixtures) passes identically with
+old and new tables — no pinned or official value changes; only
+previously order-dependent (non-contractual) outcomes move, always
+toward the documented algorithm. Recorded as a pre-publication
+correction (no PyPI release and no adopted consumer of 1.x outputs
+exists yet); post-publication the freeze is absolute — see
+`docs/VERSIONING.md`.
+
+Also additive (backwards-compatible): top-level exports for
+`calculate_descriptor_strict`, `rank_descriptors_strict`,
+`calculate_team_strict`, `rank_teams_strict`, `canonical_team_id`;
+player/team id as the final ranking tiebreak so colliding caller
+keys cannot leak input order; executable `examples/` A–G with CI
+gate (`tests/test_examples.py`); order-invariance regression tests
+(`tests/test_de_order_invariance.py`); rewritten README;
+`docs/DEVELOPMENT.md` + `docs/RELEASING.md`; packaging metadata
+(Production/Stable, keywords, Homepage); CI packaging validation
+(sdist + `twine check` + wheel/sdist clean-install smoke).
+
+Suite: 652 passed + benchmarks, 66 documented differential skips.
+No FIDE approval/acceptance claimed.
+
 ## [1.1.0] — 2026-10-04
 
 Additive minor: generic MTB26 modifier engine, team domain, Article-16

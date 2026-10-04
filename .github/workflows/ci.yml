@@ -21,7 +21,39 @@ jobs:
         run: pip install -e .
       - name: Tests
         run: python -m pytest tests -q
+      - name: Examples gate
+        run: python -m pytest tests/test_examples.py -q
       - name: Packaging smoke test
         run: |
           pip wheel . --no-deps -w dist
           python -c "import tiebreak_core; print(tiebreak_core.__version__)"
+
+  packaging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build wheel + sdist
+        run: |
+          pip install build twine
+          python -m build --outdir dist/
+      - name: Validate metadata rendering
+        run: twine check dist/*
+      - name: Clean-install smoke test (wheel)
+        run: |
+          python -m venv /tmp/pkg-env
+          /tmp/pkg-env/bin/pip install dist/*.whl
+          /tmp/pkg-env/bin/python -c "import tiebreak_core as t; assert t.__version__"
+          /tmp/pkg-env/bin/python -c "
+          from tiebreak_core import GameRecord, PlayerTiebreakData, rank_standings_strict
+          ps = {1: PlayerTiebreakData(1, 2000, 1.0, [GameRecord(2, 1900, 1.0, 'white', 1, kind='played')]),
+                2: PlayerTiebreakData(2, 1900, 0.0, [GameRecord(1, 2000, 0.0, 'black', 1, kind='played')])}
+          r = rank_standings_strict(ps, ['buchholz'], 1, ruleset='fide-2026')
+          assert [p.player_id for p in r.players] == [1, 2]"
+      - name: Clean-install smoke test (sdist)
+        run: |
+          python -m venv /tmp/sdist-env
+          /tmp/sdist-env/bin/pip install dist/*.tar.gz
+          /tmp/sdist-env/bin/python -c "import tiebreak_core as t; assert t.__version__"
