@@ -455,6 +455,78 @@ class TestSbCutIdentification:
         assert got == {"sonneborn_berger_cut2": 1.5}
 
 
+class TestSbCutLocality:
+    """Cut victim follows the FIDE selection basis (§14.1.1.d), not
+    incidental values: raising a non-minimum opponent changes nothing
+    about WHO is cut (delta accounting holds); raising the minimum
+    above the next basis moves the cut (sensitivity). Fully played,
+    so both FIDE rulesets agree.
+    """
+
+    def base(self):
+        # P1 (1.5): W vs A(4.0) [4.0], D vs B(2.0) [1.0], L vs C(1.0)
+        # [0]. SB = 5.0, C1 cuts R3 (lowest basis 1.0) -> 5.0.
+        return {
+            1: P(1, 2000, 1.5, [(2, 1.0, "white", 1, "played"),
+                                 (3, 0.5, "black", 2, "played"),
+                                 (4, 0.0, "white", 3, "played")]),
+            2: P(2, 1500, 4.0, [(1, 0.0, "black", 1, "played"),
+                                 (9, 1.0, "white", 2, "played"),
+                                 (9, 1.0, "white", 3, "played"),
+                                 (9, 1.0, "white", 4, "played"),
+                                 (9, 1.0, "white", 5, "played")]),
+            3: P(3, 1500, 2.0, [(1, 0.5, "white", 2, "played"),
+                                 (9, 1.0, "black", 1, "played"),
+                                 (9, 0.5, "black", 3, "played")]),
+            4: P(4, 1500, 1.0, [(1, 1.0, "black", 3, "played")]),
+            9: P(9, 0, 0.0, []),
+        }
+
+    def test_unrelated_raise_keeps_victim(self):
+        from tiebreak_core import calculate_strict
+        from tiebreak_core.models import GameRecord, PlayerTiebreakData
+        for ruleset in ("fide-2024", "fide-2026"):
+            pl = self.base()
+            base = calculate_strict(pl[1], pl, "sonneborn_berger_cut1",
+                                    5, ruleset=ruleset)
+            assert base == 5.0, ruleset  # cuts R3 (basis 1.0, product 0)
+            raised = self.base()
+            raised[2] = PlayerTiebreakData(
+                2, 1500, 5.0, self.base()[2].games + [
+                    GameRecord(opponent_id=9, opponent_rating=0, score=1.0,
+                               color="white", round_number=6,
+                               kind="played")])
+            got = calculate_strict(raised[1], raised,
+                                   "sonneborn_berger_cut1", 5,
+                                   ruleset=ruleset)
+            # Victim unchanged (still R3): C1 grows by exactly the SB
+            # delta (+1.0 from the raised R1 product).
+            assert got == base + 1.0, ruleset
+
+    def test_minimum_raise_moves_victim(self):
+        from tiebreak_core import calculate_strict
+        from tiebreak_core.models import GameRecord, PlayerTiebreakData
+        for ruleset in ("fide-2024", "fide-2026"):
+            raised = self.base()
+            raised[4] = PlayerTiebreakData(
+                4, 1500, 3.0, self.base()[4].games + [
+                    GameRecord(opponent_id=9, opponent_rating=0, score=1.0,
+                               color="white", round_number=4,
+                               kind="played"),
+                    GameRecord(opponent_id=9, opponent_rating=0, score=1.0,
+                               color="white", round_number=5,
+                               kind="played")])
+            sb = calculate_strict(raised[1], raised, "sonneborn_berger",
+                                  5, ruleset=ruleset)
+            c1 = calculate_strict(raised[1], raised,
+                                  "sonneborn_berger_cut1", 5,
+                                  ruleset=ruleset)
+            # Bases now [4.0, 2.0, 3.0]: minimum moved R3 -> R2,
+            # cutting the 1.0 product: SB 5.0, C1 4.0.
+            assert sb == 5.0, ruleset
+            assert c1 == 4.0, ruleset
+
+
 class TestCutCombosAndAobFb:
     """F26-2 MTB26 combos: SB-C2, ARO-C2, FB-C1/C2, AOB/FB.
 

@@ -111,3 +111,27 @@ class TestOrderingFrozen:
         p = PlayerTiebreakData(1, 1500, 2.0, [rec(2, 1.0)])
         allp = {1: p, 2: PlayerTiebreakData(2, 1500, 2.0, [])}
         assert calculate(p, allp, "koya", total_rounds=0) == 0.0
+
+
+class TestKindBlindnessFrozen:
+    def test_kinds_ignored_by_legacy_calculators(self):
+        # Legacy path predates the kind taxonomy: identical numbers
+        # with and without kinds (frozen blindness, not a feature).
+        plain = PlayerTiebreakData(1, 1500, 2.5, [
+            rec(2, 1.0, rnd=1), rec(3, 0.5, rnd=2), rec(4, 1.0, rnd=3)])
+        kinded = PlayerTiebreakData(1, 1500, 2.5, [
+            GameRecord(opponent_id=2, opponent_rating=1500, score=1.0,
+                       color="white", round_number=1, kind="played"),
+            GameRecord(opponent_id=3, opponent_rating=1500, score=0.5,
+                       color="white", round_number=2, kind="played"),
+            GameRecord(opponent_id=4, opponent_rating=1500, score=1.0,
+                       color="white", round_number=3, kind="played")])
+        ctx = {1: plain, 2: PlayerTiebreakData(2, 1500, 1.0, []),
+               3: PlayerTiebreakData(3, 1500, 1.0, []),
+               4: PlayerTiebreakData(4, 1500, 1.0, [])}
+        ctxk = dict(ctx)
+        ctxk[1] = kinded
+        for crit in ["buchholz", "sonneborn_berger", "progressive",
+                     "aro", "koya"]:
+            assert calculate(kinded, ctxk, crit, total_rounds=3) == \
+                calculate(plain, ctx, crit, total_rounds=3)
