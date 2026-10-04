@@ -69,6 +69,7 @@ from tiebreak_core.errors import (
     InvalidPlayerDataError,
     DuplicatePlayerIdError,
     RegistryError,
+    InvalidDescriptorError,
 )
 from tiebreak_core.strict import (
     calculate_strict,
@@ -82,6 +83,39 @@ from tiebreak_core.strict import (
     require_ruleset,
 )
 from tiebreak_core.ranking import rank_standings, order_ids, sort_key
+from tiebreak_core.modifiers import (
+    ModifierSpec,
+    parse_descriptor,
+    canonical_id,
+    calculate_descriptor,
+    rank_descriptors,
+)
+from tiebreak_core.team import (
+    TeamMatch,
+    TeamRecord,
+    TeamFormat,
+    TeamResult,
+    TeamStandingsResult,
+    TEAM_KINDS,
+    validate_match,
+    validate_team,
+    validate_teams,
+    calculate_team,
+    rank_team_standings,
+)
+from tiebreak_core.article16 import (
+    Article16Policy,
+    FIDE_2024_POLICY,
+    FIDE_2026_SWISS_POLICY,
+    FIDE_2026_RR_POLICY,
+    resolve_policy,
+)
+from tiebreak_core.scoring import (
+    ScoringScheme,
+    STANDARD,
+    is_standard,
+    require_standard_or_explicit,
+)
 from tiebreak_core.rules import (
     CALCULATION_RULES_VERSION,
     FIDE_REFERENCE,
@@ -145,6 +179,32 @@ __all__ = [
     "InvalidPlayerDataError",
     "DuplicatePlayerIdError",
     "RegistryError",
+    "InvalidDescriptorError",
+    "ModifierSpec",
+    "parse_descriptor",
+    "canonical_id",
+    "calculate_descriptor",
+    "rank_descriptors",
+    "TeamMatch",
+    "TeamRecord",
+    "TeamFormat",
+    "TeamResult",
+    "TeamStandingsResult",
+    "TEAM_KINDS",
+    "validate_match",
+    "validate_team",
+    "validate_teams",
+    "calculate_team",
+    "rank_team_standings",
+    "Article16Policy",
+    "FIDE_2024_POLICY",
+    "FIDE_2026_SWISS_POLICY",
+    "FIDE_2026_RR_POLICY",
+    "resolve_policy",
+    "ScoringScheme",
+    "STANDARD",
+    "is_standard",
+    "require_standard_or_explicit",
     "calculate_strict",
     "calculate_all_strict",
     "rank_standings_strict",

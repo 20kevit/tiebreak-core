@@ -36,6 +36,7 @@ from tiebreak_core.errors import (
     InvalidGameRecordError,
     InvalidPlayerDataError,
     UnknownCriterionError,
+    UnsupportedCriterionError,
     UnsupportedRulesetError,
 )
 
@@ -467,6 +468,138 @@ def order_ids_strict(
     return _order_ids(points, values, checked_criteria, deterministic_keys)
 
 
+def calculate_descriptor_strict(
+    player: PlayerTiebreakData,
+    all_players: Mapping[int, PlayerTiebreakData],
+    descriptor: str,
+    total_rounds: int,
+    ruleset: str = "fide-2026",
+    mode: str = "swiss",
+    draw_points: float = 0.5,
+) -> float:
+    """Validated MTB26 descriptor calculation (individual scope).
+
+    ``ruleset`` accepts ``fide-2026`` (generic machine) and
+    ``fide-2024`` (named combos only — generic ``n >= 3`` raises
+    ``UnsupportedCriterionError``). Team descriptors raise
+    ``UnsupportedCriterionError`` (use ``calculate_team_strict``).
+    """
+    from tiebreak_core.modifiers import calculate_descriptor as _calc_desc
+    from tiebreak_core.modifiers import parse_descriptor as _parse
+
+    require_ruleset(ruleset)
+    if ruleset == "legacy-0.1.0":
+        raise UnsupportedCriterionError(descriptor, ruleset)
+    _require_total_rounds(total_rounds)
+    validate_player(player)
+    players = validate_players(all_players)
+    spec = _parse(descriptor)  # InvalidDescriptorError on bad combos
+    if spec.is_team:
+        from tiebreak_core.errors import UnsupportedCriterionError as _UCE
+
+        raise _UCE(
+            f"{descriptor!r} (team descriptor; use "
+            f"calculate_team_strict)", ruleset)
+    if ruleset == "fide-2024" and (
+            (spec.cut is not None and spec.cut > 2)
+            or (spec.median is not None and spec.median > 2)):
+        from tiebreak_core import fide2024 as _fide
+
+        _fide.validate_inputs(players, total_rounds)
+        raise UnsupportedCriterionError(descriptor, ruleset)
+    if ruleset == "fide-2024":
+        from tiebreak_core import fide2024 as _fide
+
+        _fide.validate_inputs(players, total_rounds)
+        return _calc_desc(player, players, descriptor, total_rounds)
+    from tiebreak_core import fide2026 as _fide26
+
+    _fide26.validate_inputs(players, total_rounds)
+    _validate_draw_points(draw_points)
+    return _calc_desc(player, players, descriptor, total_rounds, mode,
+                      draw_points)
+
+
+def rank_descriptors_strict(
+    players: Mapping[int, PlayerTiebreakData],
+    descriptors: Sequence[str],
+    total_rounds: int,
+    deterministic_keys: Mapping[int, int] | None = None,
+    ruleset: str = "fide-2026",
+    mode: str = "swiss",
+    draw_points: float = 0.5,
+    pairing_numbers: Mapping[int, int] | None = None,
+):
+    """Validated descriptor ranking (individual scope, fide-2026)."""
+    from tiebreak_core.modifiers import rank_descriptors as _rank_desc
+
+    require_ruleset(ruleset)
+    if ruleset != "fide-2026":
+        raise UnsupportedCriterionError(descriptors, ruleset)
+    _require_total_rounds(total_rounds)
+    checked_players = validate_players(players)
+    from tiebreak_core import fide2026 as _fide26
+
+    _fide26.validate_inputs(checked_players, total_rounds)
+    _validate_keys(deterministic_keys)
+    _validate_draw_points(draw_points)
+    return _rank_desc(checked_players, list(descriptors), total_rounds,
+                      deterministic_keys, mode, draw_points,
+                      pairing_numbers)
+
+
+def calculate_team_strict(
+    team,
+    all_teams: Mapping,
+    descriptor: str,
+    total_rounds: int,
+    fmt=None,
+    primary: str = "MP",
+) -> float:
+    """Validated team descriptor calculation (C.07 §§11–13)."""
+    from tiebreak_core.team import calculate_team as _calc_team
+    from tiebreak_core.team import validate_teams as _validate_teams
+
+    _require_total_rounds(total_rounds)
+    checked = _validate_teams(all_teams)
+    if team.team_id not in checked:
+        raise InvalidPlayerDataError(
+            f"team {team.team_id} not in the teams mapping")
+    return _calc_team(team, checked, descriptor, total_rounds, fmt,
+                      primary)
+
+
+def rank_teams_strict(
+    teams: Mapping,
+    descriptors: Sequence[str],
+    total_rounds: int,
+    fmt=None,
+    primary: str = "MP",
+    deterministic_keys: Mapping[int, int] | None = None,
+):
+    """Validated team ranking (C.07 §§11–13 stages)."""
+    from tiebreak_core.team import rank_team_standings as _rank_teams
+    from tiebreak_core.team import validate_teams as _validate_teams
+
+    _require_total_rounds(total_rounds)
+    checked = _validate_teams(teams)
+    _validate_keys(deterministic_keys)
+    return _rank_teams(checked, list(descriptors), total_rounds, fmt,
+                       primary, deterministic_keys)
+
+
+def _validate_draw_points(draw_points: float) -> None:
+    import math
+
+    if (isinstance(draw_points, bool)
+            or not isinstance(draw_points, (int, float))
+            or not math.isfinite(draw_points)
+            or draw_points < 0):
+        raise InvalidPlayerDataError(
+            f"draw_points must be a finite number >= 0 "
+            f"(0.5 for standard scoring), got {draw_points!r}")
+
+
 __all__ = [
     "VALID_SCORES",
     "VALID_COLORS",
@@ -479,4 +612,8 @@ __all__ = [
     "calculate_all_strict",
     "rank_standings_strict",
     "order_ids_strict",
+    "calculate_descriptor_strict",
+    "rank_descriptors_strict",
+    "calculate_team_strict",
+    "rank_teams_strict",
 ]

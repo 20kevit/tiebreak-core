@@ -107,6 +107,46 @@ def test_benchmark_2000_fide2026():
     assert elapsed < 60
 
 
+def test_benchmark_500_descriptors():
+    from tiebreak_core import rank_descriptors
+    players = _players_26(500)
+    start = time.perf_counter()
+    res = rank_descriptors(
+        players, ["BH/C3", "BH/M2", "SB/C2", "ARO/C2", "KS/L+1"], 7)
+    elapsed = time.perf_counter() - start
+    print(f"\nbenchmark descriptors n=500: {elapsed:.3f}s")
+    assert len(res.players) == 500
+    assert [p.rank for p in res.players] == list(range(1, 501))
+    assert elapsed < 60
+
+
+def test_benchmark_500_teams():
+    import random as _random
+    from tiebreak_core import rank_team_standings, TeamMatch, TeamRecord
+    rng = _random.Random(7)
+    teams = {}
+    n, boards = 200, 4
+    for tid in range(1, n + 1):
+        matches = [TeamMatch((((tid + i) % n) + 1), (i % 7) + 1,
+                             rng.choice([0.0, 1.0, 2.0]),
+                             rng.choice([0.0, 0.5, 1.0, 1.5, 2.0, 2.5,
+                                         3.0, 3.5, 4.0]))
+                   for i in range(7)]
+        mp = sum(m.mp for m in matches)
+        gp = sum(m.gp for m in matches)
+        teams[tid] = TeamRecord(
+            tid, mp, gp, matches,
+            tuple(round(gp / boards, 1) for _ in range(boards)))
+    start = time.perf_counter()
+    res = rank_team_standings(
+        teams, ["EMMSB", "EGGSB/C1", "SSSC", "EDE", "BC"], 7)
+    elapsed = time.perf_counter() - start
+    print(f"\nbenchmark teams n=200: {elapsed:.3f}s")
+    assert len(res.teams) == 200
+    assert [t.rank for t in res.teams] == list(range(1, 201))
+    assert elapsed < 60
+
+
 def test_benchmark_2000_fide2024():
     from tiebreak_core import fide2024
     players = _players_26(2000)

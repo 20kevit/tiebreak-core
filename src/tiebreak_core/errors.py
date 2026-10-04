@@ -60,3 +60,15 @@ class DuplicatePlayerIdError(InvalidPlayerDataError):
 
 class RegistryError(TiebreakError):
     """Raised on illegal registry operations (e.g. overwriting a built-in)."""
+
+
+class InvalidDescriptorError(TiebreakError):
+    """Raised when an MTB26 rank-order descriptor is malformed or
+    combines modifiers FIDE does not define (e.g. ``SB/M1``)."""
+
+    def __init__(self, descriptor: object, reason: str = "") -> None:
+        self.descriptor = descriptor
+        self.reason = reason
+        detail = f": {reason}" if reason else ""
+        super().__init__(
+            f"invalid MTB26 descriptor {descriptor!r}{detail}")
