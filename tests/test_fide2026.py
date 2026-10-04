@@ -719,15 +719,25 @@ class TestAobExactRanking:
             assert order[0] == 2, (ruleset, order[:4])
             assert order[1] == 1, (ruleset, order[:4])
 
-    def test_aob_fb_unchanged(self):
-        # Out of scope guard: AOB/FB keeps its established behavior
-        # (documented 1dp presentation value) — this mission changes
-        # `aob` only.
-        from tiebreak_core import calculate_strict
-        pl = self.fixture()
-        got = calculate_strict(pl[2], pl, "aob_fb", 8,
-                               ruleset="fide-2026")
-        assert got == round(got, 1)
+    def test_aob_fb_exact_ranking_shared_fixture(self):
+        # Same F3 fixture, total_rounds=9: no recorded round is the
+        # final, so fb_adj == adj and fb_own == points for every
+        # record — hence AOB/FB == AOB here (2.125 vs 2.0625, both
+        # displaying 2.1). This proves the FB-averaging definition is
+        # unchanged (only the rounding left the ranking path) and
+        # that exact values decide the order.
+        from tiebreak_core import calculate_strict, rank_standings_strict
+        pl = TestAobExactRanking().fixture()
+        a = calculate_strict(pl[2], pl, "aob_fb", 9, ruleset="fide-2026")
+        b = calculate_strict(pl[1], pl, "aob_fb", 9, ruleset="fide-2026")
+        assert a == 2.125
+        assert b == 2.0625
+        assert round(a, 1) == round(b, 1) == 2.1
+        res = rank_standings_strict(pl, ["aob_fb"], 9,
+                                    ruleset="fide-2026")
+        order = [p.player_id for p in res.players]
+        assert order[0] == 2, order[:4]
+        assert order[1] == 1, order[:4]
 
 
 class TestTerminals:

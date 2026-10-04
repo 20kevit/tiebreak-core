@@ -589,9 +589,9 @@ def average_opponents_fore_buchholz(
     Fore-Buchholz values.
 
     The default ``aob`` id averages BH (final); this additive id
-    averages FB (e.g. computed live before the final round). Rounded
-    to 1 decimal (documented presentation value for this id).
-    Empty set → 0.0.
+    averages FB (e.g. computed live before the final round). Exact
+    average (no rounding — FIDE states none, and ranking sorts on
+    this value; consumers format for display). Empty set → 0.0.
     """
     ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
                          _pre)
@@ -606,7 +606,7 @@ def average_opponents_fore_buchholz(
                                draw_points, total_rounds,
                                forfeits_as_played)
            for oid in opp_ids]
-    return round(sum(fbs) / len(fbs), 1)
+    return sum(fbs) / len(fbs)
 
 
 def _fb_tables(ctx: Dict[int, List[_f24.ClassifiedRound]],
