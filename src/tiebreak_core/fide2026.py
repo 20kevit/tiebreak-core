@@ -423,6 +423,55 @@ def median_buchholz(player: PlayerTiebreakData,
     return sum(c.value for c in _f24._remove_max(rest))
 
 
+def fore_median1(player: PlayerTiebreakData,
+                 all_players: Mapping[int, PlayerTiebreakData],
+                 total_rounds: int, mode: str = "swiss",
+                 draw_points: float = 0.5,
+                 forfeits_as_played: bool = False,
+                 _pre: _Precomputed | None = None) -> float:
+    """FB-M1: Fore Buchholz, least then most cut (§§14.3 + 16.5).
+
+    MTB26 ``/M1`` combo on the FB base. <3 elements → uncut FB
+    (documented edge, mirrors BH-M1).
+    """
+    ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
+                      _pre)
+    _validate_forfeits_flag(forfeits_as_played)
+    own_fb, adj = _fb_tables(ctx, dict(all_players), total_rounds)
+    contribs = _fb_contribs(player, ctx, own_fb, adj, mode,
+                            draw_points, total_rounds,
+                            forfeits_as_played)
+    if len(contribs) < 3:
+        return sum(c.value for c in contribs)
+    rest = _f24._apply_cuts_least(contribs, 1)
+    return sum(c.value for c in _f24._remove_max(rest))
+
+
+def fore_median2(player: PlayerTiebreakData,
+                 all_players: Mapping[int, PlayerTiebreakData],
+                 total_rounds: int, mode: str = "swiss",
+                 draw_points: float = 0.5,
+                 forfeits_as_played: bool = False,
+                 _pre: _Precomputed | None = None) -> float:
+    """FB-M2: Fore Buchholz, two least then two most (§§14.4 + 16.5.2).
+
+    MTB26 ``/M2`` combo on the FB base. <5 elements → uncut FB
+    (documented edge, mirrors BH-M2).
+    """
+    ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,
+                      _pre)
+    _validate_forfeits_flag(forfeits_as_played)
+    own_fb, adj = _fb_tables(ctx, dict(all_players), total_rounds)
+    contribs = _fb_contribs(player, ctx, own_fb, adj, mode,
+                            draw_points, total_rounds,
+                            forfeits_as_played)
+    if len(contribs) < 5:
+        return sum(c.value for c in contribs)
+    rest = _f24._apply_cuts_least(contribs, 2)
+    rest = _f24._remove_max(rest)
+    return sum(c.value for c in _f24._remove_max(rest))
+
+
 def median_buchholz_2(player: PlayerTiebreakData,
                       all_players: Mapping[int, PlayerTiebreakData],
                       total_rounds: int, mode: str = "swiss",
@@ -1041,6 +1090,57 @@ def aro_cut2(player: PlayerTiebreakData,
         sum(o.rating for o in rest) / len(rest)))
 
 
+def aro_median1(player: PlayerTiebreakData,
+                all_players: Mapping[int, PlayerTiebreakData],
+                total_rounds: int, mode: str = "swiss",
+                draw_points: float = 0.5,
+                forfeits_as_played: bool = False,
+                _pre: _Precomputed | None = None) -> float:
+    """ARO-M1 §14.3: exclude the lowest and highest opponent rating.
+
+    MTB26 ``/M1`` combo on the ARO base. VUR rounds contribute no
+    opponent rating, so cuts are plain (least then most, in that
+    order). Fewer than 3 rated OTB opponents → uncut ARO
+    (documented edge).
+    """
+    _validate_forfeits_flag(forfeits_as_played)
+    _use_pre(all_players, total_rounds, mode, draw_points, _pre)
+    opps = sorted((o.rating for o in
+                   _otb_rated_opponents(player, all_players)))
+    if len(opps) < 3:
+        if not opps:
+            return 0.0
+        return float(_f24._fide_round_half_up(
+            sum(opps) / len(opps)))
+    rest = opps[1:-1]
+    return float(_f24._fide_round_half_up(sum(rest) / len(rest)))
+
+
+def aro_median2(player: PlayerTiebreakData,
+                all_players: Mapping[int, PlayerTiebreakData],
+                total_rounds: int, mode: str = "swiss",
+                draw_points: float = 0.5,
+                forfeits_as_played: bool = False,
+                _pre: _Precomputed | None = None) -> float:
+    """ARO-M2 §14.4: exclude the two lowest and two highest ratings.
+
+    MTB26 ``/M2`` combo on the ARO base. Plain cuts (no VUR ratings
+    exist); keeps ≥1 element. Fewer than 5 rated OTB opponents →
+    uncut ARO (documented edge).
+    """
+    _validate_forfeits_flag(forfeits_as_played)
+    _use_pre(all_players, total_rounds, mode, draw_points, _pre)
+    opps = sorted((o.rating for o in
+                   _otb_rated_opponents(player, all_players)))
+    if len(opps) < 5:
+        if not opps:
+            return 0.0
+        return float(_f24._fide_round_half_up(
+            sum(opps) / len(opps)))
+    rest = opps[2:-2]
+    return float(_f24._fide_round_half_up(sum(rest) / len(rest)))
+
+
 def _tpr_core(games: List[Tuple[float, int]]) -> float:
     """Tournament performance from rated-OTB (score, opp rating) pairs."""
     if not games:
@@ -1170,11 +1270,15 @@ FIDE2026_IDS: Tuple[str, ...] = (
     "aro",
     "aro_cut1",
     "aro_cut2",
+    "aro_median1",
+    "aro_median2",
     "aob",
     "aob_fb",
     "fore_buchholz",
     "fore_buchholz_cut1",
     "fore_buchholz_cut2",
+    "fore_median1",
+    "fore_median2",
     "koya",
     "tpr",
     "ptp",
@@ -1202,11 +1306,15 @@ FIDE2026_REGISTRY = {
     "aro": average_rating_opponents,
     "aro_cut1": aro_cut1,
     "aro_cut2": aro_cut2,
+    "aro_median1": aro_median1,
+    "aro_median2": aro_median2,
     "aob": average_opponents_buchholz,
     "aob_fb": average_opponents_fore_buchholz,
     "fore_buchholz": fore_buchholz,
     "fore_buchholz_cut1": fore_buchholz_cut1,
     "fore_buchholz_cut2": fore_buchholz_cut2,
+    "fore_median1": fore_median1,
+    "fore_median2": fore_median2,
     "koya": koya,
     "tpr": tournament_performance,
     "ptp": perfect_performance,

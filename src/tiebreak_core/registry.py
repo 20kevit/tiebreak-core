@@ -73,6 +73,10 @@ TIEBREAK_FIDE_REF: Dict[str, str] = {
     "fore_buchholz_cut1": "C.07 §8.3+§14.1.1 FB-C1 (fide-2026)",
     "fore_buchholz_cut2": "C.07 §8.3+§14.2 FB-C2 (fide-2026)",
     "aob_fb": "C.07 §8.2 AOB over Fore BH (fide-2026)",
+    "fore_median1": "C.07 §8.3+§14.3 FB-M1 (fide-2026)",
+    "fore_median2": "C.07 §8.3+§14.4 FB-M2 (fide-2026)",
+    "aro_median1": "C.07 §10.1+§14.3 ARO-M1 (fide-2026)",
+    "aro_median2": "C.07 §10.1+§14.4 ARO-M2 (fide-2026)",
 }
 
 DEFAULT_CRITERIA: List[str] = [

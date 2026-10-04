@@ -527,6 +527,23 @@ class TestSbCutLocality:
             assert c1 == 4.0, ruleset
 
 
+    def test_aro_median_edges(self):
+        from tiebreak_core import calculate_strict
+        # Two rated OTB opps: M1 falls back to uncut ARO (documented).
+        pl = {1: P(1, 2000, 1.5, [(2, 1.0, "white", 1, "played"),
+                                   (3, 0.5, "black", 2, "played")]),
+              2: P(2, 1800, 0.0, [(1, 0.0, "black", 1, "played")]),
+              3: P(3, 1700, 0.5, [(1, 0.5, "white", 2, "played")])}
+        assert calculate_strict(pl[1], pl, "aro_median1", 2,
+                                ruleset="fide-2026") == 1750.0
+        assert calculate_strict(pl[1], pl, "aro_median2", 2,
+                                ruleset="fide-2026") == 1750.0
+        # No rated OTB opps: 0.0 (documented edge).
+        pl2 = {1: P(1, 2000, 0.0, [])}
+        assert calculate_strict(pl2[1], pl2, "aro_median1", 1,
+                                ruleset="fide-2026") == 0.0
+
+
 class TestCutCombosAndAobFb:
     """F26-2 MTB26 combos: SB-C2, ARO-C2, FB-C1/C2, AOB/FB.
 

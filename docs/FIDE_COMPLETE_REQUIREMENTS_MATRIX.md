@@ -15,8 +15,8 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | Q-BHC2 | §14.2+16.5.2 | BH-C2 (BH/C2) | 2024 + 2026 | Swiss | same | reapply | catalog | — | unit | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-BHM | §§14.3–14.4 | BH-M1/M2 (BH/M1/M2) | 2024 + 2026 | Swiss | same | order | catalog | — | unit + VERIFIED (2026 MEDIAN2) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-BHGEN | MTB26 /Cn /Mn | generic cuts/medians | 2026 | Swiss | n | machine | modifiers | — | — | SPECIFIED | core | P2 |
-| Q-AOB | §8.2 | AOB (+/F) | 2024 + 2026 | Swiss | opp BH | FB proj | catalog | TEC AOB | unit | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base, under caps; /F SPECIFIED) | core | P1 |
-| Q-FB | §8.3 | FB (+cuts/P) | 2024 + 2026 | Swiss | final pairing | draws | catalog | TEC FB | VERIFIED (2024) + unit (2026 caps+/P) | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base + C1/C2, under caps; /P flag; M-combos SPECIFIED) | core | P0 |
+| Q-AOB | §8.2 | AOB (+/F) | 2024 + 2026 | Swiss | opp BH | FB proj | catalog | TEC AOB | unit | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base + FB variant, under caps) | core | P1 |
+| Q-FB | §8.3 | FB (+cuts/P) | 2024 + 2026 | Swiss | final pairing | draws | catalog | TEC FB | VERIFIED (2024) + unit (2026 caps+/P) | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base + C1/C2/M1/M2, under caps; /P flag) | core | P0 |
 | Q-SB | §9.1 | SB | 2024 + 2026 | Swiss | opp finals × scores | 16.3/16.4 | catalog | Laxman 37.25 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-SBC1 | §14.1.1.d+16.5 | SB-C1 (SB/C1; +/C2 /P) | 2024 + 2026 | Swiss | +VUR | higher-of | catalog | — | unit + VERIFIED (2026 SB-C1) | 2024: IMPLEMENTED (C1) · 2026: IMPLEMENTED (C1, under caps; /P flag) | core | P0 |
 | Q-SBC2 | §14.2+16.5.2 | SB-C2 (SB/C2) | 2026 | Swiss | +VUR | reapply C1-cut | modifiers | — | unit (F26-2 hand-computed) | IMPLEMENTED (F26-2; reapplied-C1 reading, documented) | core | P1 |
@@ -25,7 +25,7 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | Q-TYPEB | §§7.1–7.4,7.6 | WIN/WON/BPG/BWG/REP | 2024 + 2026 | Swiss | games+kinds | OTB | catalog | TEC ch.7 | unit | 2024: IMPLEMENTED · 2026: IMPLEMENTED (Swiss + RR-mode §15.2 scope) | core | P1 |
 | Q-STD | §7.7 | STD | 2026 | standard scoring | sched-opp round scores (explicit or 1-½-0 complement) + draw value | draw-value | catalog | — | unit (F26-2 hand-computed) | IMPLEMENTED (F26-2; exotic tables BLOCKED U6) | core | P1 |
 | Q-TPN | §7.8 | TPN/R | 2026 | any | pairing nos | order | catalog | — | unit (terminal ordering) | IMPLEMENTED (ascending terminal; reverse consumer-side) | core+consumer | P2 |
-| Q-ARO | §10.1 | ARO (+/C1/C2/M1/M2) | 2024 + 2026 | Swiss | OTB ratings | half-up | catalog | — | unit | 2024: IMPLEMENTED (base+C1) · 2026: IMPLEMENTED (base+C1+C2; M1/M2 SPECIFIED) | core | P1 |
+| Q-ARO | §10.1 | ARO (+/C1/C2/M1/M2) | 2024 + 2026 | Swiss | OTB ratings | half-up | catalog | — | unit | 2024: IMPLEMENTED (base+C1) · 2026: IMPLEMENTED (base+C1+C2+M1+M2) | core | P1 |
 | Q-AOBFB | §8.2 (2026) | AOB/FB | 2026 | Swiss | opp FB | FB proj | diff D8 | — | unit (F26-2 hand-computed) | IMPLEMENTED (F26-2, additive id `aob_fb`) | core | P2 |
 | Q-TPR | §10.2+RR8.1a | TPR | 2024 + 2026 | Swiss | OTB frac | table | catalog | TEC TPR | VERIFIED (2024) + unit (2026 parity) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same sets) | core | P1 |
 | Q-PTP | §10.3+RR8.1b | PTP | 2024 + 2026 | Swiss | OTB scores | full scale | catalog | — | VERIFIED (2024) + unit (2026 parity) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same sets) | core | P1 |

@@ -47,7 +47,7 @@ cut exception); the behavior is the §6.1.1 forfeit-inclusion opt-in
 | REP | Rounds Elected to Play | 7.6 | — | fide-2024 | IMPLEMENTED |
 | STD | Standard Points | 7.7 | — | fide-2026 | IMPLEMENTED (standard scoring; exotic tables need score-model extension, U6) |
 | SB + /C1 /C2 /P (+ combos) | Sonneborn-Berger | 9.1 | C1 C2 P | fide-2024 (+SB-C1) + fide-2026 | IMPLEMENTED (C1, C2, /P flag) |
-| ARO + /C1 /C2 /M1 /M2 | Average Rating of Opponents | 10.1 | C1 C2 M1 M2 | fide-2024 (+C1) + fide-2026 | IMPLEMENTED (C1, C2); M1/M2 SPECIFIED |
+| ARO + /C1 /C2 /M1 /M2 | Average Rating of Opponents | 10.1 | C1 C2 M1 M2 | fide-2024 (+C1) + fide-2026 | IMPLEMENTED (C1, C2, M1, M2) |
 | TPR | Tournament Performance Rating | 10.2 | — | fide-2024 | IMPLEMENTED |
 | PTP | Perfect Tournament Performance | 10.3 | — | fide-2024 | IMPLEMENTED |
 | APRO | Avg TPR of Opponents | 10.4 | — | fide-2024 | IMPLEMENTED |
@@ -67,7 +67,7 @@ Codes `SB/P`, `SB/C1/P`, `SB/C2/P`, `ARO/C1…`, `ARO/M1…` are listed
 | TPN, TPN/R | 7.8 | — | R | IMPLEMENTED (ascending terminal under fide-2026; /R consumer-side) |
 | BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual BH/C1/C2/M1/M2; /P flag under fide-2026; /F-combos SPECIFIED) |
 | AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base + AOB/FB id `aob_fb` under fide-2026) |
-| FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB + C1/C2 + /P flag under fide-2026); M-combos SPECIFIED |
+| FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB + C1/C2/M1/M2 + /P flag under fide-2026) |
 | KS[:MP/:GP] + /Lx | 9.2 | MP GP | Lx | IMPLEMENTED (base); limits SPECIFIED |
 
 ## Table 3 — teams only
@@ -113,7 +113,7 @@ each ordered descriptor to a calculation request:
 ```text
 MTB26/TRF descriptor  →  consumer parsing  →  normalized core request  →  tiebreak-core
 "BH/C1/P"             →  base BH + Cut-1    →  criterion "buchholz_cut1" (+ forfeit-inclusion flag, live under fide-2026 since 0.7.0)
-"ARO/M2"              →  base ARO + Median-2 →  future parametric cut (SPECIFIED; today: UnsupportedCriterionError)
+"ARO/M2"              →  base ARO + Median-2 →  criterion "aro_median2" (fide-2026)
 "DE/P"                →  base DE + forfeit-inclusion → positional "direct_encounter" stage (Swiss default; regulations opt-in via the fide-2026 flag since 0.7.0)
 "OTHER_x"             →  NOT a FIDE criterion, never silently mapped; consumer resolves or the strict
                          core raises UnknownCriterionError on calculation request (legacy: frozen 0.0)

@@ -165,8 +165,10 @@ Cut-1 §14.1 (BH-C1/ARO-C1/PS-C1/SB-C1 + team-ESB variant §14.1.2),
 Cut-2 §14.2 (BH-C2), Median-1 §14.3, Median-2 §14.4, Limit §14.5
 (Koya threshold ±½ steps), all subject to Article 16. Generic
 modifier machinery beyond the named FIDE combinations is
-software convention (e.g. PS-C2, ARO-M1/M2 in echecsjs) —
-SPECIFIED at most, never presented as FIDE-defined.
+software convention (e.g. PS-C2 as two-lowest-cumulatives) —
+SPECIFIED at most, never presented as FIDE-defined. Named M1/M2
+combos (BH/FB/ARO) are implemented; arbitrary /Cn//Mn (n≥3) raise
+UnknownCriterionError.
 
 ## Non-FIDE / legacy ids (frozen, never extended)
 

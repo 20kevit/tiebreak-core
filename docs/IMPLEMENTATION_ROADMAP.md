@@ -26,10 +26,9 @@ criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 | N-RTNG | Rating order | §10.6 | fide-2026 | IMPLEMENTED (F26-1, descending terminal) | rating (have) | ranking key | unit | P2 |
 | N-PFLAG | Forfeit-inclusion opt-in (/P) | §6.1.1/MTB26 | fide-2026 | IMPLEMENTED (F26-1) | forfeits_as_played flag | BH/SB/FB/Koya/DE scope | unit | P1 |
 | N-AOBFB | AOB over Fore BH | §8.2 (2026) | fide-2026 | IMPLEMENTED (F26-2a, additive id `aob_fb`) | FB values | F-AOB/FB | unit | P2 |
-| N-C2COMBO | SB-C2/ARO-C2/FB-C1/FB-C2 | §§14.1–14.2 | fide-2026 | IMPLEMENTED (F26-2b; SB-C2 = reapplied C1-cut, documented; PS-C2 declined — no FIDE semantics) | cut helpers | F26-1 cuts | unit | P1 |
+| N-C2COMBO | SB-C2/ARO-C2/FB-C1/FB-C2 + FB-M1/M2/ARO-M1/M2 | §§14.1–14.4 | fide-2026 | IMPLEMENTED (F26-2b + hardening: SB-C2 = reapplied C1-cut, documented; PS-C2 declined — no FIDE semantics) | cut helpers | F26-1 cuts | unit + differential | P1 |
 | N-RRBAN | BH round-robin ban | Art 8 note | fide-2026 | SPECIFIED | coverage detect | docs/warn | docs | P2 |
-| N-AOBFB | AOB over Fore BH | §8.2 (2026) | fide-2026 | SPECIFIED | FB values | F-AOB/FB | unit | P2 |
-| N-KOYALIM | Koya limit ±½ | §14.5 | future | DEFERRED | param | F-KOYA | — | P3 |
+| N-KOYALIM | Koya limit ±½ | §14.5 | fide-2024 + fide-2026 | IMPLEMENTED (`koya_limit` offset; echecs-differentially validated) | param | F-KOYA | unit + differential | P1 |
 | N-OPT16.6 | Local Art-16 overrides | §16.6 | future | DEFERRED | competition regs | — | — | P3 |
 | X-TEAM | MP/GP/BC/TBR/BBE/ESB/EDE/SSSC | §§11–13 | — | OUT_OF_SCOPE | TeamMatch domain | new module | — | on demand |
 | X-PAIR | C.04 opposition eval | C.04 §§1.7–1.8 | — | CONSUMER_OWNED | snapshots | pairing-core | — | — |
