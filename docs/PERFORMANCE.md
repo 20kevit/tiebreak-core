@@ -30,10 +30,13 @@ classification/adjusted-score context built once per standings):
   adjusted-score precompute shared by all criteria, then the same
   linearithmic ranking. (Pre-fix prototype rebuilt the context per
   (player, criterion) — quadratic, ~1.6s at n=100; sharing gives ~80×.)
-- `fide2024.rank_standings` still rebuilds its context per
-  (player, criterion) — quadratic, acceptable at club sizes, known
-  limitation for 2000-player opens under `fide-2024` (identical
-  outputs; perf-only fix deferred, never a behavior change).
+- `fide2024.rank_standings` shared the per-(player, criterion)
+  rebuild until 0.9.x (quadratic: 1.3s at n=100, 35.7s at n=500).
+  Hardening release hoists one shared classification/adjusted-score
+  context per standings (same pure functions, additive `_pre`
+  plumbing, zero output change — proven by the unchanged suite +
+  corpus + 2024/2026 parity): 100→0.013s, 200→0.029s, 500→0.075s,
+  2000→~0.3s (`test_benchmark_2000_fide2024`, bound < 60s).
 - Fixed in 0.1.x: per-player `dict(players)` copy (O(n²) churn).
 
 ## Guidance

@@ -105,3 +105,18 @@ def test_benchmark_2000_fide2026():
     assert [p.rank for p in res.players] == list(range(1, 2001))
     assert res.rules_version == "fide-2026"
     assert elapsed < 60
+
+
+def test_benchmark_2000_fide2024():
+    from tiebreak_core import fide2024
+    players = _players_26(2000)
+    start = time.perf_counter()
+    res = fide2024.rank_standings(
+        players, ["buchholz_cut1", "buchholz", "sonneborn_berger",
+                  "progressive", "direct_encounter", "aro"], 7)
+    elapsed = time.perf_counter() - start
+    print(f"\nbenchmark fide-2024 n=2000: {elapsed:.3f}s")
+    assert len(res.players) == 2000
+    assert [p.rank for p in res.players] == list(range(1, 2001))
+    assert res.rules_version == "fide-2024"
+    assert elapsed < 60

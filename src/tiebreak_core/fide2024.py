@@ -298,6 +298,32 @@ def _adj_table(players: Mapping[int, PlayerTiebreakData],
     return {pid: adjusted_score(ctx[pid]) for pid in players}
 
 
+#: Precomputed shared context: (classified rounds, adjusted scores).
+_Precomputed = Tuple[Dict[int, List[ClassifiedRound]], Dict[int, float]]
+
+
+def _precompute(shared: Mapping[int, PlayerTiebreakData],
+                total_rounds: int) -> _Precomputed:
+    """Classify once + adjusted-score table once (shared hot path).
+
+    Pure refactor hook: identical results to per-call
+    ``_require_context`` + ``_adj_table``; ``rank_standings`` builds
+    it once so full-tournament ranking is linearithmic, not
+    quadratic. Direct ``calculate`` calls omit it (one precompute
+    per call, as before).
+    """
+    ctx = _require_context(shared, total_rounds)
+    return ctx, _adj_table(shared, ctx)
+
+
+def _use_pre(shared: Mapping[int, PlayerTiebreakData],
+             total_rounds: int,
+             _pre: _Precomputed | None) -> _Precomputed:
+    if _pre is not None:
+        return _pre
+    return _precompute(dict(shared), total_rounds)
+
+
 def validate_inputs(players: Mapping[int, PlayerTiebreakData],
                     total_rounds: int) -> None:
     """fide-2024 input gate (called by the strict path).
@@ -341,20 +367,20 @@ def validate_inputs(players: Mapping[int, PlayerTiebreakData],
 
 def buchholz(player: PlayerTiebreakData,
              all_players: Mapping[int, PlayerTiebreakData],
-             total_rounds: int) -> float:
+             total_rounds: int,
+             _pre: _Precomputed | None = None) -> float:
     """§8.1 with §§16.3–16.4. Exact sum (no rounding)."""
-    ctx = _require_context(all_players, total_rounds)
-    adj = _adj_table(all_players, ctx)
+    ctx, adj = _use_pre(all_players, total_rounds, _pre)
     return sum(c.value for c in _buchholz_contribs(
         player.points, ctx[player.player_id], adj))
 
 
 def buchholz_cut1(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
-                  total_rounds: int) -> float:
+                  total_rounds: int,
+                  _pre: _Precomputed | None = None) -> float:
     """BH-C1 §14.1.1.a with §16.5.1. Single score kept uncut (edge)."""
-    ctx = _require_context(all_players, total_rounds)
-    adj = _adj_table(all_players, ctx)
+    ctx, adj = _use_pre(all_players, total_rounds, _pre)
     contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj)
     if len(contribs) < 2:
         return sum(c.value for c in contribs)
@@ -364,10 +390,10 @@ def buchholz_cut1(player: PlayerTiebreakData,
 
 def buchholz_cut2(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
-                  total_rounds: int) -> float:
+                  total_rounds: int,
+                  _pre: _Precomputed | None = None) -> float:
     """BH-C2 §14.2 with §16.5.2 (exception reapplied). Keeps ≥1 element."""
-    ctx = _require_context(all_players, total_rounds)
-    adj = _adj_table(all_players, ctx)
+    ctx, adj = _use_pre(all_players, total_rounds, _pre)
     contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj)
     if len(contribs) < 2:
         return sum(c.value for c in contribs)
@@ -376,10 +402,10 @@ def buchholz_cut2(player: PlayerTiebreakData,
 
 def median_buchholz(player: PlayerTiebreakData,
                     all_players: Mapping[int, PlayerTiebreakData],
-                    total_rounds: int) -> float:
+                    total_rounds: int,
+                    _pre: _Precomputed | None = None) -> float:
     """BH-M1 §14.3 (least then most). <3 elements → full BH (edge)."""
-    ctx = _require_context(all_players, total_rounds)
-    adj = _adj_table(all_players, ctx)
+    ctx, adj = _use_pre(all_players, total_rounds, _pre)
     contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj)
     if len(contribs) < 3:
         return sum(c.value for c in contribs)
@@ -389,10 +415,10 @@ def median_buchholz(player: PlayerTiebreakData,
 
 def median_buchholz_2(player: PlayerTiebreakData,
                       all_players: Mapping[int, PlayerTiebreakData],
-                      total_rounds: int) -> float:
+                      total_rounds: int,
+                      _pre: _Precomputed | None = None) -> float:
     """BH-M2 §14.4 with §16.5.2. <5 elements → full BH (edge)."""
-    ctx = _require_context(all_players, total_rounds)
-    adj = _adj_table(all_players, ctx)
+    ctx, adj = _use_pre(all_players, total_rounds, _pre)
     contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj)
     if len(contribs) < 5:
         return sum(c.value for c in contribs)
@@ -403,25 +429,25 @@ def median_buchholz_2(player: PlayerTiebreakData,
 
 def sonneborn_berger(player: PlayerTiebreakData,
                      all_players: Mapping[int, PlayerTiebreakData],
-                     total_rounds: int) -> float:
+                     total_rounds: int,
+                     _pre: _Precomputed | None = None) -> float:
     """§9.1 with §§16.3–16.4. Exact sum (no rounding)."""
-    ctx = _require_context(all_players, total_rounds)
-    adj = _adj_table(all_players, ctx)
+    ctx, adj = _use_pre(all_players, total_rounds, _pre)
     return sum(c.value for c in _sb_contribs(
         player.points, ctx[player.player_id], adj))
 
 
 def sonneborn_berger_cut1(player: PlayerTiebreakData,
                           all_players: Mapping[int, PlayerTiebreakData],
-                          total_rounds: int) -> float:
+                          total_rounds: int,
+                          _pre: _Precomputed | None = None) -> float:
     """SB-C1 §14.1.1.d with §16.5.1 (cut higher of lowest-VUR/least).
 
     The §14.1.1.d candidate is the product of the opponent with the
     lowest opponent score (lowest product among those on ties) — not
     the least product overall.
     """
-    ctx = _require_context(all_players, total_rounds)
-    adj = _adj_table(all_players, ctx)
+    ctx, adj = _use_pre(all_players, total_rounds, _pre)
     elements = _sb_scored(player.points, ctx[player.player_id], adj)
     if len(elements) < 2:
         return sum(e.value for e in elements)
@@ -432,9 +458,10 @@ def sonneborn_berger_cut1(player: PlayerTiebreakData,
 
 def progressive(player: PlayerTiebreakData,
                 all_players: Mapping[int, PlayerTiebreakData],
-                total_rounds: int) -> float:
+                total_rounds: int,
+                _pre: _Precomputed | None = None) -> float:
     """§7.5 over all tournament rounds (gap-filled; absent carries)."""
-    ctx = _require_context(all_players, total_rounds)
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     by_round: Dict[int, float] = {}
     for r in ctx[player.player_id]:
         by_round[r.round_number] = by_round.get(r.round_number, 0.0) + r.score
@@ -447,9 +474,10 @@ def progressive(player: PlayerTiebreakData,
 
 def progressive_cut1(player: PlayerTiebreakData,
                      all_players: Mapping[int, PlayerTiebreakData],
-                     total_rounds: int) -> float:
+                     total_rounds: int,
+                     _pre: _Precomputed | None = None) -> float:
     """PS-C1 §14.1.1.c: exclude the score achieved after the first round."""
-    ctx = _require_context(all_players, total_rounds)
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     by_round: Dict[int, float] = {}
     for r in ctx[player.player_id]:
         by_round[r.round_number] = by_round.get(r.round_number, 0.0) + r.score
@@ -464,8 +492,10 @@ def progressive_cut1(player: PlayerTiebreakData,
 
 def _otb_opponents(player: PlayerTiebreakData,
                    all_players: Mapping[int, PlayerTiebreakData],
-                   total_rounds: int) -> List[PlayerTiebreakData]:
-    ctx = _require_context(all_players, total_rounds)
+                   total_rounds: int,
+                   _pre: _Precomputed | None = None
+                   ) -> List[PlayerTiebreakData]:
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     opps = []
     for r in ctx[player.player_id]:
         if r.kind == PLAYED and r.opponent_id in all_players:
@@ -475,35 +505,39 @@ def _otb_opponents(player: PlayerTiebreakData,
 
 def wins(player: PlayerTiebreakData,
          all_players: Mapping[int, PlayerTiebreakData],
-         total_rounds: int) -> float:
+         total_rounds: int,
+         _pre: _Precomputed | None = None) -> float:
     """WIN §7.1: rounds with win-points, with or without playing."""
-    ctx = _require_context(all_players, total_rounds)
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     return float(sum(1 for r in ctx[player.player_id] if r.score == 1.0))
 
 
 def won(player: PlayerTiebreakData,
         all_players: Mapping[int, PlayerTiebreakData],
-        total_rounds: int) -> float:
+        total_rounds: int,
+        _pre: _Precomputed | None = None) -> float:
     """WON §7.2: games won over the board."""
-    ctx = _require_context(all_players, total_rounds)
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     return float(sum(1 for r in ctx[player.player_id]
                      if r.kind == PLAYED and r.score == 1.0))
 
 
 def games_black(player: PlayerTiebreakData,
                 all_players: Mapping[int, PlayerTiebreakData],
-                total_rounds: int) -> float:
+                total_rounds: int,
+                _pre: _Precomputed | None = None) -> float:
     """BPG §7.3: games played over the board with black."""
-    _require_context(all_players, total_rounds)
+    _use_pre(all_players, total_rounds, _pre)
     return float(sum(1 for g in player.games
                      if normalize_kind(g) == PLAYED and g.color == "black"))
 
 
 def wins_black(player: PlayerTiebreakData,
                all_players: Mapping[int, PlayerTiebreakData],
-               total_rounds: int) -> float:
+               total_rounds: int,
+               _pre: _Precomputed | None = None) -> float:
     """BWG §7.4: games won over the board with black."""
-    _require_context(all_players, total_rounds)
+    _use_pre(all_players, total_rounds, _pre)
     return float(sum(1 for g in player.games
                      if normalize_kind(g) == PLAYED and g.color == "black"
                      and g.score == 1.0))
@@ -511,11 +545,12 @@ def wins_black(player: PlayerTiebreakData,
 
 def rounds_played_elected(player: PlayerTiebreakData,
                           all_players: Mapping[int, PlayerTiebreakData],
-                          total_rounds: int) -> float:
+                          total_rounds: int,
+                          _pre: _Precomputed | None = None) -> float:
     """REP §7.6: recorded non-absent rounds minus half/zero-byes and
     forfeit losses."""
     from tiebreak_core.models import ABSENT
-    ctx = _require_context(all_players, total_rounds)
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     rounds = [r for r in ctx[player.player_id] if r.kind != ABSENT]
     excluded = sum(1 for r in rounds if r.is_vur)
     return float(len(rounds) - excluded)
@@ -528,14 +563,16 @@ def _fide_round_half_up(value: float) -> int:
 
 def average_rating_opponents(player: PlayerTiebreakData,
                              all_players: Mapping[int, PlayerTiebreakData],
-                             total_rounds: int) -> float:
+                             total_rounds: int,
+                             _pre: _Precomputed | None = None) -> float:
     """ARO §10.1: average rating of OTB opponents, 0.5 rounded up.
 
     Opponents without a positive rating are excluded (callers must drop
     the criterion when unrated players are present without published
     handling rules — §10 intro). Empty set → 0.0 (documented edge).
     """
-    opps = [o for o in _otb_opponents(player, all_players, total_rounds)
+    opps = [o for o in _otb_opponents(player, all_players, total_rounds,
+                                      _pre)
             if o.rating > 0]
     if not opps:
         return 0.0
@@ -544,7 +581,8 @@ def average_rating_opponents(player: PlayerTiebreakData,
 
 def aro_cut1(player: PlayerTiebreakData,
              all_players: Mapping[int, PlayerTiebreakData],
-             total_rounds: int) -> float:
+             total_rounds: int,
+             _pre: _Precomputed | None = None) -> float:
     """ARO-C1 §14.1.1.b: exclude the lowest opponent rating.
 
     VUR rounds contribute no opponent rating, so the §16.5 exception has
@@ -552,11 +590,13 @@ def aro_cut1(player: PlayerTiebreakData,
     rated OTB opponents → uncut ARO (documented edge).
     """
     opps = sorted(
-        (o for o in _otb_opponents(player, all_players, total_rounds)
+        (o for o in _otb_opponents(player, all_players, total_rounds,
+                                   _pre)
          if o.rating > 0),
         key=lambda o: o.rating)
     if len(opps) < 2:
-        return average_rating_opponents(player, all_players, total_rounds)
+        return average_rating_opponents(player, all_players, total_rounds,
+                                        _pre)
     rest = opps[1:]
     return float(_fide_round_half_up(
         sum(o.rating for o in rest) / len(rest)))
@@ -564,14 +604,14 @@ def aro_cut1(player: PlayerTiebreakData,
 
 def average_opponents_buchholz(player: PlayerTiebreakData,
                                all_players: Mapping[int, PlayerTiebreakData],
-                               total_rounds: int) -> float:
+                               total_rounds: int,
+                               _pre: _Precomputed | None = None) -> float:
     """AOB §8.2: average of OTB opponents' (fide-2024) Buchholz.
 
     Exact average (no rounding — FIDE states none, and ranking sorts
     on this value; consumers format for display). Empty set → 0.0.
     """
-    ctx = _require_context(all_players, total_rounds)
-    adj = _adj_table(all_players, ctx)
+    ctx, adj = _use_pre(all_players, total_rounds, _pre)
     opp_ids = [r.opponent_id for r in ctx[player.player_id]
                if r.kind == PLAYED and r.opponent_id in all_players]
     if not opp_ids:
@@ -583,13 +623,14 @@ def average_opponents_buchholz(player: PlayerTiebreakData,
 
 def fore_buchholz(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
-                  total_rounds: int) -> float:
+                  total_rounds: int,
+                  _pre: _Precomputed | None = None) -> float:
     """FB §8.3: Buchholz with final-round *paired* games as draws.
 
     Unpaired final rounds (byes) keep their awarded points; Art.16
     applies on top, with the dummy rule using FB-adjusted own points.
     """
-    ctx = _require_context(all_players, total_rounds)
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     fb_points: Dict[int, float] = {}
     for pid, rounds in ctx.items():
         pts = 0.0
@@ -644,7 +685,8 @@ def _validate_koya_limit(koya_limit: float) -> float:
 
 def koya(player: PlayerTiebreakData,
          all_players: Mapping[int, PlayerTiebreakData],
-         total_rounds: int, koya_limit: float = 0.0) -> float:
+         total_rounds: int, koya_limit: float = 0.0,
+         _pre: _Precomputed | None = None) -> float:
     """KS §9.2: points vs opponents on ≥50% of the maximum possible.
 
     Maximum possible = total tournament rounds (1 pt/round). Koya is not
@@ -655,7 +697,7 @@ def koya(player: PlayerTiebreakData,
     ``koya_limit`` (§14.5, MTB26 ``/L``): threshold offset in
     half-points (positive = fewer contributors, negative = more).
     """
-    ctx = _require_context(all_players, total_rounds)
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     _validate_koya_limit(koya_limit)
     threshold = total_rounds / 2 + koya_limit
     total = 0.0
@@ -712,14 +754,15 @@ def _pd_for_rating(own: int, opp: int) -> float:
 
 def tournament_performance(player: PlayerTiebreakData,
                            all_players: Mapping[int, PlayerTiebreakData],
-                           total_rounds: int) -> float:
+                           total_rounds: int,
+                           _pre: _Precomputed | None = None) -> float:
     """TPR §10.2: rounded ARO + table rating difference.
 
     ARO here is the §10.1 quantity (0.5 rounded up); the fraction is
     points in rated OTB games over their count. No rated OTB games →
     0.0 (documented edge, consistent with ARO).
     """
-    _require_context(all_players, total_rounds)
+    _use_pre(all_players, total_rounds, _pre)
     games = _rated_otb_games(player, all_players)
     if not games:
         return 0.0
@@ -730,7 +773,8 @@ def tournament_performance(player: PlayerTiebreakData,
 
 def perfect_performance(player: PlayerTiebreakData,
                         all_players: Mapping[int, PlayerTiebreakData],
-                        total_rounds: int) -> float:
+                        total_rounds: int,
+                        _pre: _Precomputed | None = None) -> float:
     """PTP §10.3: lowest rating with expected score ≥ tournament score.
 
     Expected score sums §8.1b probabilities over rated OTB opponents;
@@ -741,7 +785,7 @@ def perfect_performance(player: PlayerTiebreakData,
     lowest rated opponent (per spec). No rated OTB games → 0.0.
     Found by binary search (expected score is monotone in rating).
     """
-    _require_context(all_players, total_rounds)
+    _use_pre(all_players, total_rounds, _pre)
     games = _rated_otb_games(player, all_players)
     if not games:
         return 0.0
@@ -767,32 +811,35 @@ def perfect_performance(player: PlayerTiebreakData,
 def _average_opponent_metric(
         player: PlayerTiebreakData,
         all_players: Mapping[int, PlayerTiebreakData],
-        total_rounds: int, metric) -> float:
+        total_rounds: int, metric,
+        _pre: _Precomputed | None = None) -> float:
     """Mean of ``metric`` over OTB opponents (§§10.4–10.5 shape)."""
-    ctx = _require_context(all_players, total_rounds)
+    ctx, _ = _use_pre(all_players, total_rounds, _pre)
     opps = [r.opponent_id for r in ctx[player.player_id]
             if r.kind == PLAYED and r.opponent_id in all_players]
     if not opps:
         return 0.0
-    vals = [metric(all_players[oid], all_players, total_rounds)
+    vals = [metric(all_players[oid], all_players, total_rounds, _pre)
             for oid in opps]
     return float(_fide_round_half_up(sum(vals) / len(vals)))
 
 
 def apro(player: PlayerTiebreakData,
          all_players: Mapping[int, PlayerTiebreakData],
-         total_rounds: int) -> float:
+         total_rounds: int,
+         _pre: _Precomputed | None = None) -> float:
     """APRO §10.4: average of OTB opponents' TPR, 0.5 rounded up."""
     return _average_opponent_metric(player, all_players, total_rounds,
-                                    tournament_performance)
+                                    tournament_performance, _pre)
 
 
 def appo(player: PlayerTiebreakData,
          all_players: Mapping[int, PlayerTiebreakData],
-         total_rounds: int) -> float:
+         total_rounds: int,
+         _pre: _Precomputed | None = None) -> float:
     """APPO §10.5: average of OTB opponents' PTP, 0.5 rounded up."""
     return _average_opponent_metric(player, all_players, total_rounds,
-                                    perfect_performance)
+                                    perfect_performance, _pre)
 
 
 # ------------------------------------------------------------------
@@ -977,18 +1024,20 @@ def require_supported(criterion: str) -> None:
 def calculate(player: PlayerTiebreakData,
               all_players: Mapping[int, PlayerTiebreakData],
               criterion: str, total_rounds: int,
-              koya_limit: float = 0.0) -> float:
+              koya_limit: float = 0.0,
+              _pre: _Precomputed | None = None) -> float:
     """Single fide-2024 calculation (validated upstream by strict)."""
     require_supported(criterion)
     if criterion == "koya":
-        return koya(player, dict(all_players), total_rounds, koya_limit)
+        return koya(player, dict(all_players), total_rounds, koya_limit,
+                    _pre)
     if koya_limit != 0.0:
         from tiebreak_core.errors import InvalidPlayerDataError
         raise InvalidPlayerDataError(
             f"koya_limit applies to the koya criterion only, got "
             f"criterion {criterion!r}")
     return FIDE2024_REGISTRY[criterion](player, dict(all_players),
-                                        total_rounds)
+                                        total_rounds, _pre)
 
 
 def calculate_all(player: PlayerTiebreakData,
@@ -996,8 +1045,10 @@ def calculate_all(player: PlayerTiebreakData,
                   criteria: Sequence[str], total_rounds: int,
                   koya_limit: float = 0.0) -> Dict[str, float]:
     """Multi-criterion fide-2024 calculation."""
-    return {c: calculate(player, all_players, c, total_rounds,
-                         koya_limit)
+    shared = dict(all_players)
+    pre = _precompute(shared, total_rounds)
+    return {c: calculate(player, shared, c, total_rounds,
+                         koya_limit, pre)
             for c in criteria}
 
 
@@ -1021,9 +1072,10 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
                          key=lambda pid: keys.get(pid, pid))
     scalar = [c for c in criteria if c in FIDE2024_REGISTRY]
     shared = dict(players)
+    pre = _precompute(shared, total_rounds)
     values: Dict[int, Dict[str, float]] = {
         pid: {c: calculate(shared[pid], shared, c, total_rounds,
-                           koya_limit)
+                           koya_limit, pre)
               for c in scalar}
         for pid in ordered_ids
     }
