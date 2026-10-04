@@ -583,7 +583,8 @@
    "source": "FIDE Arbiters Manual 2026, C.07 worked examples pp.258-259 (Laxman, 1st SOA International Grandmasters 2024); 2024 rule text: FIDE Council 2024_FC2_18",
    "source_grade": "PRIMARY",
    "status": "VERIFIED",
-   "total_rounds": 10
+   "total_rounds": 10,
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 9.1, 14.1.1, 16.4.2 (March-2026 caps)",
@@ -1168,7 +1169,8 @@
      "buchholz_cut1": 50.0,
      "sonneborn_berger": 37.25
     }
-   }
+   },
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 16.3–16.4 (forfeit-win dummy)",
@@ -1765,7 +1767,8 @@
    "source": "FIDE Arbiters Manual 2026, C.07 worked examples p.259 (Example 01, OLD column)",
    "source_grade": "PRIMARY",
    "status": "VERIFIED",
-   "total_rounds": 9
+   "total_rounds": 9,
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 16.4.1 (forfeit dummy capped at scheduled-opponent adjusted score)",
@@ -2362,7 +2365,8 @@
     "1": {
      "buchholz": 49.5
     }
-   }
+   },
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 16.3–16.4 (forfeit loss + withdrawal)",
@@ -3023,7 +3027,8 @@
    "source": "FIDE Arbiters Manual 2026, C.07 worked examples p.260 (Example 03, OLD column)",
    "source_grade": "PRIMARY",
    "status": "VERIFIED",
-   "total_rounds": 10
+   "total_rounds": 10,
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 16.4.1–16.4.2 (forfeit-loss cap + withdrawal cap)",
@@ -3684,7 +3689,8 @@
     "1": {
      "buchholz": 63.0
     }
-   }
+   },
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 16.3–16.4 (round-1 forfeit win, scheduled opponent excluded)",
@@ -4455,7 +4461,8 @@
    "source": "FIDE Arbiters Manual 2026, C.07 worked examples p.260 (Example 04, OLD column)",
    "source_grade": "PRIMARY",
    "status": "VERIFIED",
-   "total_rounds": 10
+   "total_rounds": 10,
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 16.4.1 (forfeit dummy capped at excluded opponent 0 + 9 half-points)",
@@ -5226,7 +5233,8 @@
     "1": {
      "buchholz": 69.0
     }
-   }
+   },
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 16.5.1 (VUR-preferential cut; TEC cross-check)",
@@ -5441,7 +5449,8 @@
    "source": "FIDE TEC Tie-Break Exercises V01-1 (tec.fide.com, 2024-04-16), Example 06",
    "source_grade": "PRIMARY",
    "status": "VERIFIED",
-   "total_rounds": 5
+   "total_rounds": 5,
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   },
   {
    "article": "C.07 §§8.1, 14.1–14.4, 16.5 (VUR-preferential cuts)",
@@ -5656,7 +5665,8 @@
     "4": {
      "buchholz_cut1": 11.5
     }
-   }
+   },
+   "evidence": "OFFICIAL_PRINTED_VALUE"
   }
  ],
  "version": 1

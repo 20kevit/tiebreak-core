@@ -223,7 +223,8 @@
           "tpr": 2106.0,
           "ptp": 2133.0
         }
-      }
+      },
+      "evidence": "OFFICIAL_DEFINITION_DERIVED"
     },
     {
       "id": "TEC-KOYA-RR-6",
@@ -534,7 +535,8 @@
             }
           ]
         }
-      }
+      },
+      "evidence": "OFFICIAL_PRINTED_VALUE"
     },
     {
       "id": "TEC-TPR-ARO-4",
@@ -797,7 +799,8 @@
           "points": 0.0,
           "games": []
         }
-      }
+      },
+      "evidence": "OFFICIAL_PRINTED_VALUE"
     }
   ]
 }

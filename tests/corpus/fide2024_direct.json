@@ -122,7 +122,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "evidence": "OFFICIAL_DEFINITION_DERIVED"
     },
     {
       "id": "FIDE2024-DE-CERTAINTY",
@@ -262,7 +263,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "evidence": "OFFICIAL_DEFINITION_DERIVED"
     }
   ]
 }

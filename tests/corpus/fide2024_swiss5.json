@@ -302,7 +302,8 @@
           "wins_black": 0.0,
           "rounds_elected": 3.0
         }
-      }
+      },
+      "evidence": "OFFICIAL_DEFINITION_DERIVED"
     },
     {
       "id": "TEC-SB-C1-STEPHAN-MARIA",
@@ -739,7 +740,8 @@
           "points": 0.0,
           "games": []
         }
-      }
+      },
+      "evidence": "OFFICIAL_PRINTED_VALUE"
     },
     {
       "id": "TEC-AOB-FULL-16",
@@ -1670,7 +1672,8 @@
             }
           ]
         }
-      }
+      },
+      "evidence": "OFFICIAL_PRINTED_VALUE"
     }
   ]
 }
