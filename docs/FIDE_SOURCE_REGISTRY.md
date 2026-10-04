@@ -28,6 +28,7 @@ Handbook was unreachable, the covering official PDF/manual is named.
 | SRC-TRF26 | TRF26 Format v2026 (C.02 Annexure A) | 12/05/2025 | 01/09/2025 | C.02 Annexure A (638-line extraction per repo docs) | PRIMARY official format | Fields 202/212 (MTB26 order), 192 (regime), 001/round fields, 013 (scoring table) — consumer-side parser | CROSS-CHECKED |
 | SRC-MTB26 | MTB26 mandatory tie-break program table (Handbook version governs) | 2025 | 2026 | Handbook MTB26 chapter (141-line draft extraction cross-checked; STD 7.7 / TPN 7.8 / RTNG 10.6 rows verified present) | PRIMARY official table | Modifier/code inventory (`FIDE_MTB26_CATALOG.md`); `OTHER_*` rule | CROSS-CHECKED |
 | SRC-SEC-IMPL | @echecs/* (MIT TS), chesspairings.org guide, Lichess WC Blitz analysis | — | — | public web | SECONDARY, non-authoritative | Trim direction, SB-cut pointers, ambiguity context only | UNVERIFIED (by design; never normative) |
+| SRC-C07-TEAM-IDX | FIDE Handbook C.07 Mar-2026 indexed text, team chapters (§§11–13, MTB26 Table 3) | 02/02/2026 | 01/03/2026 | handbook.fide.com chapter excerpts (search-index retrieval, Oct-2026 session) | Official text excerpts: §12 intro (forfeit/PAB), §§12.1–12.3 wordings, §§13.1/13.2.1–4/13.3.1–2/13.4, §14.1.2, MTB26 variant grid | Team formulas in `tiebreak_core.team` (PRIMARY_NORMATIVE sites); unretrieved edges stay PROJECT_DERIVED | CROSS-CHECKED (excerpts verbatim; full-chapter fetch still times out — see live-endpoint note) |
 
 ## Live-endpoint limitations (recorded, not worked around by invention)
 

@@ -12,6 +12,13 @@ Zero runtime dependencies, stdlib only, Python `>=3.10`, MIT.
   `docs/VERSIONING.md`, `docs/FIDE_2026_DIFF.md`).
 - Reference: FIDE Handbook C.07 (see `docs/TIEBREAK_RULES.md`,
   `docs/FIDE_SOURCES.md`).
+- Generic modifiers: any valid MTB26 descriptor (`BH/C3`, `ARO/M2`,
+  `KS/L+1`, `SB/C2/P`, `TPN/R`) via `calculate_descriptor` /
+  `rank_descriptors` (`tiebreak_core.modifiers`).
+- Team tournaments: full C.07 §§11–13 (`MP/GP`, `BC/TBR/BBE`,
+  `MPvGP`, `EMMSB/EMGSB/EGMSB/EGGSB`, `EDE` + chains, `SSSC`,
+  `:MP/:GP` refs) via `calculate_team` / `rank_team_standings`
+  (`tiebreak_core.team`).
 - Relationship: `chess-manager → tiebreak-core ← pairing-core callers`
   (narrow scalar/vector data only — `pairing-core` does NOT depend on
   `tiebreak-core`; see `docs/COMPATIBILITY.md`).

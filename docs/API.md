@@ -43,6 +43,57 @@ caller (see ADAPTER_CHESS_MANAGER.md).
 version strings; historical reproducibility is guaranteed by pinning the
 version with stored results.
 
+## Generic modifiers (1.1.0, fide-2026)
+
+```python
+from tiebreak_core import (
+    parse_descriptor, canonical_id,           # MTB26 grammar -> ModifierSpec
+    calculate_descriptor, rank_descriptors,   # individual scope
+    InvalidDescriptorError,
+)
+calculate_descriptor(player, players, "BH/C3", total_rounds=9) -> float
+rank_descriptors(players, ["BH/C1", "SB/C1", "DE", "TPN/R"], total_rounds=9,
+                 pairing_numbers={...}) -> StandingsResult
+```
+
+`/P` enables forfeit inclusion, `/L±n` sets the Koya limit in
+half-points, `/R` reverses terminal direction. n=1/2 delegate to the
+named ids (equivalence-pinned); FIDE-undefined combos raise
+`InvalidDescriptorError`. Strict wrappers:
+`calculate_descriptor_strict` / `rank_descriptors_strict`.
+
+## Team domain (1.1.0, C.07 §§11–13)
+
+```python
+from tiebreak_core import (
+    TeamMatch, TeamRecord, TeamFormat,         # inputs
+    calculate_team, rank_team_standings,      # team scope
+    validate_team, validate_teams,
+)
+teams = {1: TeamRecord(1, mp=5.0, gp=9.5, matches=[...],
+                       board_points=(3.5, 2.5, 2.0, 1.5))}
+rank_team_standings(teams, ["EMMSB", "EDE", "BC"], total_rounds=3,
+                    fmt=TeamFormat()) -> TeamStandingsResult
+```
+
+Primary MP/GP orders first (default MP, the FIDE default); BC splits
+ascending (lower wins); TBR/BBE split by reapplication keys; EDE and
+§13.3.2 chains are group stages. Strict wrappers:
+`calculate_team_strict` / `rank_teams_strict`.
+
+## Policy / scoring models (1.1.0)
+
+```python
+from tiebreak_core import (
+    Article16Policy, resolve_policy,          # §16.6 overrides
+    ScoringScheme, STANDARD,                  # point tables
+)
+resolve_policy("fide-2026", mode="round_robin") -> Article16Policy
+```
+
+Policies record validated §16.6 overrides (engine defaults unchanged);
+exotic scoring tables cross the boundary as explicit per-round inputs.
+
 ## Strict path (additive, Phase 0)
 
 ```python

@@ -9,6 +9,44 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [1.1.0] — 2026-10-04
+
+Additive minor: generic MTB26 modifier engine, team domain, Article-16
+policy and scoring-scheme models. No published ruleset output changes
+(proven by the untouched frozen suites + named-equivalence tests).
+
+Added:
+
+- `tiebreak_core.modifiers`: MTB26 descriptor grammar
+  (`Name[:MP|:GP][/Cn][/Mn][/L±n][/Kx][/P][/F][/R]`) with typed
+  `InvalidDescriptorError` rejection of FIDE-undefined combos;
+  generic /Cn /Mn calculators (BH/SB/ARO/FB families, PS/Cn as
+  round-exclusion generalising §14.1.1.c); `/P` → forfeit inclusion,
+  `/L±n` → Koya half-point limits, `/R` → terminal reversal in
+  `rank_descriptors`. n=1/2 delegate to the named ids
+  (equivalence-pinned); `fide-2024` keeps named ids only.
+- `tiebreak_core.team`: team domain beside (not inside) `GameRecord` —
+  `TeamMatch`/`TeamRecord`/`TeamFormat`; MP/GP (§11), BC/TBR/BBE
+  (§12), MPvGP/ESB×4/EDE+chains/SSSC (§13), ESB-C1/C2 (§14.1.2),
+  Table-2 reuse on :MP/:GP refs (§13 blanket rule), staged
+  `rank_team_standings` (BC ascending, TBR/BBE reapplication keys,
+  pair-only §13.3.2 chains). Tests are definition-derived hand
+  calculations (no official team example retrieved — never labelled
+  official); unretrieved edges are documented PROJECT_DERIVED
+  interpretations.
+- `tiebreak_core.article16`: `Article16Policy` value object +
+  `resolve_policy` (§16.6 overrides recorded/validated; engine
+  defaults unchanged).
+- `tiebreak_core.scoring`: `ScoringScheme` model + explicit-input
+  rule for exotic tables.
+- Strict wrappers: `calculate_descriptor_strict`,
+  `rank_descriptors_strict`, `calculate_team_strict`,
+  `rank_teams_strict`.
+
+Suite: 639 passed (503 pre-existing untouched + 136 new), 66 skipped.
+Benchmarks added: descriptor-heavy ranking (n=500) + team ranking
+(n=200). No FIDE approval/acceptance claimed.
+
 ## [1.0.0] — 2026-10-04
 
 First stable release: complete individual-tournament tie-break core

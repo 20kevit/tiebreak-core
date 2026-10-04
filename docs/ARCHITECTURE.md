@@ -34,6 +34,15 @@ contract: `docs/DOMAIN_MODEL.md`. Missing-data policy: ADR-004.
 - Legacy surface: frozen lenient functions (compatibility).
 - Strict surface (`tiebreak_core.strict`): validated, typed errors,
   explicit `ruleset=`, delegation-guaranteed identical values.
+- Modifier engine (`tiebreak_core.modifiers`, 1.1.0): MTB26 descriptor
+  parsing + generic /Cn /Mn /L /P /F /R semantics over the fide-2026
+  engine; named n=1/2 delegate (one code path per semantic).
+- Team domain (`tiebreak_core.team`, 1.1.0): TeamMatch/TeamRecord/
+  TeamFormat + §§11–13 calculators + staged team ranking. Shares only
+  error types and the descriptor grammar with the individual side —
+  never the `GameRecord` model.
+- Policy/scoring (`article16.py`, `scoring.py`, 1.1.0): `Article16Policy`
+  value object (§16.6 overrides) + `ScoringScheme` model.
 - Registry: stable ids + controlled extension (ADR-005).
 - Rulesets: explicit versioned behavior pins (ADR-001).
 - Presentation (`display.py`): strictly outside the calculation path.

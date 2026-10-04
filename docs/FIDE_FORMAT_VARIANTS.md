@@ -6,7 +6,7 @@ Full C.07 Arts 6–10 + 14 + 16. Unplayed: Art 16 (categories, adjusted,
 dummy+caps, VUR cuts). DE §§6.1–6.3 with certainty rule. BH-family
 allowed (2026 RR-ban does not touch Swiss). Rating TBs drop with
 unrateds unless pre-published handling. `fide-2024` implements this;
-`fide-2026` specified. Status: IMPLEMENTED/SPECIFIED.
+`fide-2026` implemented. Status: IMPLEMENTED.
 
 ## Round-robin (individual)
 
@@ -17,9 +17,9 @@ unrateds unless pre-published handling. `fide-2024` implements this;
   forfeit losses excluded from Type-B counts (D12). No dummy rule
   (Art 16 is Swiss-only). Koya is RR-scoped (§9.2). DE: full meeting
   expected; §6.3 certainty inapplicable; forfeit inclusion still
-  needs the §6.1.1 opt-in text. Status: SPECIFIED (RR mode flag is
-  P1; no RR engine yet — correct, since Swiss is the implemented
-  scope).
+needs the §6.1.1 opt-in text. Status: IMPLEMENTED (RR mode flag +
+`/P` opt-in; BH-ban documented-not-enforced; Koya scope gating stays
+caller-side).
 
 ## Pre-determined pairings (generalisation of RR rule)
 
@@ -29,14 +29,15 @@ unrateds unless pre-published handling. `fide-2024` implements this;
 
 Arts 11–13 + 16 (team reading: "points" = MP and GP). MP/GP
 primitives; ESB/EDE/SSSC/MPvGP; BC/TBR/BBE knockout codes;
-2026 EDE chains. Unplayed-team-round handling per 16.x team notes.
-Status: OUT_OF_SCOPE (TeamMatch domain).
+2026 EDE chains. Unplayed-team-round handling per the documented
+PROJECT_DERIVED readings in `tiebreak_core.team`.
+Status: IMPLEMENTED (1.1.0 `tiebreak_core.team`).
 
 ## Team knockout (tied MP and GP)
 
 §12 codes only (BC/TBR/BBE), forfeit wins/losses = standard,
 PAB = standard-win GP per board (§12 intro). Invoked via §13.3.2
-chains. Status: OUT_OF_SCOPE.
+chains. Status: IMPLEMENTED (1.1.0 team module).
 
 ## Knockout/elimination (individual)
 
@@ -50,7 +51,8 @@ No separate formulas (WRBC: BH-C1→BH→AROC1→DE→lots, all "as
 described in C.07"). Alternative scoring (3-1-0 etc.) is bridged by
 STD (§7.7); TRF26 record 013 carries the event scoring table
 (W/D/L/A/P/X + points). Armageddon decides matches, never feeds
-tie-break inputs. Status: STD SPECIFIED; rest CONSUMER_OWNED.
+tie-break inputs. Status: STD IMPLEMENTED (standard scope);
+rest CONSUMER_OWNED.
 
 ## Pairing-time (C.04, not standings)
 

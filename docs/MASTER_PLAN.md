@@ -23,11 +23,16 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 
 - `fide-2026` calculations: IMPLEMENTED (0.7.0/0.8.0, corrected
   0.9.0: SB-C1/C2 opponent-score cut, full-point-bye classification,
-  exact AOB/AOB-FB). Remaining
-  SPECIFIED surface: generic /Cn /Mn machine, Koya limits §14.5,
-  exotic-scoring STD (U6), team module (on demand), Art.16.6
-  overrides. Full domain specification: `docs/FIDE_TIEBREAK_MASTER_SPEC.md`
-  + companions, verified 2024→2026 diff, 21-case VERIFIED corpus.
+  exact AOB/AOB-FB). Remaining SPECIFIED surface: exotic-scoring
+  STD without explicit scores (U6, typed error), Art.16.6
+  competition-specific engine behavior beyond the `Article16Policy`
+  value object. Full domain specification:
+  `docs/FIDE_TIEBREAK_MASTER_SPEC.md` + companions, verified
+  2024→2026 diff, 21-case VERIFIED corpus.
+- 1.1.0 closed the rest: generic /Cn /Mn machine
+  (`tiebreak_core.modifiers`), Koya limits also for team KS,
+  team module (`tiebreak_core.team`), /R reversal, `Article16Policy`,
+  `ScoringScheme`.
 - Direct Encounter: standings-level stub under legacy (frozen);
   group stage under fide-2024/fide-2026.
 - Rating-based family complete under fide-2024 AND fide-2026
@@ -44,11 +49,11 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 | BH / C1 / C2 / M1 | legacy ✓ + fide-2024 ✓ (Art.16) | done |
 | M2 | ✓ (additive) + fide-2024 ✓ | done |
 | SB / PS / Wins / B-family | legacy ✓ + fide-2024 ✓ (cuts, OTB) | done |
-| DE | legacy stub + fide-2024 group stage ✓ | done (team EDE future) |
+| DE | legacy stub + fide-2024 group stage ✓ | done (+ team EDE 1.1.0) |
 | Koya | legacy (Swiss-applied) + fide-2024 (max-possible threshold) | done (RR-gating documented) |
 | ARO / ARPO | legacy (simplified dp, frozen); fide-2024 ARO/ARO-C1 ✓ | TPR family done (TPR/PTP/APRO/APPO ✓) |
 | Art.16 taxonomy | ✓ input foundation | done (engine done) |
-| TPR/PTP/APPO/RTNG/AOB/FB | AOB/FB/TPR/PTP/APRO/APPO ✓ | RTNG + team systems deferred w/ rationale |
+| TPR/PTP/APPO/RTNG/AOB/FB | AOB/FB/TPR/PTP/APRO/APPO ✓ | RTNG ✓ + team systems ✓ (1.1.0) |
 
 ## Release strategy
 

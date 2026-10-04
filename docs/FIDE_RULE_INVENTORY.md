@@ -22,8 +22,8 @@ ids from `FIDE_CRITERIA_CATALOG.md`. `Status` is per §15 of the mission
 | R-BWG | C.07 §7.4 | OTB wins with Black | wins_black | 2024, 2026 | IMPLEMENTED (fide-2024) |
 | R-PS | C.07 §7.5 | Σ cumulative scores (gap-filled) | progressive | all | IMPLEMENTED |
 | R-REP | C.07 §7.6 | Rounds − HPB/ZPB/forfeit losses | rounds_elected | 2024, 2026 | IMPLEMENTED (fide-2024) |
-| R-STD | C.07 §7.7 (2026) | Outscore/equal scheduled opponent (+draw-value unplayed) | std | 2026 | SPECIFIED (needs opp round scores) |
-| R-TPN | C.07 §7.8 (2026) | Final pairing-number order (asc, or desc if regulated) | tpn | 2026 | SPECIFIED (needs pairing nos) |
+| R-STD | C.07 §7.7 (2026) | Outscore/equal scheduled opponent (+draw-value unplayed) | std | 2026 | IMPLEMENTED (standard scope; exotic tables need explicit opp scores — typed error) |
+| R-TPN | C.07 §7.8 (2026) | Final pairing-number order (asc, or desc if regulated) | tpn | 2026 | IMPLEMENTED (terminal stage; /R reversal in rank_descriptors) |
 | R-BH | C.07 §8.1 | Σ opponent final adjusted scores + §16.4 dummies | buchholz | all | IMPLEMENTED |
 | R-RRBAN | C.07 Art 8 note (2026) | BH-family must not be used in round-robins | bh/aob/fb | 2026 | SPECIFIED (document; warn, don't hard-enforce) |
 | R-AOB | C.07 §8.2 | Mean of OTB opponents' BH (2026: or FB) | aob | 2024, 2026 | IMPLEMENTED (BH-based) |
@@ -37,21 +37,21 @@ ids from `FIDE_CRITERIA_CATALOG.md`. `Status` is per §15 of the mission
 | R-PTP | C.07 §10.3 + RR §8.1b | Lowest rating with ΣPD ≥ OTB score; 0 → −800; full scale | ptp | 2024, 2026 | IMPLEMENTED |
 | R-APRO | C.07 §10.4 | Mean opp TPR, half-up int | apro | 2024, 2026 | IMPLEMENTED |
 | R-APPO | C.07 §10.5 | Mean opp PTP, half-up int | appo | 2024, 2026 | IMPLEMENTED |
-| R-RTNG | C.07 §10.6 (2026) | Rating order (desc, or asc if regulated) | rtng | 2026 | SPECIFIED (terminal; consumer key) |
-| R-TEAM-* | C.07 §§11–13 | MP/GP, BC/TBR/BBE, MPvGP, ESB×4, EDE+chains, SSSC | team_* | all | OUT_OF_SCOPE (needs TeamMatch domain) |
-| R-CUT1 | C.07 §14.1.1 | BH-C1/ARO-C1/PS-C1/SB-C1 value cuts (+team §14.1.2) | *_cut1 | 2024, 2026 | IMPLEMENTED (individual) |
+| R-RTNG | C.07 §10.6 (2026) | Rating order (desc, or asc if regulated) | rtng | 2026 | IMPLEMENTED (terminal stage; /R reversal in rank_descriptors) |
+| R-TEAM-* | C.07 §§11–13 | MP/GP, BC/TBR/BBE, MPvGP, ESB×4, EDE+chains, SSSC | team_* | all | IMPLEMENTED (1.1.0 team module; definition-derived tests) |
+| R-CUT1 | C.07 §14.1.1 | BH-C1/ARO-C1/PS-C1/SB-C1 value cuts (+team §14.1.2) | *_cut1 | 2024, 2026 | IMPLEMENTED (individual + team ESB-C1) |
 | R-CUT2 | C.07 §14.2 | Two least-significant cuts (BH-C2 named) | buchholz_cut2 | all | IMPLEMENTED |
 | R-MED1/2 | C.07 §§14.3–14.4 | Least(+most) cuts in order | median_* | all | IMPLEMENTED |
-| R-LIMIT | C.07 §14.5 | Koya limit ±½ steps | koya variants | all | DEFERRED (generic limit machinery) |
+| R-LIMIT | C.07 §14.5 | Koya limit ±½ steps | koya variants | all | IMPLEMENTED (koya_limit halves + /L descriptors, individual + team) |
 | R-RR-FORFEIT | C.07 §15.2 (2024) | Pre-determined: forfeits = regular games | RR mode | 2024 | DEFERRED (no RR mode) |
 | R-RR-FORFEIT26 | C.07 §15.2 (2026) | …except forfeits in §10, forfeit losses in Type B | RR mode | 2026 | SPECIFIED (RR mode rule) |
 | R-VUR | C.07 §16.1.2 | VUR = requested bye or forfeit loss | all cuts | 2023→ | IMPLEMENTED |
 | R-CAT | C.07 §16.2.1–16.2.5 | Five unplayed categories (positional early/late split) | art16 | 2023→ | IMPLEMENTED |
 | R-ADJ | C.07 §16.3 | Opponent-side: .1–.4 face value, .5 as draws | bh/sb/ko | 2023→ | IMPLEMENTED |
 | R-DUMMY24 | C.07 §16.4 (2024) | Dummy finishes on own score, uncapped | bh/sb | 2024 | IMPLEMENTED |
-| R-DUMMY26 | C.07 §16.4.1–16.4.2 (2026) | Dummy ≤ scheduled-opp adjusted (forfeits) / ≤ draw×rounds (rest) | bh/sb | 2026 | SPECIFIED (fide-2026 core) |
+| R-DUMMY26 | C.07 §16.4.1–16.4.2 (2026) | Dummy ≤ scheduled-opp adjusted (forfeits) / ≤ draw×rounds (rest) | bh/sb | 2026 | IMPLEMENTED (fide-2026 core) |
 | R-VURCUT | C.07 §16.5.1–16.5.2 | Cut lowest VUR contribution (SB: higher-of), reapplied | cuts | 2023→ | IMPLEMENTED |
-| R-OPT OUT | C.07 §16.6 | Pre-announced alternatives to 16.3–16.5 | art16 | all | DEFERRED (no competition-reg input contract) |
+| R-OPT OUT | C.07 §16.6 | Pre-announced alternatives to 16.3–16.5 | art16 | all | PARTIALLY_IMPLEMENTED (Article16Policy value object + resolve_policy records/validates overrides; engine defaults unchanged) |
 | R-ETT192 | ETT26 (C.02.03 Annex C) + TRF26-192 | 192 code → format regime (Swiss→Art16; predetermined→§15.2; team→§§11–13 codes; KO→Art3/§12; CUSTOM_*→explicit OTHER_ mapping, never inferred) | ETT26 | SPECIFIED (consumer-owned lookup; core receives normalized mode) |
 | R-PAIR-BH/SB | C.04 Basic Rules §§1.7–1.8 | Pairing-time BH/SB on CURRENT scores + self-game + accel exclusion; bracket order BH→SB→TPN | pairing | 2026 | CONSUMER_OWNED (pairing-core, not this lib) |
 | R-NORM-TPR | B.01 §§1.4.6–1.4.9 | Norm Rp: floors, imputed 1400, 35% min — NOT tiebreak TPR | — | all | OUT_OF_SCOPE (documented warning) |

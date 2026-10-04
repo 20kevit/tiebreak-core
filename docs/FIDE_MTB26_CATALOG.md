@@ -63,25 +63,25 @@ Codes `SB/P`, `SB/C1/P`, `SB/C2/P`, `ARO/C1…`, `ARO/M1…` are listed
 |---|---|---|---|---|
 | WIN[:MP] | 7.1 | MP | — | IMPLEMENTED (individual; team use needs TeamMatch) |
 | WON[:MP] | 7.2 | MP | — | IMPLEMENTED (individual; team dito) |
-| PS[:MP/:GP] + /C1 /C2 | 7.5 | MP GP | C1 C2 | IMPLEMENTED (PS, PS-C1); PS-C2/… SPECIFIED |
+| PS[:MP/:GP] + /C1 /C2 | 7.5 | MP GP | C1 C2 | IMPLEMENTED (PS, PS-C1 + generic PS/Cn round-exclusion; team refs via team module) |
 | TPN, TPN/R | 7.8 | — | R | IMPLEMENTED (ascending terminal under fide-2026; /R consumer-side) |
-| BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual BH/C1/C2/M1/M2; /P flag under fide-2026; /F-combos SPECIFIED) |
+| BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual named + generic /Cn /Mn; /P flag; BH/F routed to the FB family; team refs via team module) |
 | AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base + AOB/FB id `aob_fb` under fide-2026) |
 | FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB + C1/C2/M1/M2 + /P flag under fide-2026) |
-| KS[:MP/:GP] + /Lx | 9.2 | MP GP | Lx | IMPLEMENTED (base); limits SPECIFIED |
+| KS[:MP/:GP] + /Lx | 9.2 | MP GP | Lx | IMPLEMENTED (base + /L±n half-point limits individual + team) |
 
 ## Table 3 — teams only
 
 | identifier | § | modifiers/options | implementation_status |
 |---|---|---|---|
-| BC | 12.1 | — | OUT_OF_SCOPE (team module) |
-| TBR | 12.2 | — | OUT_OF_SCOPE |
-| BBE | 12.3 | — | OUT_OF_SCOPE |
-| MPvGP | 13.1 | — | OUT_OF_SCOPE |
-| EMMSB/EMGSB/EGMSB/EGGSB + /C1 /C2 /P | 13.2.1–4 | C1 C2 P | OUT_OF_SCOPE |
-| EDE + /P | 13.3 | P | OUT_OF_SCOPE |
-| EDEBT/EDEBB/EDET/EDEB (+/P) | 13.3+13.3.2 | P | OUT_OF_SCOPE |
-| SSSC + /F /P /Kx (+combos) | 13.4 | F P Kx | OUT_OF_SCOPE |
+| BC | 12.1 | — | IMPLEMENTED (team module; ascending) |
+| TBR | 12.2 | — | IMPLEMENTED (team module; reapplication key) |
+| BBE | 12.3 | — | IMPLEMENTED (team module; reapplication key) |
+| MPvGP | 13.1 | — | IMPLEMENTED (team module; primary-parameterised) |
+| EMMSB/EMGSB/EGMSB/EGGSB + /C1 /C2 /P | 13.2.1–4 | C1 C2 P | IMPLEMENTED (team module; §14.1.2 incl. tied-basis rule) |
+| EDE + /P | 13.3 | P | IMPLEMENTED (team module group stage) |
+| EDEBT/EDEBB/EDET/EDEB (+/P) | 13.3+13.3.2 | P | IMPLEMENTED (team module; pair-only chains) |
+| SSSC + /F /P /Kx (+combos) | 13.4 | F P Kx | IMPLEMENTED (team module; trunc normaliser, /Kx override) |
 
 ## Distinction (§5 of the mission) applied to MTB26
 
@@ -107,8 +107,11 @@ forfeit-inclusion flag; FB projection).
 
 ## Descriptor → core-request boundary (normative for adapters)
 
-The core never parses TRF syntax. Consumer-owned normalization maps
-each ordered descriptor to a calculation request:
+The core never parses TRF record syntax (202/212 field layout stays
+consumer-owned), but since 1.1.0 it DOES parse MTB26 rank-order
+descriptors (`tiebreak_core.modifiers.parse_descriptor`) into semantic
+specs. Consumer-owned normalization maps each ordered descriptor to a
+calculation request (now a one-line `parse_descriptor` call):
 
 ```text
 MTB26/TRF descriptor  →  consumer parsing  →  normalized core request  →  tiebreak-core

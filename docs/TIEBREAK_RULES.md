@@ -70,5 +70,9 @@ values since 0.7.0).
 Roadmap (new rules versions, never silent changes): all items shipped
 (Art.16 both editions, SB-C1/PS-C1/ARO-C1 + C2 combos, Median-1/2,
 AOB + AOB/FB, ForeBH + C1/C2, TPR/PTP/APRO/APPO/RTNG, full DE stage,
-STD, TPN) — see `docs/IMPLEMENTATION_ROADMAP.md` for the exact
-residual scope (generic machine, Koya limits, exotic STD, team).
+STD, TPN) — plus 1.1.0: generic /Cn//Mn modifier machine, Koya
+limits also for team KS, full team domain (§§11–13), /R reversal,
+`Article16Policy`, `ScoringScheme`. Residual scope is exotic STD
+tables without explicit scores (typed error) and Art.16.6
+competition-specific engine behavior — see
+`docs/IMPLEMENTATION_ROADMAP.md`.

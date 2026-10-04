@@ -30,7 +30,7 @@ states for each criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 | N-RRBAN | BH round-robin ban | Art 8 note | fide-2026 | SPECIFIED | coverage detect | docs/warn | docs | P2 |
 | N-KOYALIM | Koya limit ±½ | §14.5 | fide-2024 + fide-2026 | IMPLEMENTED (`koya_limit` offset; echecs-differentially validated) | param | F-KOYA | unit + differential | P1 |
 | N-OPT16.6 | Local Art-16 overrides | §16.6 | future | DEFERRED | competition regs | — | — | P3 |
-| X-TEAM | MP/GP/BC/TBR/BBE/ESB/EDE/SSSC | §§11–13 | — | OUT_OF_SCOPE | TeamMatch domain | new module | — | on demand |
+| X-TEAM | MP/GP/BC/TBR/BBE/ESB/EDE/SSSC | §§11–13 | — | IMPLEMENTED (1.1.0 `tiebreak_core.team`; definition-derived tests) | TeamMatch domain | team.py | unit+property | done |
 | X-PAIR | C.04 opposition eval | C.04 §§1.7–1.8 | — | CONSUMER_OWNED | snapshots | pairing-core | — | — |
 | X-NORMTPR | Title-norm performance | B.01 | — | OUT_OF_SCOPE | floors/mixes | never share | warning | — |
 | X-LEGACY | buchholz_sum/arpo/stub-DE | — | legacy-0.1.0 | IMPLEMENTED (frozen) | — | — | goldens | — |
@@ -83,5 +83,9 @@ minor release with `fide-2026` status=implemented (Swiss scope).
 DONE in 0.7.0 — evidence, ownership, API impact, and tests all landed;
 no further research required first. F26-2 (N-STD standard scope +
 SB-C2/ARO-C2/FB-C1/FB-C2 + AOB/FB) DONE in 0.8.0. Remaining
-SPECIFIED surface: exotic STD (U6), generic /Cn//Mn machine, Koya
-limits §14.5, team module (on demand), Art.16.6 overrides.
+Remaining SPECIFIED surface: exotic STD without explicit scores
+(U6, typed error), Art.16.6 competition-specific engine behavior
+beyond the `Article16Policy` value object. DONE in 1.1.0: generic
+/Cn//Mn machine, Koya limits (already landed pre-1.0; now also team
+KS + /L descriptors), team module, /R reversal, PS/Cn machine,
+policy/scoring models.

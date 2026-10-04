@@ -23,21 +23,23 @@ priorities/statuses: `docs/FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
   variant id (`aob_fb`); SB-C2/ARO-C2/FB-C1/FB-C2 combos;
   dangling-opponent typed errors (fide-2024 + fide-2026; crash
   site found by differential fixture work).
-- Declined with reasons (not deferred silently): PS-C2 (no FIDE
-  semantics — PS-C1 is round-exclusion, not element-cut), generic
-  /Cn /Mn machine, Koya limits §14.5 (still SPECIFIED/DEFERRED),
-  Art-8 RR-ban enforcement (documented-not-enforced by design).
-- NEXT: differential validation + performance + conformance prep;
-  consumer per-tournament `fide-2026` opt-in; 1.0 gate per
-  IMPLEMENTATION_ROADMAP.
+- Declined with reasons (not deferred silently): PS-C2 as an
+  element-cut reading (no FIDE semantics — implemented instead as the
+  MTB26-machine round-exclusion generalisation of §14.1.1.c in
+  1.1.0, never presented as C.07-named), percentage-normalised
+  WON/BPG/BWG variants (rejected by TEC 2025), Art-8 RR-ban
+  enforcement (documented-not-enforced by design).
+- Delivered in 1.1.0: generic /Cn /Mn machine (`tiebreak_core.modifiers`),
+  Koya limits also for team KS + /L descriptors, /R reversal, team
+  domain below, `Article16Policy`, `ScoringScheme`.
 
-## Team-domain future (on demand — no team consumer today)
+## Team domain — DELIVERED in 1.1.0
 
-- Objective: TeamMatch domain beside (not inside) the core.
-- Scope: match/MP/GP/board-vector records; §§11–13 codes;
-  §13.3.2 chains; SSSC normaliser; team EDE; team DE/P.
-- Definition of Done: deferred until a consumer requires it;
-  must NOT stretch `GameRecord` (gap analysis).
+- `tiebreak_core.team`: TeamMatch/TeamRecord/TeamFormat beside (not
+  inside) the core; §§11–13 codes; §13.3.2 chains (pair-only);
+  SSSC normaliser + /Kx; team EDE + /P; definition-derived hand
+  calculations + property tests (no official team example retrieved —
+  never labelled official).
 
 ## Differential validation + performance + conformance prep
 

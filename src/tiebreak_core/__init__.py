@@ -126,7 +126,7 @@ from tiebreak_core.rules import (
     is_supported,
 )
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __fide_reference__ = FIDE_REFERENCE
 __rules_version__ = CALCULATION_RULES_VERSION
 

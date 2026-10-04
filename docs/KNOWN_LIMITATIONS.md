@@ -48,8 +48,11 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
 
 ## fide-2024 boundaries (explicit scope, not defects)
 
-12. Team systems (§§11–13) — not modeled (different domain objects:
-    matches, boards, MP/GP). Requested only if a team consumer appears.
+12. Team systems (§§11–13) — implemented since 1.1.0 in
+    `tiebreak_core.team` (fide-2026 team scope; the fide-2024 engine
+    itself stays individual-Swiss — team descriptors resolve through
+    the team module, whose BH/ESB sums use own-total dummies /
+    played-only legs per the documented PROJECT_DERIVED readings).
 13. TPR/PTP/APRO/APPO (§§10.2–10.5) — IMPLEMENTED under fide-2024
     from the fully-extracted official §§8.1a/8.1b tables (101 + 51
     entries, verified). Documented interpretations: p rounded half-up
@@ -60,12 +63,31 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
 15. Art.16.6 local overrides — no competition-regulation input contract;
     unsupported by design until a consumer requires it.
 16. March-2026 edition — implemented as ruleset `fide-2026` (0.7.0,
-    Phase F26-1): §16.4 dummy caps, Swiss/RR mode flag (§15.2
-    carve-out), TPN/RTNG terminal stages, `/P` forfeit-inclusion flag;
-    verified against the Manual's NEW-regime columns (see
-    `docs/FIDE_2026_DIFF.md` D13/D15 and the VERIFIED corpus).
-    Still out of scope: Standard Points §7.7 (model extension),
-    /C2-/Cn-/Mn-combos beyond the named ids, Koya limits §14.5, team
-    systems, Art.16.6 overrides. The `fide-2024` engine is frozen and
-    byte-identical (proven by the suite + 2024-vs-2026 parity tests
-    on fully-played events).
+    Phase F26-1; extended 0.8.0 STD + cut combos, 1.1.0 generic
+    modifiers + team domain): §16.4 dummy caps, Swiss/RR mode flag
+    (§15.2 carve-out), TPN/RTNG terminal stages, `/P`
+    forfeit-inclusion flag; verified against the Manual's NEW-regime
+    columns (see `docs/FIDE_2026_DIFF.md` D13/D15 and the VERIFIED
+    corpus). Still out of scope: exotic-scoring STD tables without
+    explicit per-round opponent scores (typed error, U6),
+    Art.16.6 competition-specific overrides beyond the
+    `Article16Policy` value object (policy recorded; engine defaults
+    unchanged), percentage-normalised WON/BPG/BWG variants (rejected
+    by TEC 2025 — never FIDE-defined). The `fide-2024` engine is
+    frozen and byte-identical (proven by the suite + 2024-vs-2026
+    parity tests on fully-played events).
+
+## 1.1.0 additions (new scope, not defects)
+
+17. Team edge readings — unplayed-team BH dummies (own total),
+    ESB played-only sums, team fore-BH draws, EDE certainty fallback,
+    pair-only §13.3.2 chains are PROJECT_DERIVED interpretations
+    (documented in `tiebreak_core.team`): no official team worked
+    example was retrieved, so team tests are definition-derived hand
+    calculations, never labelled official.
+18. PS/Cn (n ≥ 2) is an MTB26-machine generalisation of §14.1.1.c
+    round-exclusion, not a C.07-named combo — the docs never present
+    it as FIDE-defined.
+19. `Article16Policy` overrides (§16.6) are recorded and validated
+    but only the FIDE-default policies drive the engines; exotic
+    event tables must still cross the boundary as explicit inputs.

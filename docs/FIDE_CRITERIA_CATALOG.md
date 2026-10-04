@@ -145,30 +145,39 @@ terminal stage). Rating order,
 descending (or ascending if regulated — consumer-side reversal).
 Terminal; same ownership as TPN.
 
-## Team systems (Articles 11–13) — OUT_OF_SCOPE for the core
+## Team systems (Articles 11–13) — IMPLEMENTED (1.1.0 team module)
 
 Primitives: MP + GP per team match (§11). Knockout: BC (board-number
 × board GP, lower wins, GP-tied only), TBR (top-board GP, reapplied
-downward), BBE (all-but-bottom GP, reapplied upward) — all need a
-per-board GP matrix. Competition: MPvGP (§13.1), ESB four combos
-EMMSB/EMGSB/EGMSB/EGGSB (§13.2 + Cut-1 variant §14.1.2), EDE
-(§13.3.1 primary→secondary, §13.3.2 2026 chains, §13.3.3 subset
-restart), SSSC (secondary + BH-derived Schedule Strength ÷
-truncated normaliser, §13.4). §13 blanket rule re-applies Arts.6–10
-to teams on MP/GP reference scores. All need `TeamMatch`
-(round/opponent-team/MP/GP/board vector/unplayed flags) — a different
-record type; `GameRecord` must not be stretched (see gap analysis).
+downward), BBE (all-but-bottom GP, reapplied upward) — all read the
+per-board GP matrix (`TeamRecord.board_points`). Competition: MPvGP
+(§13.1, primary-parameterised), ESB four combos EMMSB/EMGSB/EGMSB/
+EGGSB (§13.2 + Cut-1 variant §14.1.2 incl. the tied-basis rule, C2
+reapplied), EDE (§13.3.1 primary→secondary, §13.3.2 2026 chains as
+pair-only ranking stages, §13.3.3 subset-restart shape), SSSC
+(secondary + BH-derived Schedule Strength ÷ truncated normaliser,
+§13.4; `/Kx` override; `/F` fore variant). §13 blanket rule
+re-applies Arts.6–10 to teams on MP/GP reference scores
+(WIN/WON/PS/BH/SB-as-ESB/KS/AOB/FB). All live on `TeamMatch`
+(round/opponent-team/MP/GP/kind flags) beside — never inside —
+`GameRecord` (see gap analysis). Edge readings without retrieved
+team-specific text (unplayed-team dummies, ESB played-only sums,
+team fore projection, EDE certainty fallback) are documented
+PROJECT_DERIVED interpretations in `tiebreak_core.team`; tests are
+definition-derived hand calculations (no official team example
+retrieved — never labelled official).
 
 ## Modifiers (Article 14) — summary
 
 Cut-1 §14.1 (BH-C1/ARO-C1/PS-C1/SB-C1 + team-ESB variant §14.1.2),
 Cut-2 §14.2 (BH-C2), Median-1 §14.3, Median-2 §14.4, Limit §14.5
-(Koya threshold ±½ steps), all subject to Article 16. Generic
-modifier machinery beyond the named FIDE combinations is
-software convention (e.g. PS-C2 as two-lowest-cumulatives) —
-SPECIFIED at most, never presented as FIDE-defined. Named M1/M2
-combos (BH/FB/ARO) are implemented; arbitrary /Cn//Mn (n≥3) raise
-UnknownCriterionError.
+(Koya threshold ±½ steps), all subject to Article 16. The generic
+MTB26 machine (`tiebreak_core.modifiers`, 1.1.0) implements arbitrary
+valid /Cn /Mn (BH/SB/ARO/FB families + team BH refs), PS/Cn as
+round-exclusion (MTB26-machine reading of §14.1.1.c — never present
+PS-C2 as a C.07-named combo), KS/L±n, /P, /F, /R, and :MP/:GP team
+refs; FIDE-undefined combos (SB/Mn, KS/P, AOB/Cn, …) raise
+`InvalidDescriptorError`. n=1/2 delegate to the named ids.
 
 ## Non-FIDE / legacy ids (frozen, never extended)
 

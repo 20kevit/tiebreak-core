@@ -14,7 +14,7 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | Q-BHC1 | §14.1.1.a+16.5 | BH-C1 (BH/C1) | 2024 + 2026 | Swiss | +VUR flags | VUR-cut | catalog | Laxman/Ex06 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-BHC2 | §14.2+16.5.2 | BH-C2 (BH/C2) | 2024 + 2026 | Swiss | same | reapply | catalog | — | unit | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-BHM | §§14.3–14.4 | BH-M1/M2 (BH/M1/M2) | 2024 + 2026 | Swiss | same | order | catalog | — | unit + VERIFIED (2026 MEDIAN2) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
-| Q-BHGEN | MTB26 /Cn /Mn | generic cuts/medians | 2026 | Swiss | n | machine | modifiers | — | — | SPECIFIED | core | P2 |
+| Q-BHGEN | MTB26 /Cn /Mn | generic cuts/medians | 2026 | Swiss | n | machine | modifiers | — | unit + named-equivalence (n=1/2 delegate) + monotonicity | IMPLEMENTED (`tiebreak_core.modifiers`: BH/SB/ARO/FB /Cn, BH/ARO/FB /Mn, PS/Cn round-exclusion; invalid combos raise `InvalidDescriptorError`) | core | P2 |
 | Q-AOB | §8.2 | AOB (+/F) | 2024 + 2026 | Swiss | opp BH | FB proj | catalog | TEC AOB | unit | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base + FB variant, under caps) | core | P1 |
 | Q-FB | §8.3 | FB (+cuts/P) | 2024 + 2026 | Swiss | final pairing | draws | catalog | TEC FB | VERIFIED (2024) + unit (2026 caps+/P) | 2024: IMPLEMENTED (base) · 2026: IMPLEMENTED (base + C1/C2/M1/M2, under caps; /P flag) | core | P0 |
 | Q-SB | §9.1 | SB | 2024 + 2026 | Swiss | opp finals × scores | 16.3/16.4 | catalog | Laxman 37.25 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
@@ -40,24 +40,37 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | Q-FIRSTR | §10 note | first-rating rule | 2026 | any | snapshot | contract | diff D9 | — | contract | IMPLEMENTED-by-construction | consumer | — |
 | Q-SEQ | §§4.1–4.2 | ordered lists + subgroups → lots | all | any | descriptors | ranking | arch-gap §26 | — | ranking tests | IMPLEMENTED+CONSUMER_OWNED (selection) | shared | — |
 
-## Team criteria (FIDE-defined YES; THP-mandatory YES where MTB26-listed; core implementation NO)
+## Team criteria (FIDE-defined YES; THP-mandatory YES where MTB26-listed; core implementation YES since 1.1.0)
 
-Deferred from the current tiebreak-core scope SOLELY because the current
-domain model (`GameRecord`: one player's game) and consumer do not require
-them — NOT because they are optional for a complete FIDE-approved THP
-(they are mandatory there wherever MTB26 lists them). Required future
-domain: TeamMatch (round, opponent team, MP/GP for-against, per-board GP
-vector, unplayed/bye flags) in a team module beside — not inside — the core.
+Implemented in `tiebreak_core.team` on the `TeamMatch`/`TeamRecord`/
+`TeamFormat` domain beside — not inside — the individual core.
+Formulas are PRIMARY_NORMATIVE (Handbook C.07 text); edge readings
+unplayed-team dummies, ESB played-only sums, team fore projection,
+EDE incomplete-meeting certainty, pair-only chains) are documented
+PROJECT_DERIVED interpretations in the module docstring. No official
+team worked example was retrieved: tests are definition-derived hand
+calculations + property tests (evidence: INDEPENDENT_ORACLE /
+PROJECT_DERIVED, never labelled official).
 
 | Req | Art | Code | Inputs | Status |
 |---|---|---|---|---|
-| T-MPGP | §11 | MP/GP primitives | match scores | OUT_OF_SCOPE |
-| T-KO | §12 | BC/TBR/BBE (+forfeit/PAB rules) | board GP matrix | OUT_OF_SCOPE |
-| T-ESB | §13.2+14.1.2 | EMMSB/EMGSB/EGMSB/EGGSB /C1/C2/P | opp MP/GP × scored | OUT_OF_SCOPE |
-| T-EDE | §13.3+13.3.2 | EDE /P, EDEBT/EDEBB/EDET/EDEB | primary→secondary, KO chains | OUT_OF_SCOPE |
-| T-SSSC | §13.4 | SSSC /F/P/Kx | secondary + BH ÷ normaliser | OUT_OF_SCOPE |
-| T-MPVGP | §13.1 | MPvGP | other score | OUT_OF_SCOPE |
-| T-IND | §13 blanket | individual codes :MP/:GP | TeamMatch | OUT_OF_SCOPE |
+| T-MPGP | §11 | MP/GP primitives | match scores | IMPLEMENTED |
+| T-KO | §12 | BC/TBR/BBE (+forfeit/PAB rules) | board GP matrix | IMPLEMENTED (BC ascending; TBR/BBE reapplication keys) |
+| T-ESB | §13.2+14.1.2 | EMMSB/EMGSB/EGMSB/EGGSB /C1/C2/P | opp MP/GP × scored | IMPLEMENTED (C1 per §14.1.2 incl. tied-basis rule; C2 reapplied) |
+| T-EDE | §13.3+13.3.2 | EDE /P, EDEBT/EDEBB/EDET/EDEB | primary→secondary, KO chains | IMPLEMENTED (group stage; chains pair-only per §13.3.2) |
+| T-SSSC | §13.4 | SSSC /F/P/Kx | secondary + BH ÷ normaliser | IMPLEMENTED (trunc normaliser; /Kx override; /C1-C2 dividend cut) |
+| T-MPVGP | §13.1 | MPvGP | other score | IMPLEMENTED (primary-parameterised) |
+| T-IND | §13 blanket | individual codes :MP/:GP | TeamMatch | IMPLEMENTED (WIN/WON/PS/BH/SB/KS/AOB/FB on MP/GP refs; SB:MP-style bare codes correctly rejected — team SB is the ESB family) |
+
+## Modifier engine / policy / scoring (1.1.0)
+
+| Req | Source/Art | Behavior | Status | Owner |
+|---|---|---|---|---|
+| Q-DESC | MTB26 grammar | descriptor parsing + canonical ids + typed rejection | IMPLEMENTED (`tiebreak_core.modifiers.parse_descriptor`) | core |
+| Q-PSGEN | MTB26 /Cn on PS | PS/Cn round-exclusion (generalised §14.1.1.c) | IMPLEMENTED | core |
+| Q-REV | MTB26 /R | TPN/R + RTNG/R ranking reversal | IMPLEMENTED (`rank_descriptors`) | core+consumer |
+| Q-A16POL | C.07 §16.6 | `Article16Policy` value object + `resolve_policy` (§16.6 overrides) | IMPLEMENTED (defaults pinned to engine behavior) | core |
+| Q-SCORE | C.07 §7.7 context | `ScoringScheme` model + explicit-input rule for exotic tables | IMPLEMENTED | core+consumer |
 
 ## Regimes, interchange, approval
 
