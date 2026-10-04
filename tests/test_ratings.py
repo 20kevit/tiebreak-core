@@ -102,3 +102,21 @@ class TestRatingEdges:
         # Only the rated game counts: ARO 1800, p 0/1 -> dp -800.
         assert got["aro"] == pytest.approx(1800.0)
         assert got["tpr"] == pytest.approx(1000.0)
+
+    def test_aro_half_up_exact(self):
+        # §10.1: 0.5 rounds UP (not banker's). Mean exactly 1812.5.
+        # Same rule feeds APRO/APPO (§§10.4–10.5); covered under both
+        # FIDE rulesets (identical text).
+        p = PlayerTiebreakData(1, 1500, 2.0, [g(2, 1.0, rnd=1, rating=1550),
+                                              g(3, 0.0, rnd=2, rating=2100),
+                                              g(4, 0.5, rnd=3, rating=1750),
+                                              g(5, 0.5, rnd=4, rating=1850)])
+        opps = {1: p,
+                2: PlayerTiebreakData(2, 1550, 0.0, []),
+                3: PlayerTiebreakData(3, 2100, 1.0, []),
+                4: PlayerTiebreakData(4, 1750, 0.0, []),
+                5: PlayerTiebreakData(5, 1850, 0.0, [])}
+        for ruleset in ("fide-2024", "fide-2026"):
+            got = calculate_all_strict(p, opps, ["aro"], 4,
+                                       ruleset=ruleset)
+            assert got["aro"] == 1813.0, ruleset
