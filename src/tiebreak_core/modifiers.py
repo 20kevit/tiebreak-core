@@ -590,7 +590,9 @@ def rank_descriptors(players: Mapping, descriptors: Sequence[str],
     keys = deterministic_keys or {}
     tpn = _f26._validate_pairing_numbers(pairing_numbers, shared) \
         if any(s.base == "TPN" for s in specs) else {}
-    ordered_ids = sorted(shared, key=lambda pid: keys.get(pid, pid))
+    # Player id as the final tiebreak (F4, 1.2.0; see fide2024).
+    ordered_ids = sorted(shared,
+                         key=lambda pid: (keys.get(pid, pid), pid))
     scalar_ids: List[str] = []
     values: Dict[int, Dict[str, float]] = {pid: {} for pid in ordered_ids}
     for spec, raw in zip(specs, descriptors):

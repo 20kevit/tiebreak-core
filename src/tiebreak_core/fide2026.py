@@ -1453,7 +1453,9 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
     keys = deterministic_keys or {}
     tpn = _validate_pairing_numbers(pairing_numbers, shared) \
         if "tpn" in criteria else {}
-    ordered_ids = sorted(shared, key=lambda pid: keys.get(pid, pid))
+    # Player id as the final tiebreak (F4, 1.2.0; see fide2024).
+    ordered_ids = sorted(shared,
+                         key=lambda pid: (keys.get(pid, pid), pid))
     scalar = [c for c in criteria if c in FIDE2026_REGISTRY]
     values: Dict[int, Dict[str, float]] = {
         pid: {c: (koya(shared[pid], shared, total_rounds, mode,
@@ -1505,28 +1507,33 @@ def _mini_table(group: Sequence[int],
     Repeated meetings average per side (§6.1.2). A pair counts as
     unplayed when NO game record exists between them in either
     direction (documented interpretation).
+
+    Pair iteration (F4, 1.2.0): each side's games credit its own
+    mini-score, so the table is independent of group order (prior
+    code credited only the first-iterated side per pair).
     """
     gset = set(group)
+    kinds = ((PLAYED,) if mode == "swiss"
+             else (PLAYED,) + _FORFEIT_KINDS)
     scores: Dict[int, Fraction] = {pid: Fraction(0) for pid in group}
     missing: Dict[int, int] = {pid: 0 for pid in group}
-    done = set()
-    for pid in group:
-        own = [g for g in players[pid].games
-               if g.opponent_id in gset and g.opponent_id != pid
-               and (normalize_kind(g) == PLAYED
-                    or (mode == "round_robin"
-                        and normalize_kind(g) in _FORFEIT_KINDS))]
-        by_opp: Dict[int, List[float]] = {}
-        for game in own:
-            by_opp.setdefault(game.opponent_id, []).append(float(game.score))
-        for opp, scs in by_opp.items():
-            pair = (min(pid, opp), max(pid, opp))
-            if pair in done:
-                continue
-            done.add(pair)
-            scores[pid] += sum(Fraction(s) for s in scs) / len(scs)
-    for idx, first in enumerate(group):
-        for second in group[idx + 1:]:
+    members = list(group)
+    for idx, first in enumerate(members):
+        for second in members[idx + 1:]:
+            first_scs = [float(g.score) for g in players[first].games
+                         if g.opponent_id == second
+                         and normalize_kind(g) in kinds]
+            second_scs = [float(g.score) for g in players[second].games
+                          if g.opponent_id == first
+                          and normalize_kind(g) in kinds]
+            if first_scs:
+                scores[first] += (sum(Fraction(s) for s in first_scs)
+                                  / len(first_scs))
+            if second_scs:
+                scores[second] += (sum(Fraction(s) for s in second_scs)
+                                   / len(second_scs))
+    for idx, first in enumerate(members):
+        for second in members[idx + 1:]:
             met = any(g.opponent_id == second for g in players[first].games) \
                 or any(g.opponent_id == first for g in players[second].games)
             if not met:

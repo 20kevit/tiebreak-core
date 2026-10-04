@@ -503,26 +503,32 @@ def _mini_scores(group: Sequence[int],
 
     Contested mutual matches only; repeated meetings average per side
     (§6.1.2 shape). Returns (mini-scores, unplayed-pair counts).
+
+    Pair iteration (F4, 1.2.0): each side's matches credit its own
+    mini-score, so the table is independent of group order (prior
+    code credited only the first-iterated side per pair).
     """
-    gset = set(group)
     mini: Dict[int, Fraction] = {tid: Fraction(0) for tid in group}
     missing: Dict[int, int] = {tid: 0 for tid in group}
-    done = set()
-    for tid in group:
-        by_opp: Dict[int, List[float]] = {}
-        for match in teams[tid].matches:
-            if (match.opponent_id in gset and match.opponent_id != tid
-                    and match.kind in CONTESTED_KINDS):
-                by_opp.setdefault(match.opponent_id, []).append(
-                    float(_scored(match, score)))
-        for opp, values in by_opp.items():
-            pair = (min(tid, opp), max(tid, opp))
-            if pair in done:
-                continue
-            done.add(pair)
-            mini[tid] += sum(Fraction(v) for v in values) / len(values)
-    for idx, first in enumerate(group):
-        for second in group[idx + 1:]:
+    members = list(group)
+    for idx, first in enumerate(members):
+        for second in members[idx + 1:]:
+            first_scs = [float(_scored(m, score))
+                         for m in teams[first].matches
+                         if m.opponent_id == second
+                         and m.kind in CONTESTED_KINDS]
+            second_scs = [float(_scored(m, score))
+                          for m in teams[second].matches
+                          if m.opponent_id == first
+                          and m.kind in CONTESTED_KINDS]
+            if first_scs:
+                mini[first] += (sum(Fraction(v) for v in first_scs)
+                               / len(first_scs))
+            if second_scs:
+                mini[second] += (sum(Fraction(v) for v in second_scs)
+                                 / len(second_scs))
+    for idx, first in enumerate(members):
+        for second in members[idx + 1:]:
             met = any(m.opponent_id == second
                       for m in teams[first].matches) \
                 or any(m.opponent_id == first
@@ -903,7 +909,10 @@ def rank_team_standings(teams: Mapping[int, TeamRecord],
                 f"tiebreak_core.modifiers)", "fide-2026")
         _check_team_spec(spec, raw)
     keys = deterministic_keys or {}
-    ordered_ids = sorted(shared, key=lambda tid: keys.get(tid, tid))
+    # Team id as the final tiebreak (F4, 1.2.0): fully-tied teams with
+    # colliding caller keys still order deterministically.
+    ordered_ids = sorted(shared,
+                         key=lambda tid: (keys.get(tid, tid), tid))
     values: Dict[int, Dict[str, float]] = {tid: {} for tid in ordered_ids}
     for spec, raw in zip(specs, descriptors):
         if spec.base in _GROUP_STAGES:

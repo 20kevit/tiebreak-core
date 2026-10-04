@@ -1068,8 +1068,10 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
     _require_context(players, total_rounds)
     check_ranking_criteria(criteria)
     keys = deterministic_keys or {}
+    # Player id as the final tiebreak: fully-tied players with
+    # colliding caller keys still order deterministically (F4, 1.2.0).
     ordered_ids = sorted(players,
-                         key=lambda pid: keys.get(pid, pid))
+                         key=lambda pid: (keys.get(pid, pid), pid))
     scalar = [c for c in criteria if c in FIDE2024_REGISTRY]
     shared = dict(players)
     pre = _precompute(shared, total_rounds)
@@ -1133,26 +1135,32 @@ def _mini_table(group: Sequence[int],
     NO game record exists between them in either direction
     (documented interpretation — excluded forfeit pairs are fixed
     exclusions, not variable outcomes).
+
+    Pair iteration (F4, 1.2.0): each side's games credit its own
+    mini-score, so the table is independent of group order. (Prior
+    code credited only the first-iterated side per pair, dropping the
+    other side's games whenever group order put it second.)
     """
     gset = set(group)
     scores: Dict[int, Fraction] = {pid: Fraction(0) for pid in group}
     missing: Dict[int, int] = {pid: 0 for pid in group}
-    done = set()
-    for pid in group:
-        own = [g for g in players[pid].games
-               if g.opponent_id in gset and g.opponent_id != pid
-               and normalize_kind(g) == PLAYED]
-        by_opp: Dict[int, List[float]] = {}
-        for game in own:
-            by_opp.setdefault(game.opponent_id, []).append(float(game.score))
-        for opp, scs in by_opp.items():
-            pair = (min(pid, opp), max(pid, opp))
-            if pair in done:
-                continue
-            done.add(pair)
-            scores[pid] += sum(Fraction(s) for s in scs) / len(scs)
-    for idx, first in enumerate(group):
-        for second in group[idx + 1:]:
+    members = list(group)
+    for idx, first in enumerate(members):
+        for second in members[idx + 1:]:
+            first_scs = [float(g.score) for g in players[first].games
+                         if g.opponent_id == second
+                         and normalize_kind(g) == PLAYED]
+            second_scs = [float(g.score) for g in players[second].games
+                          if g.opponent_id == first
+                          and normalize_kind(g) == PLAYED]
+            if first_scs:
+                scores[first] += (sum(Fraction(s) for s in first_scs)
+                                  / len(first_scs))
+            if second_scs:
+                scores[second] += (sum(Fraction(s) for s in second_scs)
+                                   / len(second_scs))
+    for idx, first in enumerate(members):
+        for second in members[idx + 1:]:
             met = any(g.opponent_id == second for g in players[first].games) \
                 or any(g.opponent_id == first for g in players[second].games)
             if not met:

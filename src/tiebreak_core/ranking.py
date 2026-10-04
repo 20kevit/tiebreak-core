@@ -63,7 +63,9 @@ def rank_standings(
     def _key(pr: PlayerResult) -> Tuple:
         return sort_key(pr.points, pr.values, criteria, keys.get(pr.player_id, pr.player_id))
 
-    ordered = sorted(scored, key=_key)
+    # Player id as the final tiebreak: fully-tied players with
+    # colliding caller keys still order deterministically (F4, 1.2.0).
+    ordered = sorted(scored, key=lambda pr: (_key(pr), pr.player_id))
     ranked = tuple(
         PlayerResult(player_id=pr.player_id, points=pr.points,
                      values=pr.values, rank=i + 1)
