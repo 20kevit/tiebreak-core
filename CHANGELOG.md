@@ -9,6 +9,21 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [1.0.0] — 2026-10-04
+
+First stable release: complete individual-tournament tie-break core
+for `fide-2024` (frozen era semantics) and `fide-2026` (current
+C.07). Public API frozen at this contract (additive extensions only
+henceforth; output-changing corrections to published rulesets
+require new ruleset ids per `docs/VERSIONING.md`).
+
+Since 0.9.0: AOB/FB exact ranking, Koya §14.5 limits, FB/ARO median
+combos, fide-2024 shared-context performance (100×, identical
+outputs), echecs differential harness (10 fixtures), 3 official TEC
+corpus cases, source registry, versioning-policy resolution. Suite:
+503 passed. No FIDE approval/acceptance claimed (see
+`docs/FIDE_APPROVAL_PATH.md`).
+
 ## [0.9.0] — 2026-10-03
 
 Correctness remediation (independent audit F1/F2/F3). API
