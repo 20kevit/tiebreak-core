@@ -36,7 +36,7 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | Q-ART16 | §§15.3/16 | categories/adj/dummy/cuts | 2024 + 2026 | Swiss | kinds | classify | data-sem §3 | Manual 01–06 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-DUMMY26 | §16.4.1–2 | dummy caps | 2026 | Swiss | sched-opp adj | Q-ART16 | diff D13 | Manual NEW | VERIFIED ×5 (BH 55/49.5/63/69, C1 50/11.5, SB 37.25) | IMPLEMENTED (F26-1) | core | P0 |
 | Q-RR152 | §15.2 | RR forfeit scope | 2026 | RR/pre-paired | mode flag | sets | diff D12 | — | unit (RR mode) | IMPLEMENTED (F26-1) | core | P1 |
-| Q-RRBAN | Art-8 note | BH RR ban | 2026 | RR | coverage | warn | diff D7 | — | — | SPECIFIED | core+consumer | P2 |
+| Q-RRBAN | Art-8 note | BH RR ban | 2026 | RR | coverage | warn | diff D7 | — | — | CONSUMER_OWNED (enforcement is organizer list duty; core documents, see D7) | core+consumer | P2 |
 | Q-FIRSTR | §10 note | first-rating rule | 2026 | any | snapshot | contract | diff D9 | — | contract | IMPLEMENTED-by-construction | consumer | — |
 | Q-SEQ | §§4.1–4.2 | ordered lists + subgroups → lots | all | any | descriptors | ranking | arch-gap §26 | — | ranking tests | IMPLEMENTED+CONSUMER_OWNED (selection) | shared | — |
 

@@ -2,10 +2,10 @@
 
 ## Requirements matrix
 
-Scope note: `F-*` rows are fide-2024 scope (frozen, VERIFIED) — they do
-NOT imply fide-2026 implementation. Every 2026 counterpart is an `N-*`
-row below (SPECIFIED, PENDING corpus). Per-ruleset states for each
-criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
+Scope note: `F-*` rows are fide-2024 scope (frozen, VERIFIED).
+Every 2026 counterpart is an `N-*` row below with its own status
+(IMPLEMENTED, SPECIFIED, or DEFERRED with rationale). Per-ruleset
+states for each criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 
 | ID | Feature | FIDE source | Ruleset | Status | Inputs | Deps | Tests | Priority |
 |---|---|---|---|---|---|---|---|---|
@@ -53,10 +53,11 @@ criterion: `FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
 ## 1.0 definition
 
 `fide-2026` implemented (N-DUMMYCAP + N-RR15.2 + TPN/RTNG/STD
-specified-or-implemented per consumer need) + all PENDING corpus
-green + chess-manager per-tournament adoption + perf budgets met.
-Team systems, Koya-limit machinery, and 16.6 overrides are explicitly
-NOT 1.0 blockers (documented rationale above).
+implemented; Koya limits implemented) + zero PENDING corpus cases
+(all VERIFIED) + perf budgets met + consumer per-tournament
+adoption (chess-manager side, outside this repo). Team systems and
+16.6 overrides are explicitly NOT 1.0 blockers (documented
+rationale above).
 
 ## Uncertainty register (classified: ID / Question / Evidence / Impact / Blocking / Owner / Action)
 
@@ -72,7 +73,7 @@ NOT 1.0 blockers (documented rationale above).
 | U8 | WRBC fine print | downloads failed; snippets convergent | none (standard scoring, C.07-referenced) | NON-BLOCKING | docs | none |
 | U9 | ETT26 Handbook-PDF direct bytes | hosts unreachable; content verified via index + TEC table | version labels (DUTCH_2025 vs 2026 cutover) recorded; Handbook governs | NON-BLOCKING | docs | re-fetch on reachability |
 | U10 | THP VCL final text; PIWE chapter | "subject to final VCL"; Manual only outlines | approval-side only; zero core impact | NON-BLOCKING | vendor/FIDE | track per Acceptance Cycle |
-| U11 | EX04 Amit R2–R10 representation (exclusion vs bye-recorded) | Manual NEW BH=69 requires Amit adjusted 4.5 = 0.0+9×0.5, i.e. R2–R10 recorded as trailing zero-byes (16.2.5→draws), mirroring the EX01 Leo stub | corpus encodes trailing zero-byes with an explicit INPUT NOTE; engine implements the recorded-rounds reading (§§16.1–16.3) | NON-BLOCKING (number reproduces the printed official value under the documented representation) | FIDE (class-c clarification) | if FIDE clarifies excluded rounds are absent, Amit adjusted becomes 0.0 and EX04-2026 BH becomes 64.5 — corpus + note must be revisited |
+| U11 | EX04 Amit R2–R10 representation (exclusion vs bye-recorded) | Manual NEW BH=69 requires Amit adjusted 4.5 = 0.0+9×0.5, i.e. R2–R10 recorded as trailing zero-byes (16.2.5→draws), mirroring the EX01 Leo stub | corpus encodes trailing zero-byes with an explicit INPUT NOTE; engine implements the recorded-rounds reading (§§16.1–16.3) | RESOLVED (hardening audit): the Manual's Ex04 prose states the arithmetic outright — "0 (scheduled opponent's score) plus ½ point for every remaining unpaired round … 0 + (½×9) = 4.5" — confirming the encoded representation reproduces official arithmetic exactly; the absent-reading alternative is refuted by the printed text | — | closed |
 
 ## Recommended next autonomous phase
 

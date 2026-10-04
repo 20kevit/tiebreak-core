@@ -53,7 +53,8 @@ Mixed-ruleset displays must label the producing ruleset per row/table.
   TPN (`pairing_numbers`); presentation/prizes/persistence/TRF I/O.
 - **Input model**: `PlayerTiebreakData` + `GameRecord` + `GAME_KINDS`
   (+ `mode`, `draw_points`, `forfeits_as_played`, `pairing_numbers`,
-  `opponent_score` for the fide-2026 surface).
+  `opponent_score`, `koya_limit` for the fide-2026 surface;
+  `koya_limit` also under fide-2024).
   TRF mapping table: `FIDE_TRF26_INTEROPERABILITY.md`.
 - **Output model**: `StandingsResult` (ordered, criteria, rules_version).
   Equal values → deterministic-key order (then lots/consumer policy).

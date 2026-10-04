@@ -543,6 +543,29 @@ class TestSbCutLocality:
         assert calculate_strict(pl2[1], pl2, "aro_median1", 1,
                                 ruleset="fide-2026") == 0.0
 
+    def test_fb_median_edges(self):
+        from tiebreak_core import calculate_strict
+        # Two recorded rounds (< 3): median falls back to uncut FB.
+        pl = {1: P(1, 2000, 1.5, [(2, 1.0, "white", 1, "played"),
+                                   (3, 0.5, "black", 2, "played")]),
+              2: P(2, 1500, 0.0, [(1, 0.0, "black", 1, "played")]),
+              3: P(3, 1500, 0.5, [(1, 0.5, "white", 2, "played")])}
+        fb = calculate_strict(pl[1], pl, "fore_buchholz", 2,
+                              ruleset="fide-2026")
+        assert calculate_strict(pl[1], pl, "fore_median1", 2,
+                                ruleset="fide-2026") == fb
+        assert calculate_strict(pl[1], pl, "fore_median2", 2,
+                                ruleset="fide-2026") == fb
+        # Single SB element: uncut (documented edge guard).
+        one = {1: P(1, 2000, 1.0, [(2, 1.0, "white", 1, "played")]),
+               2: P(2, 1500, 1.0, [(1, 0.0, "black", 1, "played"),
+                                    (9, 1.0, "white", 2, "played")]),
+               9: P(9, 0, 0.0, [])}
+        assert calculate_strict(one[1], one, "sonneborn_berger", 2,
+                                ruleset="fide-2026") == 1.0
+        assert calculate_strict(one[1], one, "sonneborn_berger_cut1", 2,
+                                ruleset="fide-2026") == 1.0
+
 
 class TestCutCombosAndAobFb:
     """F26-2 MTB26 combos: SB-C2, ARO-C2, FB-C1/C2, AOB/FB.

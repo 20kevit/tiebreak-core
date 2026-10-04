@@ -81,10 +81,11 @@ criterion once pairing numbers cross the boundary. `SPECIFIED`.
 
 Absent from the 2024 text (verified by search). Declarative scope
 restriction covering BH and derivatives (§§8.1–8.3). Engine impact:
-none under `fide-2024` (documented; a future `fide-2026` strict path
-may warn/reject BH-family criteria when every participant met every
-other — detection needs full pairing coverage, so default is document,
-not enforce).
+none under `fide-2024`; documented-not-enforced under `fide-2026`
+by design — list selection is organizer-owned (C.07 §4.1/Art.8
+note), partial round-robins exist (where a ban would over-reject),
+and detection needs full pairing coverage. The `mode` flag keeps
+regime selection explicit consumer-side.
 
 ## D8. §8.2 AOB — "(or Fore Buchholz)" (clarification)
 
