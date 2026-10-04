@@ -81,4 +81,7 @@ Phase F26-1: implement N-DUMMYCAP + Swiss/RR mode (+ ETT192-derived regime flag)
 activate the PENDING shells, extend property/perf tests, cut the next
 minor release with `fide-2026` status=implemented (Swiss scope).
 DONE in 0.7.0 — evidence, ownership, API impact, and tests all landed;
-no further research required first. Next: F26-2 (N-STD + cut-combos).
+no further research required first. F26-2 (N-STD standard scope +
+SB-C2/ARO-C2/FB-C1/FB-C2 + AOB/FB) DONE in 0.8.0. Remaining
+SPECIFIED surface: exotic STD (U6), generic /Cn//Mn machine, Koya
+limits §14.5, team module (on demand), Art.16.6 overrides.

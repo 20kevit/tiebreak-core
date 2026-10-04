@@ -19,13 +19,15 @@ golden + live-equivalence tests, thin chess-manager adapter. Proven:
 - Stage G: pairing-core narrow-contract + chess-manager adapter docs.
 - Stage H: consolidated ARCHITECTURE, benchmarks, packaging verification.
 
-## Current gaps (honest list — updated 0.8.0; was accurate at 0.6.0)
+## Current gaps (honest list — updated 0.9.0; was accurate at 0.6.0)
 
-- `fide-2026` calculations: IMPLEMENTED (0.7.0/0.8.0). Remaining
+- `fide-2026` calculations: IMPLEMENTED (0.7.0/0.8.0, corrected
+  0.9.0: SB-C1/C2 opponent-score cut, full-point-bye classification,
+  exact AOB/AOB-FB). Remaining
   SPECIFIED surface: generic /Cn /Mn machine, Koya limits §14.5,
   exotic-scoring STD (U6), team module (on demand), Art.16.6
   overrides. Full domain specification: `docs/FIDE_TIEBREAK_MASTER_SPEC.md`
-  + companions, verified 2024→2026 diff, 20-case VERIFIED corpus.
+  + companions, verified 2024→2026 diff, 21-case VERIFIED corpus.
 - Direct Encounter: standings-level stub under legacy (frozen);
   group stage under fide-2024/fide-2026.
 - Rating-based family complete under fide-2024 AND fide-2026

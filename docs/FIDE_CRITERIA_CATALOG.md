@@ -81,14 +81,19 @@ unplayed → excluded from BPG (a fide-2026 RR-mode rule).
 ### REP §7.6 — rounds minus half/zero-byes and forfeit losses.
 Implemented: `rounds_elected` (fide-2024).
 
-### STD §7.7 — Standard Points (NEW 2026, Type B). SPECIFIED.
+### STD §7.7 — Standard Points (NEW 2026, Type B). IMPLEMENTED
+(fide-2026, standard scoring).
 Rounds outscoring the scheduled opponent (+½ for equal), unplayed
-rounds compared against the event's draw value. Needs scheduled
-opponent round scores — missing input (see `FIDE_DATA_SEMANTICS.md`).
+rounds compared against the event's draw value. Scheduled-opponent
+round scores: explicit `GameRecord.opponent_score`, else the
+standard 1-½-0 complement when `draw_points == 0.5` (exotic tables
+need explicit scores — typed error otherwise).
 
-### TPN §7.8 — Tournament Pairing Number (NEW 2026, Type B). SPECIFIED.
-Ascending (or, if regulated, descending) final pairing number.
-Terminal lots-replacement. Needs pairing numbers — consumer input.
+### TPN §7.8 — Tournament Pairing Number (NEW 2026, Type B).
+IMPLEMENTED (fide-2026 terminal stage, ascending).
+Ascending (or, if regulated, descending — consumer-side reversal)
+final pairing number. Terminal lots-replacement. Pairing numbers
+cross the boundary via `pairing_numbers` (strict).
 
 ## Direct Encounter (Article 6, Type A, multi-listable)
 
@@ -135,9 +140,10 @@ opponent; binary search over the full scale. Implemented: `ptp`
 ### APRO §10.4 / APPO §10.5 (Type DC). Mean of opponents' TPR/PTP,
 half-up integer. Implemented: `apro`, `appo`.
 
-### RTNG §10.6 (NEW 2026, Type B). SPECIFIED. Rating order,
-descending (or ascending if regulated). Terminal; same ownership as
-TPN.
+### RTNG §10.6 (NEW 2026, Type B). IMPLEMENTED (fide-2026
+terminal stage). Rating order,
+descending (or ascending if regulated — consumer-side reversal).
+Terminal; same ownership as TPN.
 
 ## Team systems (Articles 11–13) — OUT_OF_SCOPE for the core
 

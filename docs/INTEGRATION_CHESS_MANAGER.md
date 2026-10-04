@@ -30,7 +30,7 @@ import manager models.
 
 ## Ruleset upgrades
 
-When `fide-2026` lands, adopt it per-tournament (configuration), never
+Adopt `fide-2026` per-tournament (configuration), never
 by silent global switch: historical events keep `legacy-0.1.0` results.
 Mixed-ruleset displays must label the producing ruleset per row/table.
 
@@ -48,10 +48,12 @@ Mixed-ruleset displays must label the producing ruleset per row/table.
   must not silently invent `OTHER_*` values); per-tournament ruleset
   pin stored with standings; seeding (round 0); withdrawal filtering;
   FIRST-rating snapshot (2026 §10 note); unrated-handling policy text;
-  scoring-table context (TRF 013) for future STD; pairing numbers for
-  future TPN; presentation/prizes/persistence/TRF I/O.
+  scoring-table context (TRF 013) for exotic STD (standard STD is
+  live: `opponent_score` or 1-½-0 complement); pairing numbers for
+  TPN (`pairing_numbers`); presentation/prizes/persistence/TRF I/O.
 - **Input model**: `PlayerTiebreakData` + `GameRecord` + `GAME_KINDS`
-  (+ future: Swiss/RR mode flag, scheduled-opp scores, pairing nos).
+  (+ `mode`, `draw_points`, `forfeits_as_played`, `pairing_numbers`,
+  `opponent_score` for the fide-2026 surface).
   TRF mapping table: `FIDE_TRF26_INTEROPERABILITY.md`.
 - **Output model**: `StandingsResult` (ordered, criteria, rules_version).
   Equal values → deterministic-key order (then lots/consumer policy).

@@ -14,8 +14,7 @@ priorities/statuses: `docs/FIDE_COMPLETE_REQUIREMENTS_MATRIX.md`.
   All 9 PENDING corpus shells → VERIFIED (5 unplayed NEW-regime +
   ART16 taxonomy + DE minitable + MEDIAN2 + SB-C1); property tests
   (determinism, permutation invariance, no-mutation, DE termination,
-  2026≤2024 monotonicity); 2000-player fide-2026 bench 0.22s.
-- Follow-up: F26-2 (STD + remaining 2026 deltas) is NEXT.
+  2026≤2024 monotonicity for uncut sums); 2000-player fide-2026 bench 0.22s.
 
 ## F26-2 — STD + remaining 2026 deltas (DONE in 0.8.0)
 

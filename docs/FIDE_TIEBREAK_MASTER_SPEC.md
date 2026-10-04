@@ -18,8 +18,9 @@ uncertainty register (`IMPLEMENTATION_ROADMAP.md`), never hidden.
    `legacy-0.1.0` (frozen), `fide-2024` (implemented), `fide-2026`
    (implemented since 0.7.0: Swiss core + RR mode + terminals;
    STD/C2-combos since 0.8.0).
-3. **Criteria**: 15 individual + DE stage + 4 rating derivatives
-   implemented; STD/TPN/RTNG specified; team out-of-scope. See catalog.
+3. **Criteria**: 29 individual scalars + DE group stage + TPN/RTNG
+   terminal stages implemented (fide-2026; fide-2024 covers its era
+   subset); team out-of-scope. See catalog.
 4. **Inputs per criterion**: `FIDE_CRITERIA_CATALOG.md` (formula +
    required/optional) and `FIDE_DATA_SEMANTICS.md` §4 (model gaps).
 5. **Calculations**: catalog formulas; Article 16: `fide2024.py`

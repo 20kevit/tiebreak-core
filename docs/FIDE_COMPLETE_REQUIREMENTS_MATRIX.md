@@ -88,7 +88,7 @@ PENDING_SOURCE rows: none.
 | PS / PS-C1 | `progressive` / `progressive_cut1` | Q-PS |
 | KS | `koya` | Q-KOYA |
 | WIN / WON / BPG / BWG / REP | `wins` / `won` / `games_black` / `wins_black` / `rounds_elected` | Q-TYPEB |
-| STD / TPN / RTNG | `std` / `tpn` / `rtng` (specified future ids) | Q-STD / Q-TPN / Q-RTNG |
+| STD / TPN / RTNG | `std` / `tpn` / `rtng` (implemented fide-2026 ids; `tpn`/`rtng` terminal stages) | Q-STD / Q-TPN / Q-RTNG |
 | ARO / ARO-C1 | `aro` / `aro_cut1` | Q-ARO |
 | TPR / PTP / APRO / APPO | `tpr` / `ptp` / `apro` / `appo` | Q-TPR / Q-PTP / Q-APRO / Q-APPO |
 | DE (group stage; no scalar) | positional stage (scalar `direct_encounter` refused under fide-2024) | Q-DE |
