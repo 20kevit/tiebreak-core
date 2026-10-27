@@ -374,11 +374,33 @@ class TestForfeitInclusionFlag:
         with pytest.raises(InvalidPlayerDataError):
             f26.calculate(pl[1], pl, "buchholz", 3, "swiss", 0.5, 1)
 
-    def test_p_flag_rejected_outside_2026(self):
+    def test_p_flag_supported_under_fide_2024_bh(self):
+        """``/P`` is a defined fide-2024 option for the BH family.
+
+        The 2024 regulations already treat forfeits as regular games in
+        pre-determined pairings (§15.2) and §16.6 permits competition-
+        specified alternatives to §16.4 — which is what ``/P`` selects.
+        The named-criterion path must therefore accept it and produce
+        the forfeit-as-played value (§16.3 adjusted scores), not raise.
+        """
+        from tiebreak_core import calculate_strict
+        pl = TestRoundRobinMode().rr_event()
+        plain = calculate_strict(pl[2], pl, "buchholz", 3,
+                                 ruleset="fide-2024")
+        flagged = calculate_strict(pl[2], pl, "buchholz", 3,
+                                   ruleset="fide-2024",
+                                   forfeits_as_played=True)
+        assert flagged == pytest.approx(
+            f26.buchholz(pl[2], pl, 3, forfeits_as_played=True))
+        # Player 2 has a forfeit loss, so /P must differ from plain BH.
+        assert flagged != pytest.approx(plain)
+
+    def test_p_flag_rejected_for_ratings_criterion_under_fide_2024(self):
+        """``/P`` stays fide-2026-only for ratings-based criteria."""
         from tiebreak_core import calculate_strict
         pl = TestRoundRobinMode().rr_event()
         with pytest.raises(InvalidPlayerDataError):
-            calculate_strict(pl[1], pl, "buchholz", 3,
+            calculate_strict(pl[1], pl, "aro", 3,
                              ruleset="fide-2024",
                              forfeits_as_played=True)
 

@@ -68,6 +68,7 @@ PROJECT_DERIVED, never labelled official).
 |---|---|---|---|---|
 | Q-DESC | MTB26 grammar | descriptor parsing + canonical ids + typed rejection | IMPLEMENTED (`tiebreak_core.modifiers.parse_descriptor`) | core |
 | Q-DESCRS | MTB26 grammar + ruleset dispatch | `calculate_descriptor(..., ruleset=)` evaluates under the SELECTED ruleset | 2024 + 2026 | Swiss | descriptor | named ids | modifiers + fide2024/fide2026 | — | unit (1.3.0 R1) | IMPLEMENTED (1.3.0: `fide-2024` dispatches to the frozen 2024 engine, named combos only — generic `n>=3`, `/P`, `AOB/F` and the 2026-only ids raise `UnsupportedCriterionError`; `fide-2026` unchanged) | core | P1 |
+| Q-P24 | MTB26 `/P` under fide-2024 | forfeits counted as played games against the scheduled opponent (§15.2 + §16.6 alternative to the §16.4 dummy) | 2024 + 2026 | Swiss + RR | descriptor | named ids | fide2024 + fide2026 | TEC Mandatory Tie-Breaks spec | unit | IMPLEMENTED (1.3.0 R3: BH/SB/FB/Koya/AOB families; grammar rejects ARO/PS/REP; named path fails fast for ratings/Type-B) | core | P1 |
 | Q-PSGEN | MTB26 /Cn on PS | PS/Cn round-exclusion (generalised §14.1.1.c) | IMPLEMENTED | core |
 | Q-REV | MTB26 /R | TPN/R + RTNG/R ranking reversal | IMPLEMENTED (`rank_descriptors`) | core+consumer |
 | Q-A16POL | C.07 §16.6 | `Article16Policy` value object + `resolve_policy` (§16.6 overrides) | IMPLEMENTED (defaults pinned to engine behavior) | core |

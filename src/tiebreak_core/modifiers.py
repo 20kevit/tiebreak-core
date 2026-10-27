@@ -31,7 +31,9 @@ Frozen rulesets are untouched: ``fide-2024`` keeps its named ids
 (generic ``n >= 3`` descriptors resolve under ``fide-2026`` only), and
 ``calculate_descriptor(..., ruleset="fide-2024")`` evaluates through
 the frozen 2024 engine instead of the 2026 one (the 2024 ruleset has no
-§16.4.1/§16.4.2 dummy caps, so the two must not be mixed).
+§16.4.1/§16.4.2 dummy caps, so the two must not be mixed). The 2024
+engine also implements MTB26 ``/P`` for BH/SB/FB/Koya/AOB (§16.3
+adjusted scores replacing the §16.4 dummy).
 """
 from __future__ import annotations
 
@@ -372,18 +374,27 @@ def _calculate_descriptor_fide2024(player, players: Mapping,
 
     ``fide-2024`` publishes a closed set of named ids (see
     ``fide2024.FIDE2024_IDS``). Modifiers the 2024 ruleset does not
-    define — generic ``n >= 3`` cuts/medians, ``/P``, ``AOB/F`` and the
+    define — generic ``n >= 3`` cuts/medians, ``AOB/F`` and the
     2026-only ids (SB-C2, ARO-C2/M1/M2, FB-C1/C2/M1/M2) — raise
     :class:`UnsupportedCriterionError` instead of silently reusing the
     2026 arithmetic, which would otherwise apply the §16.4.1/§16.4.2
     dummy caps that do not exist in 2024.
+
+    MTB26 ``/P`` (``spec.forfeits_played``) IS defined under 2024: the
+    regulations already treat forfeits as regular games in
+    pre-determined pairings (§15.2) and §16.6 permits competition-
+    specified alternatives to §16.4. ``/P`` selects that alternative,
+    so forfeit rounds contribute the §16.3 adjusted score of the
+    scheduled opponent instead of the §16.4 dummy — for the BH/SB/FB/
+    Koya/AOB families, mirroring ``fide-2026``.
     """
     from tiebreak_core import fide2024 as _f24
 
     base = spec.base
     if base == "KS":
         return _f24.koya(player, players, total_rounds,
-                         spec.limit_halves * 0.5)
+                         spec.limit_halves * 0.5,
+                         forfeits_as_played=spec.forfeits_played)
     if base not in _FIDE2024_NAMED_BASES:
         raise UnsupportedCriterionError(descriptor, "fide-2024")
     if spec.fore:
@@ -401,6 +412,14 @@ def _calculate_descriptor_fide2024(player, players: Mapping,
         named = _BASE_IDS.get(base)
     if named is None or named not in _f24.FIDE2024_REGISTRY:
         raise UnsupportedCriterionError(descriptor, "fide-2024")
+    if spec.forfeits_played:
+        if named not in _f24._FORFEITS_AS_PLAYED_CRITERIA:
+            raise UnsupportedCriterionError(
+                f"{descriptor!r} (/P is not defined for {named!r} under "
+                f"fide-2024; §15.2 keeps forfeits unplayed in ratings-based "
+                f"and Type-B counts)", "fide-2024")
+        return _f24.FIDE2024_REGISTRY[named](
+            player, players, total_rounds, forfeits_as_played=True)
     return _f24.FIDE2024_REGISTRY[named](player, players, total_rounds)
 
 
@@ -420,9 +439,9 @@ def calculate_descriptor(player, all_players: Mapping,
     ``ruleset`` selects the arithmetic: ``"fide-2026"`` (default) runs
     the generic 2026 machine; ``"fide-2024"`` delegates to the frozen
     2024 engine and accepts its named combos only (see
-    ``_calculate_descriptor_fide2024``). ``/P`` is a no-op under
-    ``fide-2024`` (2024 §15.2 already treats forfeits as regular
-    games).
+    ``_calculate_descriptor_fide2024``). ``/P`` is supported under
+    both rulesets and counts forfeit rounds as played games against the
+    scheduled opponent (§15.2; §16.6 alternative to the §16.4 dummy).
     """
     from tiebreak_core import fide2026 as _f26
 

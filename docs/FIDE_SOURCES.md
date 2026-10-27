@@ -93,9 +93,73 @@ via alternate official path (doc.fide.com PDF + local text extraction).
     (still current; Oct-2025 400/2650 amendment touches rating calc only, and C.07 §10.3
     uses the full scale regardless); B.01 norm-TPR ≠ C.07 TPR (floors/imputed 1400/35%).
 
+15. FIDE Handbook C.07 chapter pages, retrieved IN FULL via the live
+    Handbook site on **2026-10-27** (authoritative-source review date for
+    this mission):
+    - `https://handbook.fide.com/chapter/TieBreakRegulations032026` —
+      "Play-Off and Tie-Break Regulations", approved by FIDE Council
+      **02/02/2026**, applied **1 Mar 2026**. 3 chunks, complete
+      (§§1–16 incl. the §5 table with STD §7.7 / TPN §7.8 / RTNG §10.6 and
+      the new §7.6 REP / §15.2 carve-outs). **Latest applicable edition
+      for the target scope** — the Handbook C.07 index lists no edition
+      after 032026.
+    - `https://handbook.fide.com/chapter/TieBreakRegulations082024` —
+      effective 1 Aug 2024–28 Feb 2026 (§7.6 acronym is **GE**; no
+      §7.7/§7.8/§10.6; **§15.2 has no Type-B/ratings carve-out**; no
+      §16.4.1/§16.4.2 dummy caps). Basis for ruleset `fide-2024`.
+    - `https://handbook.fide.com/chapter/TieBreakRegulations2023` —
+      effective 1 Sep 2023–31 Mar 2024 (§16.5 is the Cut-1 exception, as
+      in 2024/2026; §15.2 "forfeited games … are treated as regular
+      games"). Confirms the Mandatory Tie-Breaks `/P` cross-reference
+      "Article C.07.16.5" is a slip in every edition.
+16. FIDE Technical Commission — **Mandatory Tie-Breaks**
+    (`https://tec.fide.com/wp-content/uploads/2024/09/MandatoryTieBreaks-1.pdf`,
+    Word source `MTB-240824.doc`; page
+    `https://tec.fide.com/2024/04/30/mandatory-tie-breaks/`):
+    RETRIEVED IN FULL. Defines the **Rank Order Descriptor** grammar
+    (`Name[:Teamscore][/Variant]…`, `/Cn /Mn /L±n /Kx /P /F`,
+    case-insensitive) and the three mandatory tables (individuals only;
+    both; teams only) plus the flat "TIE-BREAK CODES (for tie-breaks to
+    be implemented)" list. **This is the authoritative scope document
+    for the descriptor surface**; `x` = "any reasonable value must be
+    implemented". Notes "The FIDE Handbook will be updated in 2025" and
+    that the knock-out chains (EDEBT/EDEBB/EDET/EDEB) are described
+    "only in this document".
+17. FIDE Technical Commission — **Tie-Break Exercises** by IA Mario
+    Held, Rev. 2403220900 / C.07-2023
+    (`https://tec.fide.com/wp-content/uploads/2024/04/C.07-2023-Tiebreak-exercises-V01-1.pdf`;
+    page `https://tec.fide.com/2024/03/18/tie-break-exercise/`):
+    RETRIEVED IN FULL (11 chunks; 13 chapters). Official worked
+    examples with full crosstables for a Swiss individual, a round-robin
+    individual and a Swiss team tournament, covering BH/BH-C1/AOB/FB,
+    SB (Swiss + RR), Koya, ARO/TPR/APRO/PTP, DE (Swiss + RR),
+    WIN/WON/BPG/BWG/GE/PS, and the team MPvGP/BH/ESB/EDE/BC/TBR/BBE/
+    SSSC families. **Primary independent verification source** (see
+    `FIDE_OFFICIAL_EXAMPLES.md` for the implemented/pending split).
+18. FIDE **Technical Commission Manual (FTM)**
+    (`https://tec.fide.com/fide-technical-manual/`), announced
+    `https://www.fide.com/fide-publishes-technical-commission-manual/`
+    (2026-04-02); contact **Hendrik du Toit, secretary.tec@fide.com**.
+    Complementary to the Handbook under C.02 (effective 1 Mar 2026).
+    The FTM page embeds a PDF viewer; the TEC tie-break category
+    (`https://tec.fide.com/category/tie-break/`) indexes the mandatory
+    list and the exercises above.
+19. FIDE news — "FIDE reminds organizers and arbiters of updated
+    Play-Off and Tie-Break Regulations effective March 1, 2026"
+    (`https://www.fide.com/fide-reminds-organizers-and-arbiters-of-updated-play-off-and-tie-break-regulations-effective-march-1-2026/`,
+    2026-03-01): confirms STD introduction, the extended tie-break list,
+    BH/SB unplayed-round revisions and team-KO provisions; explicitly
+    addresses **Tournament Handler Program manufacturers**.
+20. FIDE Technical Commission — TRF 2025 final draft
+    (`https://tec.fide.com/2025/01/09/trf25-final-draft/`, and the
+    2024-09-04 draft): RETRIEVED (index). Team-pairing and tie-break
+    extensions to TRF; the final TRF26 labels are those in the Handbook
+    MTB26 attachment (item in `FIDE_MTB26_CATALOG.md`).
+
 ## NOT retrieved (residual)
 
-- Live Handbook chapter HTML (handbook.fide.com times out from here; mirror
-  handbook1090 likewise). Covered via items 8–11 (official PDFs/manual).
+- Live Handbook chapter HTML was unreachable on 2026-10-02/03 but was
+  retrieved IN FULL on 2026-10-27 (item 15); the older note below is
+  superseded.
 - 02/02/2026 approving instrument number/URL (UNVERIFIED; dates RETRIEVED).
 - WRBC 2025 regulation PDF fine print (MEDIUM confidence via snippets; no core impact).

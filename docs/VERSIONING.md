@@ -59,6 +59,13 @@ Rules:
   values in `CHANGELOG.md`. A maintainer who treats the published
   `fide-2026` freeze as absolute may instead cut a new ruleset id or a
   MAJOR release for R2; the correction is re-derivable either way.
+- 1.3.0 correction R3 (descriptor `/P` under `fide-2024`): no ruleset
+  output moves. `fide-2024` now implements the MTB26 `/P` option for
+  the BH/SB/FB/Koya/AOB families (§16.3 adjusted scores replacing the
+  §16.4 dummy), which the R1 routing fix had left silently ignored on
+  the descriptor path while the named-criterion path rejected it. Both
+  paths now agree; the default `forfeits_as_played=False` reproduces
+  every published 1.2.0 value.
 - `CALCULATION_RULES_VERSION` is the default ruleset the library
   calculates under when no explicit selection is made.
 - New rulesets are MINOR package changes (additive). Removing a

@@ -20,7 +20,9 @@ import pytest
 
 from tiebreak_core import fide2024 as f24
 from tiebreak_core import fide2026 as f26
-from tiebreak_core.errors import UnsupportedCriterionError
+from tiebreak_core.errors import (InvalidDescriptorError,
+                                InvalidPlayerDataError,
+                                UnsupportedCriterionError,)
 from tiebreak_core.models import GameRecord, PlayerTiebreakData
 from tiebreak_core.modifiers import calculate_descriptor
 from tiebreak_core.strict import (
@@ -145,19 +147,62 @@ class TestFide2024DescriptorDispatch:
                                koya_limit=-1.0)
             assert got_neg == pytest.approx(want_neg)
 
-    def test_forfeit_flag_is_a_no_op_under_fide_2024(self, unplayed_event):
-        # 2024 §15.2 already treats forfeits as regular games, which is
-        # what MTB26 ``/P`` opts into under fide-2026.
-        for pid in unplayed_event:
-            plain = calculate_descriptor_strict(
-                unplayed_event[pid], unplayed_event, "BH", 5,
-                ruleset="fide-2024")
-            flagged = calculate_descriptor_strict(
-                unplayed_event[pid], unplayed_event, "BH/P", 5,
-                ruleset="fide-2024")
-            assert plain == pytest.approx(flagged)
-            assert plain == pytest.approx(
-                f24.buchholz(unplayed_event[pid], dict(unplayed_event), 5))
+    def test_p_flag_counts_forfeits_as_played_under_fide_2024(self):
+        """MTB26 ``/P`` under fide-2024 (§15.2 / §16.6), not a no-op.
+
+        3 players, 3 rounds. P1 plays R1 (win vs P2), takes a forfeit
+        win vs P3 in R2 and a pairing bye in R3. adj(P2) = 2.0,
+        adj(P3) = 1.0, P1 own points = 3.0.
+
+        Plain BH substitutes the §16.4 dummy (own points) for both
+        unplayed rounds: 2.0 + 3.0 + 3.0 = 8.0. ``/P`` counts the
+        forfeit as a played game against the scheduled opponent, so
+        R2 contributes adj(P3) = 1.0 instead: 2.0 + 1.0 + 3.0 = 6.0.
+        """
+        pl = {
+            1: P(1, 2000, 3.0, [(2, 1.0, "white", 1, "played"),
+                                (3, 1.0, "white", 2, "forfeit_win"),
+                                (-1, 1.0, "white", 3, "pairing_bye")]),
+            2: P(2, 1900, 2.0, [(1, 0.0, "black", 1, "played"),
+                                (-1, 1.0, "white", 2, "pairing_bye"),
+                                (3, 1.0, "white", 3, "played")]),
+            3: P(3, 1800, 1.0, [(-1, 1.0, "white", 1, "pairing_bye"),
+                                (1, 0.0, "black", 2, "forfeit_loss"),
+                                (2, 0.0, "black", 3, "played")]),
+        }
+        plain = calculate_descriptor_strict(pl[1], pl, "BH", 3,
+                                            ruleset="fide-2024")
+        assert plain == pytest.approx(8.0)
+        flagged = calculate_descriptor_strict(pl[1], pl, "BH/P", 3,
+                                              ruleset="fide-2024")
+        assert flagged == pytest.approx(6.0)
+        # The named-criterion path must agree with the descriptor path
+        # (they previously disagreed: one rejected /P, one ignored it).
+        assert flagged == pytest.approx(
+            calculate_all_strict(pl[1], pl, ["buchholz"], 3,
+                                 ruleset="fide-2024",
+                                 forfeits_as_played=True)["buchholz"])
+        assert flagged == pytest.approx(
+            f24.buchholz(pl[1], dict(pl), 3, forfeits_as_played=True))
+
+    def test_p_flag_undefined_for_ratings_and_type_b(self, unplayed_event):
+        """``/P`` is not defined for ARO/PS/REP under fide-2024.
+
+        §15.2 keeps forfeits unplayed in ratings-based (Article 10) and
+        Type-B (Article 7) counts. The MTB26 grammar rejects the
+        combination outright; the named-criterion path (which takes a
+        boolean, not a descriptor) fails fast instead of ignoring it.
+        """
+        for descriptor in ("ARO/P", "PS/P", "REP/P"):
+            with pytest.raises(InvalidDescriptorError):
+                calculate_descriptor_strict(
+                    unplayed_event[1], unplayed_event, descriptor, 5,
+                    ruleset="fide-2024")
+        for criterion in ("aro", "progressive", "rounds_elected"):
+            with pytest.raises(InvalidPlayerDataError):
+                calculate_all_strict(unplayed_event[1], unplayed_event,
+                                     [criterion], 5, ruleset="fide-2024",
+                                     forfeits_as_played=True)
 
     def test_team_and_stage_descriptors_raise(self, unplayed_event):
         for descriptor in ("BH:MP", "DE", "TPN", "RTNG"):

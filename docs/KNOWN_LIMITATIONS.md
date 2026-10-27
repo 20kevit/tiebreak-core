@@ -120,4 +120,18 @@ frozen engine.
     `fide-2026` RR-mode output for events that combine
     `mode="round_robin"` with a forfeit loss; see `CHANGELOG.md` for
     before/after values and `docs/VERSIONING.md` for the freeze
-    discussion. Regression: `tests/test_fide2026.py::TestRoundRobinMode`.
+    discussion. Regression: `tests/test_fide2026.py::TestRoundRobinMode`,
+    `tests/test_rr_rep_forfeit_scope.py`.
+22. MTB26 `/P` under `fide-2024` — CURRENT (<= 1.2.0): the descriptor
+    path silently ignored `/P` while the named-criterion path rejected
+    it, so the two public paths disagreed about one option. FIXED
+    (1.3.0): `fide-2024` implements `/P` for the BH/SB/FB/Koya/AOB
+    families (forfeit rounds contribute the §16.3 adjusted score of the
+    scheduled opponent instead of the §16.4 dummy, and stop being VUR
+    contributions for the §16.5 Cut-1 exception); `/P` is rejected at
+    the MTB26 grammar for ARO/PS/REP and fails fast on the named-
+    criterion path for the ratings-based and Type-B criteria, where
+    §15.2 keeps forfeits unplayed. Basis: TEC Mandatory Tie-Breaks
+    descriptor specification; C.07 §15.2 (2024), §16.6. Regression:
+    `tests/test_descriptor_ruleset_dispatch.py`,
+    `tests/test_fide2026.py::TestForfeitInclusionFlag`.

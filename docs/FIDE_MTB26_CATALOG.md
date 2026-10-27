@@ -1,7 +1,7 @@
 # FIDE MTB26 catalog (Mandatory Tie-Breaks, TRF26)
 
-Primary sources (both retrieved 2026-10-03; extraction hashes in
-`FIDE_SOURCE_REGISTRY.md`):
+Primary sources (retrieved 2026-10-03 and re-verified 2026-10-27;
+extraction hashes in `FIDE_SOURCE_REGISTRY.md`):
 
 - `MTB26.pdf` — `https://handbook.fide.com/files/handbook/MTB26.pdf`
   (Handbook attachment, current; TRF26 labels). Content verified via
@@ -31,9 +31,14 @@ Variant   = /Cn (Cut n: C1, C2, …) | /Mn (Median n: M1, M2, …) | /L±n (Koya
           | /R (reverse order: TPN/R, RTNG/R)
 ```
 
-`/P` text cites "Article C.07.16.5" — a document typo (16.5 is the
-cut exception); the behavior is the §6.1.1 forfeit-inclusion opt-in
-(recorded as an official-text slip, behavior unambiguous from C.07).
+`/P` text cites "Article C.07.16.5" — a document cross-reference slip
+(§16.5 is the Cut-1 exception in every 2023→2026 edition). The option's
+own definition is unambiguous and governs: *"forfeited games, either
+wins or losses, are considered as played games against the scheduled
+opponent"*. That is §15.2's pre-determined treatment plus §16.6's
+competition-specified alternative to the §16.4 dummy, and is what both
+`fide-2024` and `fide-2026` implement for the BH/SB/FB/Koya/AOB
+families (see the status column).
 `x` in the code table = "any reasonable value must be implemented"
 (generic-Cn/Mn/Lx/Kx machine).
 
@@ -41,12 +46,12 @@ cut exception); the behavior is the §6.1.1 forfeit-inclusion opt-in
 
 | identifier | official_name | § | allowed modifiers/options | ruleset | implementation_status |
 |---|---|---|---|---|---|
-| DE, DE/P | Direct Encounter | 6 | /P | fide-2024 + fide-2026 | IMPLEMENTED (group stage; /P flag under fide-2026) |
+| DE, DE/P | Direct Encounter | 6 | /P | fide-2024 + fide-2026 | IMPLEMENTED (group stage; /P under both rulesets) |
 | BPG | Games Played w/ Black | 7.3 | — | fide-2024 | IMPLEMENTED |
 | BWG | Games Won w/ Black | 7.4 | — | fide-2024 | IMPLEMENTED |
 | REP | Rounds Elected to Play | 7.6 | — | fide-2024 | IMPLEMENTED |
 | STD | Standard Points | 7.7 | — | fide-2026 | IMPLEMENTED (standard scoring; exotic tables need score-model extension, U6) |
-| SB + /C1 /C2 /P (+ combos) | Sonneborn-Berger | 9.1 | C1 C2 P | fide-2024 (+SB-C1) + fide-2026 | IMPLEMENTED (C1, C2, /P flag) |
+| SB + /C1 /C2 /P (+ combos) | Sonneborn-Berger | 9.1 | C1 C2 P | fide-2024 (+SB-C1) + fide-2026 | IMPLEMENTED (C1, C2, /P under both rulesets) |
 | ARO + /C1 /C2 /M1 /M2 | Average Rating of Opponents | 10.1 | C1 C2 M1 M2 | fide-2024 (+C1) + fide-2026 | IMPLEMENTED (C1, C2, M1, M2) |
 | TPR | Tournament Performance Rating | 10.2 | — | fide-2024 | IMPLEMENTED |
 | PTP | Perfect Tournament Performance | 10.3 | — | fide-2024 | IMPLEMENTED |
@@ -65,10 +70,10 @@ Codes `SB/P`, `SB/C1/P`, `SB/C2/P`, `ARO/C1…`, `ARO/M1…` are listed
 | WON[:MP] | 7.2 | MP | — | IMPLEMENTED (individual; team dito) |
 | PS[:MP/:GP] + /C1 /C2 | 7.5 | MP GP | C1 C2 | IMPLEMENTED (PS, PS-C1 + generic PS/Cn round-exclusion; team refs via team module) |
 | TPN, TPN/R | 7.8 | — | R | IMPLEMENTED (ascending terminal under fide-2026; /R consumer-side) |
-| BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual named + generic /Cn /Mn; /P flag; BH/F routed to the FB family; team refs via team module) |
-| AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base + AOB/FB id `aob_fb` under fide-2026) |
-| FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB + C1/C2/M1/M2 + /P flag under fide-2026) |
-| KS[:MP/:GP] + /Lx | 9.2 | MP GP | Lx | IMPLEMENTED (base + /L±n half-point limits individual + team) |
+| BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual named + generic /Cn /Mn; /P under fide-2024 and fide-2026; BH/F routed to the FB family; team refs via team module) |
+| AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base + AOB/FB id `aob_fb` under fide-2026; `/P` is not in the official table and the MTB26 grammar rejects `AOB/P` — §8.2 averages opponents "played over the board"; the flag still reaches the *valuation* of those opponents' own Buchholz, mirroring `fide-2026`) |
+| FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB + C1/C2/M1/M2 + /P under fide-2024 and fide-2026) |
+| KS[:MP/:GP] + /Lx | 9.2 | MP GP | Lx | IMPLEMENTED (base + /L±n half-point limits individual + team; `/P` is not in the official table and the MTB26 grammar rejects `KS/P`) |
 
 ## Table 3 — teams only
 

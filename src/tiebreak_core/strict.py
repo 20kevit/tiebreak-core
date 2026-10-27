@@ -250,9 +250,27 @@ def _require_fide2026_only_kwargs(ruleset: str, mode: str,
                                   draw_points: float,
                                   forfeits_as_played: bool = False,
                                   pairing_numbers=None) -> None:
-    """fide-2026 extras (mode/draw_points/forfeits_as_played/
-    pairing_numbers) are meaningless elsewhere: fail fast instead of
-    silently ignoring them."""
+    """fide-2026 extras must never be silently ignored elsewhere.
+
+    ``mode``, ``draw_points`` and ``pairing_numbers`` are fide-2026-only
+    and are rejected under every other ruleset. ``forfeits_as_played``
+    (MTB26 ``/P``) is also accepted under ``fide-2024``: the 2024
+    regulations already treat forfeits as regular games in
+    pre-determined pairings (§15.2) and §16.6 permits competition-
+    specified alternatives to §16.4 — which is what ``/P`` selects, so
+    fide-2024 implements it for BH/SB/FB/Koya/AOB (§16.3 adjusted
+    scores replacing the §16.4 dummy).
+    """
+    if ruleset == "fide-2024":
+        if (mode != "swiss" or draw_points != 0.5
+                or pairing_numbers is not None):
+            raise InvalidPlayerDataError(
+                f"mode/draw_points/pairing_numbers are fide-2026 "
+                f"parameters; got mode={mode!r} "
+                f"draw_points={draw_points!r} "
+                f"pairing_numbers={pairing_numbers!r} under ruleset "
+                f"{ruleset!r}")
+        return
     if ruleset != "fide-2026" and (mode != "swiss" or draw_points != 0.5
                                   or forfeits_as_played is not False
                                   or pairing_numbers is not None):
@@ -291,11 +309,15 @@ def calculate_strict(
     Under ``legacy-0.1.0`` values are identical to the legacy path
     (delegation). Under ``fide-2024``/``fide-2026`` the respective FIDE
     engine computes independently (see ``tiebreak_core.fide2024`` /
-    ``tiebreak_core.fide2026``). ``mode``/``draw_points``/
-    ``forfeits_as_played`` apply to ``fide-2026`` only (round-robin
-    regime flag + §16.4.2 draw value + MTB26 ``/P`` forfeit-inclusion
-    opt-in). ``koya_limit`` (§14.5 threshold offset, half-point steps)
-    applies under ``fide-2024``/``fide-2026`` for the koya criterion.
+    ``tiebreak_core.fide2026``). ``mode``/``draw_points`` apply to
+    ``fide-2026`` only (round-robin regime flag + §16.4.2 draw value).
+    ``forfeits_as_played`` (MTB26 ``/P``) applies under both
+    ``fide-2024`` and ``fide-2026``: it counts forfeit wins and losses
+    as played games against the scheduled opponent (§15.2; §16.6
+    competition-specified alternative to the §16.4 dummy) for the
+    BH/SB/FB/Koya/AOB families. ``koya_limit`` (§14.5 threshold offset,
+    half-point steps) applies under ``fide-2024``/``fide-2026`` for the
+    koya criterion.
     """
     require_ruleset(ruleset)
     if ruleset == "fide-2024":
@@ -308,7 +330,8 @@ def calculate_strict(
         _require_koya_limit_scope(ruleset, koya_limit)
         _fide.validate_inputs(players, total_rounds)
         return _fide.calculate(player, players, criterion, total_rounds,
-                               koya_limit)
+                               koya_limit,
+                               forfeits_as_played=forfeits_as_played)
     if ruleset == "fide-2026":
         from tiebreak_core import fide2026 as _fide26
         _require_total_rounds(total_rounds)
@@ -352,7 +375,8 @@ def calculate_all_strict(
             _fide.require_supported(criterion)
         _require_koya_limit_scope(ruleset, koya_limit)
         return _fide.calculate_all(player, players, list(criteria),
-                                   total_rounds, koya_limit)
+                                   total_rounds, koya_limit,
+                                   forfeits_as_played=forfeits_as_played)
     if ruleset == "fide-2026":
         from tiebreak_core import fide2026 as _fide26
         _require_total_rounds(total_rounds)
@@ -400,7 +424,7 @@ def rank_standings_strict(
         _require_koya_limit_scope(ruleset, koya_limit)
         return _fide.rank_standings(checked_players, list(criteria),
                                     total_rounds, deterministic_keys,
-                                    koya_limit)
+                                    koya_limit, forfeits_as_played)
     if ruleset == "fide-2026":
         from tiebreak_core import fide2026 as _fide26
         _require_total_rounds(total_rounds)

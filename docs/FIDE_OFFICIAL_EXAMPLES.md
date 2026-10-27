@@ -28,6 +28,24 @@ implementation phase (each needs input reconstruction + hand
 computation; Art-16 structure unchanged 2023→2026 so chapters stay
 valid modulo the 2026 caps).
 
+### Verified against the paper's own crosstable (2026-10-27)
+
+`tests/test_official_examples_swiss.py` transcribes the paper's
+16-player Swiss crosstable independently of the library and asserts
+Exercise 1's published value:
+
+| Exercise | Published | Library | Status |
+|---|---|---|---|
+| §3.1 Ex.1 — BH(#2 Bruno) | 13.0 = 1.0+1.5+3.5+3.5+3.5 | 13.0 | **VERIFIED** (external expected value) |
+
+The paper states no opponent of #2 has an unplayed round, so §16.3
+makes no adjustment and the plain §8.1 sum applies — the library
+reproduces it exactly. The remaining chapters (BH-C1, AOB, FB, SB,
+Koya, ARO/TPR/APRO/PTP, DE, WIN/WON, BPG/BWG, GE, PS, and the team
+chapters) remain **corpus candidates**: each needs its own input
+reconstruction and hand computation. Until then they are not counted as
+independently verified.
+
 ## Rating-regulations tables (§§8.1a/8.1b)
 
 101-entry p→dp + 51-band D→PD, extracted verbatim, programmatically

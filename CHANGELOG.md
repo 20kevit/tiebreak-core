@@ -58,12 +58,37 @@ them. Before/after: only events that combine `mode="round_robin"` with a
 forfeit loss change, and only in the direction the regulations
 require.
 
-Both corrections are bug fixes to paths that contradicted their own
-documented contract; neither is a change to a ruleset's arithmetic. Per
-`docs/VERSIONING.md` a maintainer who treats the published `fide-2026`
-freeze as absolute may instead cut a new ruleset id or a MAJOR release
-for R2 — the correction is recorded here with before/after values so it
-can be re-derived either way.
+Correction R3 (descriptor `/P` under `fide-2024`). The R1 fix routed
+`fide-2024` descriptors to the frozen 2024 engine but left MTB26 `/P`
+(`forfeits_as_played`) silently ignored there, while the named-criterion
+path `calculate_all_strict(..., forfeits_as_played=True)` *rejected* the
+same flag under `fide-2024` — two public paths disagreeing about one
+option. Resolving against the authoritative texts: the TEC Mandatory
+Tie-Breaks descriptor specification defines `/P` as a legal option
+("forfeited games, either wins or losses, are considered as played games
+against the scheduled opponent") and lists it for BH/SB/FB/KS/DE/ESB/
+EDE/SSSC; C.07 §15.2 (2024) already treats forfeits as regular games in
+pre-determined pairings; §16.6 permits competition-specified alternatives
+to §16.4 — which is what `/P` selects. So `/P` is a *defined* fide-2024
+option, not an error and not a no-op. Fix: `fide2024` implements it for
+the BH/SB/FB/Koya/AOB families (forfeit rounds contribute the §16.3
+adjusted score of the scheduled opponent instead of the §16.4 dummy, and
+are no longer VUR contributions for the §16.5 Cut-1 exception);
+`strict` accepts `forfeits_as_played` under `fide-2024` for those
+criteria and fails fast for the ratings-based and Type-B criteria where
+§15.2 keeps forfeits unplayed; the descriptor path and the named-criterion
+path now agree. Hand-computed repro (3 players, 3 rounds; P1 plays R1,
+forfeit-wins R2 vs P3, takes a pairing bye in R3; adj(P2)=2.0,
+adj(P3)=1.0, own points 3.0): `BH` = 8.0, `BH/P` = 6.0. Frozen defaults
+are unchanged — `forfeits_as_played=False` reproduces every 1.2.0 output.
+
+All three corrections are bug fixes to paths that contradicted their own
+documented contract or the authoritative texts; R1 and R3 change no
+ruleset's arithmetic, and R2 moves `fide-2026` RR-mode output only toward
+the regulations the module already documented. Per `docs/VERSIONING.md` a
+maintainer who treats the published `fide-2026` freeze as absolute may
+instead cut a new ruleset id or a MAJOR release for R2 — the correction is
+recorded here with before/after values so it can be re-derived either way.
 
 Additive: regression suite `tests/test_descriptor_ruleset_dispatch.py`
 (R1) and two round-robin REP tests in `tests/test_fide2026.py` (R2).

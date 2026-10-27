@@ -66,6 +66,23 @@ _VUR_KINDS = (REQUESTED_BYE, FORFEIT_LOSS)
 # Later rounds of these kinds prove the player returned to play (§16.2.3).
 _RETURN_KINDS = (PLAYED, PAIRING_BYE, FORFEIT_WIN)
 
+#: Round kinds that ``/P`` (MTB26 ``forfeits_as_played``) promotes to
+#: played games against the scheduled opponent (§15.2).
+_FORFEIT_KINDS = (FORFEIT_WIN, FORFEIT_LOSS)
+
+
+def _as_played(kind: str, forfeits_as_played: bool, sched: bool) -> bool:
+    """True when ``kind`` contributes as a played game (§15.2 / ``/P``).
+
+    ``/P`` makes forfeit wins and losses count as played games *against
+    the scheduled opponent*: the §16.3 adjusted score replaces the
+    §16.4 dummy, and the round is no longer a VUR contribution for the
+    §16.5 Cut-1 exception. A forfeit without a known scheduled opponent
+    cannot be "played" and keeps the dummy.
+    """
+    return (kind == PLAYED
+            or (forfeits_as_played and kind in _FORFEIT_KINDS and sched))
+
 
 @dataclass(frozen=True)
 class ClassifiedRound:
@@ -145,11 +162,19 @@ class _Contribution:
 
 
 def _buchholz_contribs(own_points: float, own_rounds: List[ClassifiedRound],
-                       adj: Mapping[int, float]) -> List[_Contribution]:
-    """Buchholz elements: adj(opp) for played, own points (dummy §16.4)."""
+                       adj: Mapping[int, float],
+                       forfeits_as_played: bool = False
+                       ) -> List[_Contribution]:
+    """Buchholz elements: adj(opp) for played, own points (dummy §16.4).
+
+    ``forfeits_as_played`` (MTB26 ``/P``) counts forfeit rounds as played
+    games against the scheduled opponent (§15.2); they then contribute
+    ``adj(opp)`` and are no longer VUR contributions for §16.5.
+    """
     out: List[_Contribution] = []
     for r in own_rounds:
-        if r.kind == PLAYED:
+        if _as_played(r.kind, forfeits_as_played,
+                      r.opponent_id != -1 and r.opponent_id in adj):
             out.append(_Contribution(adj[r.opponent_id], False))
         else:
             out.append(_Contribution(own_points, r.is_vur))
@@ -157,11 +182,17 @@ def _buchholz_contribs(own_points: float, own_rounds: List[ClassifiedRound],
 
 
 def _sb_contribs(own_points: float, own_rounds: List[ClassifiedRound],
-                 adj: Mapping[int, float]) -> List[_Contribution]:
-    """SB elements: adj(opp) × score; dummy §16.4 for unplayed rounds."""
+                 adj: Mapping[int, float],
+                 forfeits_as_played: bool = False) -> List[_Contribution]:
+    """SB elements: adj(opp) × score; dummy §16.4 for unplayed rounds.
+
+    ``forfeits_as_played`` (``/P``) counts forfeit rounds as played
+    games against the scheduled opponent (§15.2).
+    """
     out: List[_Contribution] = []
     for r in own_rounds:
-        if r.kind == PLAYED:
+        if _as_played(r.kind, forfeits_as_played,
+                      r.opponent_id != -1 and r.opponent_id in adj):
             out.append(_Contribution(adj[r.opponent_id] * r.score, False))
         else:
             out.append(_Contribution(own_points * r.score, r.is_vur))
@@ -183,11 +214,17 @@ class _SBElement:
 
 
 def _sb_scored(own_points: float, own_rounds: List[ClassifiedRound],
-               adj: Mapping[int, float]) -> List[_SBElement]:
-    """SB elements carrying their opponent-score basis (§14.1.1.d)."""
+               adj: Mapping[int, float],
+               forfeits_as_played: bool = False) -> List[_SBElement]:
+    """SB elements carrying their opponent-score basis (§14.1.1.d).
+
+    ``forfeits_as_played`` (``/P``) counts forfeit rounds as played
+    games against the scheduled opponent (§15.2).
+    """
     out: List[_SBElement] = []
     for r in own_rounds:
-        if r.kind == PLAYED:
+        if _as_played(r.kind, forfeits_as_played,
+                      r.opponent_id != -1 and r.opponent_id in adj):
             basis = adj[r.opponent_id]
             out.append(_SBElement(basis, basis * r.score, False))
         else:
@@ -368,20 +405,23 @@ def validate_inputs(players: Mapping[int, PlayerTiebreakData],
 def buchholz(player: PlayerTiebreakData,
              all_players: Mapping[int, PlayerTiebreakData],
              total_rounds: int,
-             _pre: _Precomputed | None = None) -> float:
+             forfeits_as_played: bool = False,
+            _pre: _Precomputed | None = None) -> float:
     """§8.1 with §§16.3–16.4. Exact sum (no rounding)."""
     ctx, adj = _use_pre(all_players, total_rounds, _pre)
     return sum(c.value for c in _buchholz_contribs(
-        player.points, ctx[player.player_id], adj))
+        player.points, ctx[player.player_id], adj, forfeits_as_played))
 
 
 def buchholz_cut1(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
                   total_rounds: int,
-                  _pre: _Precomputed | None = None) -> float:
+                  forfeits_as_played: bool = False,
+                 _pre: _Precomputed | None = None) -> float:
     """BH-C1 §14.1.1.a with §16.5.1. Single score kept uncut (edge)."""
     ctx, adj = _use_pre(all_players, total_rounds, _pre)
-    contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj)
+    contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj,
+                                  forfeits_as_played)
     if len(contribs) < 2:
         return sum(c.value for c in contribs)
     cut = _cut_least_exception(contribs)
@@ -391,10 +431,12 @@ def buchholz_cut1(player: PlayerTiebreakData,
 def buchholz_cut2(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
                   total_rounds: int,
-                  _pre: _Precomputed | None = None) -> float:
+                  forfeits_as_played: bool = False,
+                 _pre: _Precomputed | None = None) -> float:
     """BH-C2 §14.2 with §16.5.2 (exception reapplied). Keeps ≥1 element."""
     ctx, adj = _use_pre(all_players, total_rounds, _pre)
-    contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj)
+    contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj,
+                                  forfeits_as_played)
     if len(contribs) < 2:
         return sum(c.value for c in contribs)
     return sum(c.value for c in _apply_cuts_least(contribs, 2))
@@ -403,10 +445,12 @@ def buchholz_cut2(player: PlayerTiebreakData,
 def median_buchholz(player: PlayerTiebreakData,
                     all_players: Mapping[int, PlayerTiebreakData],
                     total_rounds: int,
-                    _pre: _Precomputed | None = None) -> float:
+                    forfeits_as_played: bool = False,
+                   _pre: _Precomputed | None = None) -> float:
     """BH-M1 §14.3 (least then most). <3 elements → full BH (edge)."""
     ctx, adj = _use_pre(all_players, total_rounds, _pre)
-    contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj)
+    contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj,
+                                  forfeits_as_played)
     if len(contribs) < 3:
         return sum(c.value for c in contribs)
     rest = _apply_cuts_least(contribs, 1)
@@ -416,10 +460,12 @@ def median_buchholz(player: PlayerTiebreakData,
 def median_buchholz_2(player: PlayerTiebreakData,
                       all_players: Mapping[int, PlayerTiebreakData],
                       total_rounds: int,
-                      _pre: _Precomputed | None = None) -> float:
+                      forfeits_as_played: bool = False,
+                     _pre: _Precomputed | None = None) -> float:
     """BH-M2 §14.4 with §16.5.2. <5 elements → full BH (edge)."""
     ctx, adj = _use_pre(all_players, total_rounds, _pre)
-    contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj)
+    contribs = _buchholz_contribs(player.points, ctx[player.player_id], adj,
+                                  forfeits_as_played)
     if len(contribs) < 5:
         return sum(c.value for c in contribs)
     rest = _apply_cuts_least(contribs, 2)
@@ -430,17 +476,19 @@ def median_buchholz_2(player: PlayerTiebreakData,
 def sonneborn_berger(player: PlayerTiebreakData,
                      all_players: Mapping[int, PlayerTiebreakData],
                      total_rounds: int,
-                     _pre: _Precomputed | None = None) -> float:
+                     forfeits_as_played: bool = False,
+                    _pre: _Precomputed | None = None) -> float:
     """§9.1 with §§16.3–16.4. Exact sum (no rounding)."""
     ctx, adj = _use_pre(all_players, total_rounds, _pre)
     return sum(c.value for c in _sb_contribs(
-        player.points, ctx[player.player_id], adj))
+        player.points, ctx[player.player_id], adj, forfeits_as_played))
 
 
 def sonneborn_berger_cut1(player: PlayerTiebreakData,
                           all_players: Mapping[int, PlayerTiebreakData],
                           total_rounds: int,
-                          _pre: _Precomputed | None = None) -> float:
+                          forfeits_as_played: bool = False,
+                         _pre: _Precomputed | None = None) -> float:
     """SB-C1 §14.1.1.d with §16.5.1 (cut higher of lowest-VUR/least).
 
     The §14.1.1.d candidate is the product of the opponent with the
@@ -448,7 +496,8 @@ def sonneborn_berger_cut1(player: PlayerTiebreakData,
     the least product overall.
     """
     ctx, adj = _use_pre(all_players, total_rounds, _pre)
-    elements = _sb_scored(player.points, ctx[player.player_id], adj)
+    elements = _sb_scored(player.points, ctx[player.player_id], adj,
+                          forfeits_as_played)
     if len(elements) < 2:
         return sum(e.value for e in elements)
     remaining = list(elements)
@@ -605,7 +654,8 @@ def aro_cut1(player: PlayerTiebreakData,
 def average_opponents_buchholz(player: PlayerTiebreakData,
                                all_players: Mapping[int, PlayerTiebreakData],
                                total_rounds: int,
-                               _pre: _Precomputed | None = None) -> float:
+                               _pre: _Precomputed | None = None,
+                               forfeits_as_played: bool = False) -> float:
     """AOB §8.2: average of OTB opponents' (fide-2024) Buchholz.
 
     Exact average (no rounding — FIDE states none, and ranking sorts
@@ -617,14 +667,16 @@ def average_opponents_buchholz(player: PlayerTiebreakData,
     if not opp_ids:
         return 0.0
     bhs = [sum(c.value for c in _buchholz_contribs(
-        all_players[oid].points, ctx[oid], adj)) for oid in opp_ids]
+        all_players[oid].points, ctx[oid], adj, forfeits_as_played)
+    ) for oid in opp_ids]
     return sum(bhs) / len(bhs)
 
 
 def fore_buchholz(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
                   total_rounds: int,
-                  _pre: _Precomputed | None = None) -> float:
+                  _pre: _Precomputed | None = None,
+                  forfeits_as_played: bool = False) -> float:
     """FB §8.3: Buchholz with final-round *paired* games as draws.
 
     Unpaired final rounds (byes) keep their awarded points; Art.16
@@ -657,7 +709,8 @@ def fore_buchholz(player: PlayerTiebreakData,
     adj = {pid: fb_adj(pid) for pid in all_players}
     total = 0.0
     for r in ctx[player.player_id]:
-        if r.kind == PLAYED:
+        if _as_played(r.kind, forfeits_as_played,
+                      r.opponent_id != -1 and r.opponent_id in adj):
             total += adj[r.opponent_id]
         else:
             total += fb_points[player.player_id]
@@ -686,7 +739,8 @@ def _validate_koya_limit(koya_limit: float) -> float:
 def koya(player: PlayerTiebreakData,
          all_players: Mapping[int, PlayerTiebreakData],
          total_rounds: int, koya_limit: float = 0.0,
-         _pre: _Precomputed | None = None) -> float:
+         _pre: _Precomputed | None = None,
+         forfeits_as_played: bool = False) -> float:
     """KS §9.2: points vs opponents on ≥50% of the maximum possible.
 
     Maximum possible = total tournament rounds (1 pt/round). Koya is not
@@ -702,7 +756,9 @@ def koya(player: PlayerTiebreakData,
     threshold = total_rounds / 2 + koya_limit
     total = 0.0
     for g in player.games:
-        if normalize_kind(g) != PLAYED or g.opponent_id not in all_players:
+        kind = normalize_kind(g)
+        sched = g.opponent_id != -1 and g.opponent_id in all_players
+        if not _as_played(kind, forfeits_as_played, sched):
             continue
         if all_players[g.opponent_id].points >= threshold:
             total += g.score
@@ -939,6 +995,19 @@ _PD_RANGES: Tuple[Tuple[int, int, float, float], ...] = (
     (736, 10**9, 1.0, 0.0),
 )
 
+#: Criteria whose fide-2024 calculation is affected by MTB26 ``/P``
+#: (forfeits counted as played games against the scheduled opponent,
+#: §15.2 / §16.6). Every other fide-2024 criterion is unaffected — the
+#: 2024 regulations keep forfeits unplayed in ratings-based and Type-B
+#: counts — so ``forfeits_as_played=True`` for them fails fast instead
+#: of being silently ignored.
+_FORFEITS_AS_PLAYED_CRITERIA = frozenset({
+    "buchholz", "buchholz_cut1", "buchholz_cut2", "median_buchholz",
+    "median_buchholz_2", "sonneborn_berger", "sonneborn_berger_cut1",
+    "aob", "fore_buchholz", "koya",
+})
+
+
 # ------------------------------------------------------------------
 # Registry, dispatcher, ranking
 # ------------------------------------------------------------------
@@ -1025,30 +1094,42 @@ def calculate(player: PlayerTiebreakData,
               all_players: Mapping[int, PlayerTiebreakData],
               criterion: str, total_rounds: int,
               koya_limit: float = 0.0,
-              _pre: _Precomputed | None = None) -> float:
+              _pre: _Precomputed | None = None,
+              forfeits_as_played: bool = False) -> float:
     """Single fide-2024 calculation (validated upstream by strict)."""
     require_supported(criterion)
+    if forfeits_as_played and criterion not in _FORFEITS_AS_PLAYED_CRITERIA:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            f"forfeits_as_played (MTB26 /P) applies to the BH/SB/FB/Koya/"
+            f"AOB families under fide-2024; criterion {criterion!r} is "
+            f"unaffected (§15.2 keeps forfeits unplayed in ratings-based "
+            f"and Type-B counts)")
     if criterion == "koya":
         return koya(player, dict(all_players), total_rounds, koya_limit,
-                    _pre)
+                    _pre, forfeits_as_played)
     if koya_limit != 0.0:
         from tiebreak_core.errors import InvalidPlayerDataError
         raise InvalidPlayerDataError(
             f"koya_limit applies to the koya criterion only, got "
             f"criterion {criterion!r}")
-    return FIDE2024_REGISTRY[criterion](player, dict(all_players),
-                                        total_rounds, _pre)
+    if forfeits_as_played:
+        return FIDE2024_REGISTRY[criterion](
+            player, dict(all_players), total_rounds, forfeits_as_played=True)
+    return FIDE2024_REGISTRY[criterion](
+        player, dict(all_players), total_rounds, _pre=_pre)
 
 
 def calculate_all(player: PlayerTiebreakData,
                   all_players: Mapping[int, PlayerTiebreakData],
                   criteria: Sequence[str], total_rounds: int,
-                  koya_limit: float = 0.0) -> Dict[str, float]:
+                  koya_limit: float = 0.0,
+                  forfeits_as_played: bool = False) -> Dict[str, float]:
     """Multi-criterion fide-2024 calculation."""
     shared = dict(all_players)
     pre = _precompute(shared, total_rounds)
-    return {c: calculate(player, shared, c, total_rounds,
-                         koya_limit, pre)
+    return {c: calculate(player, shared, c, total_rounds, koya_limit,
+                         pre, forfeits_as_played)
             for c in criteria}
 
 
@@ -1056,6 +1137,7 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
                    criteria: Sequence[str], total_rounds: int,
                    deterministic_keys: Mapping[int, int] | None = None,
                    koya_limit: float = 0.0,
+                   forfeits_as_played: bool = False,
                    ) -> StandingsResult:
     """fide-2024 values + staged ordering (points, then criteria in order).
 
@@ -1077,7 +1159,7 @@ def rank_standings(players: Mapping[int, PlayerTiebreakData],
     pre = _precompute(shared, total_rounds)
     values: Dict[int, Dict[str, float]] = {
         pid: {c: calculate(shared[pid], shared, c, total_rounds,
-                           koya_limit, pre)
+                           koya_limit, pre, forfeits_as_played)
               for c in scalar}
         for pid in ordered_ids
     }
