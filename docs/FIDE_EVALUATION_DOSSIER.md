@@ -107,7 +107,7 @@ Methodology
 ```bash
 python -m venv .venv && . .venv/bin/activate
 pip install -e .
-python -m pytest -q                 # 898 passed, 69 documented skips, 0 failed
+python -m pytest -q                 # 982 passed, 69 documented skips, 0 failed
 python -m pytest tests/test_examples.py -q   # examples A–G
 python -m build                     # sdist + wheel
 ```
@@ -225,3 +225,169 @@ declaration, or a claim of approval. No submission has been made.
 - "Prepared for formal evaluation" — this dossier is complete.
 - "FIDE accepted / certified / endorsed" — **not claimed**. No such
   status has been granted or independently verified.
+
+---
+
+## Release-readiness audit — 2026-10-27
+
+### Candidate
+
+| | |
+|---|---|
+| Branch | `arena/0a162545-tiebreak-core` |
+| Commit | `8ee180ef3fa3a82bef51a999b71a2f389b314818` |
+| Ahead of `main` | 6 commits (`23e85ce`, `94f68f1`, `13bbac4`, `0f3adad`, `b4503a8`, `8ee180e`) |
+| `main` | `61491321d7886ab4abe1b7c64686dfce48d2c3dd` |
+| Tag `v1.2.0` | `a04f0f1` — **untouched** |
+| Published PyPI | 1.2.0 only — **untouched** |
+| Working tree | clean |
+
+### CI evidence (actual remote run)
+
+Run **`40526241856`** — https://github.com/20kevit/tiebreak-core/actions/runs/40526241856
+
+| Job | Status |
+|---|---|
+| `test (3.10)` | **success** |
+| `test (3.11)` | **success** |
+| `test (3.12)` | **success** |
+| `packaging` (build wheel+sdist, `twine check`, clean-install smoke tests) | **success** |
+
+This is the first successful CI run in the repository's history. **Root cause of
+every prior failure (including the five `main` runs):** the test job's only
+install step was `pip install -e .`, and the project declares
+`dependencies = []` with no optional-dependencies, so `pytest` was never
+installed and the `Tests` step died with `No module named pytest`. Fixed by
+adding a `dev` extra and installing `.[dev]` (commit `8ee180e`).
+
+Two workflow gaps were also closed: the workflow triggered only on `main`
+(commit `b4503a8`), so none of the audit commits had any CI coverage.
+
+**Limitation:** per-job stdout could not be retrieved (`gh run view --log`
+and the jobs-log API both return EOF in this environment). The job
+*conclusions* above come from the GitHub API and are authoritative; the
+per-version test totals were not readable from the log. Locally the same
+suite reports **982 passed / 69 skipped / 0 failed** on Python 3.11.
+
+### Skip accounting (69 = reported 69)
+
+| Test | Count | Reason | Still relevant? | Condition to execute |
+|---|---|---|---|---|
+| `test_differential.py::test_edition_coincidence_fide2024` | 54 | 9 criteria × 6 fixtures: `aro_cut2`, `aro_median1/2`, `fore_buchholz_cut1/2`, `fore_median1/2`, `sonneborn_berger_cut2` are **fide-2026-only**, so there is no fide-2024 value to compare | Yes — documents a real ruleset boundary | None: the comparison is impossible by design; the criteria are absent from the 2024 registry |
+| `test_differential.py::test_koya_fully_played_only` | 9 | Koya threshold basis diverges on bye-inflated scores (documented); fully-played events only; plus 2 `echecs` fixtures where Koya double-counts repeated meetings (RR-only scope) | Yes — documents a known divergence | Fully-played fixtures only; the `echecs` fixtures need a true round-robin |
+| `test_differential.py::test_exact_agreement_fide2026` | 3 | Degenerate edge policy: core falls back to uncut ARO below 5 rated opponents, oracle yields 0 (both documented; unit-tested separately) | Yes | A fixture with ≥5 rated opponents |
+| `test_conformance.py::TestOldVsNewLive::test_live_equivalence` | 3 | `chess-manager` repo not available | Yes — would be a genuine third-party cross-check | Clone the `chess-manager` reference implementation |
+
+### v1.2.0 differential (published artifact vs candidate)
+
+Harness: `tools/compat/probe_v120.py` + `tools/compat/run_differential.py`.
+It installs the **actual published `tiebreak_core-1.2.0-py3-none-any.whl`**
+(downloaded from PyPI into `/tmp/v120`) in one isolated venv and the current
+checkout in another, runs an identical probe in each, and compares
+canonicalized JSON. Artifacts: `/tmp/tiebreak-compat/{v120,cand,diff}.json`
+and `diff.txt`.
+
+**Scope limitation:** 193 cases covering every ruleset, all named criteria,
+28 individual descriptors, 18 team criteria, Swiss/round-robin modes, the
+`/P` flag and ranking paths. This is **not exhaustive** — it is a
+representative regression corpus, not a proof of equivalence.
+
+| Class | Count | Interpretation |
+|---|---|---|
+| `UNCHANGED` | 120 | Identical values, including **all four `legacy-0.1.0` cases** and **all 18 computable team criteria** |
+| `UNCHANGED-ERROR` | 25 | Same error on both sides (criteria absent from the 2024 registry; signature differences) |
+| `ERROR-CHANGE` | 21 | Message-only: R1 now names the *correct* ruleset (`fide-2024`) instead of always `fide-2026`; R3 removed `forfeits_as_played` from the fide-2026-only kwarg list |
+| `RESTRICTION` | 9 | Intentional tightening: Article 8 (BH/AOB/FB in round-robins), R4 `/P` scope (AOB/KS), R1 descriptor scope (`AOB/F` under fide-2024) |
+| `API-CHANGE` | 3 | R3: `forfeits_as_played` is now **accepted** under `fide-2024` for the BH/SB/FB families (previously rejected as a fide-2026-only kwarg) |
+| `BEHAVIOUR-CHANGE` | 1 | **R2** — see below |
+
+**The one published-ruleset behaviour change.**
+`rr.fide-2026.rep_forfeit_loser`: `3.0` (v1.2.0) → `0.0` (candidate).
+§7.6 defines REP as *"the number of rounds reduced by the number of
+half-point-byes, zero-point-byes or **forfeit losses**"*; v1.2.0 did not
+subtract forfeit losses. This changes `fide-2026`, a ruleset that **was**
+present in v1.2.0. It is a deliberate, documented in-place correction
+(see `CHANGELOG.md` R2 and `docs/VERSIONING.md`), packaged as a MINOR bump
+to 1.3.0. It is **not** hidden by this report.
+
+**No unexplained regression was found.**
+
+### Team round-robin format (Article 8)
+
+The team data model (`TeamRecord` / `TeamMatch` / `TeamFormat`) has **no
+tournament-format field**. `TeamFormat` carries only scoring parameters
+(`mp_win`, `mp_draw`, `max_gp_per_match`).
+
+Design taken (commit `0f3adad` + this audit): an explicit `mode` parameter
+on `strict.calculate_team_strict` / `rank_teams_strict`.
+
+| `mode` | Meaning | Article 8 applied? |
+|---|---|---|
+| `None` (default) | Format **not declared** | No — and this is *not* treated as Swiss. Pinned by `tests/test_team_rr_scope.py::test_undeclared_format_does_not_apply_the_restriction`. |
+| `"swiss"` | Swiss | No |
+| `"round_robin"` | Round-robin | Yes |
+
+Restricted bases: `BH`, `AOB`, `FB`, `SSSC` (SSSC because §13.4.2 defines
+schedule strength as "Buchholz of the team"). **Not** restricted: ESB
+(§13.2 — a Sonneborn-Berger variation, Article 9), EDE and its chains
+(Article 6), KS (Article 9), BC/TBR/BBE (Article 12), MPvGP/WIN/WON/PS.
+
+`tests/test_team_rr_scope.py` (84 tests) covers prohibited and permitted
+combinations including `:MP`/`:GP` variants, `mode=None` semantics, and
+invalid mode values. The raw `team.calculate_team` engine remains callable.
+
+### Official-exercise coverage matrix
+
+| Family | Status | Source | Test identifier |
+|---|---|---|---|
+| BH (Swiss) | **verified against an official worked example** | TEC *Tie-Break Exercises* (C.07-2023, Rev. 2403220900), Exercise 1 — `BH(#2) = 1.0+1.5+3.5+3.5+3.5 = 13.0` | `tests/test_official_examples_swiss.py` |
+| BH-C1/C2, M1/M2 | verified against normative definition | C.07 §8.1 + §14 modifiers | `test_fide2026.py`, `test_modifiers.py` |
+| AOB / AOB-F | verified against normative definition | C.07 §8.2 | `test_fide2026.py::TestAobExactRanking` |
+| FB family | verified against normative definition | C.07 §8.3 | `test_fide2026.py::TestCutCombosAndAobFb` |
+| SB family | verified against normative definition | C.07 §9.1 | `test_fide2026.py` |
+| Koya (KS) | verified against normative definition | C.07 §9.2 | `test_fide2026.py::TestKoyaLimits` |
+| ARO/TPR/PTP/APRO/APPO | verified against normative definition | C.07 §10.1–10.5 (conversion table per FIDE Rating Regulations) | `test_fide2026.py` |
+| WIN/WON/BPG/BWG | verified against normative definition | C.07 §7.1–7.4 | `test_fide2026.py::TestStandardPoints` |
+| PS / STD / REP / TPN / RTNG | verified against normative definition | C.07 §7.5–7.8, §10.6 | `test_fide2026.py`, `test_rr_rep_forfeit_scope.py` |
+| DE / EDE / chains | verified against normative definition | C.07 §6.1–6.3, §13.3 | `test_team.py`, `test_fide2026.py` |
+| Team ESB / SSSC / BC / TBR / BBE / MPvGP | verified against normative definition | C.07 §11–13 | `test_team.py` |
+| `legacy-0.1.0` | **internally regression-tested only** (frozen) | — | `test_fide2024.py`, `test_differential.py` |
+
+**Only one official worked example has been transcribed and verified
+(Exercise 1).** The remaining TEC *Tie-Break Exercises* chapters (BH-C1,
+AOB, FB, SB, Koya, ARO/TPR/APRO/PTP, DE, WIN/WON, BPG/BWG, GE/PS and the
+team chapters) remain **unverified against worked examples**; they are
+covered by normative-definition and regression tests only. The single
+Buchholz check is **not** comprehensive coverage.
+
+### Remaining blockers
+
+1. **Official-exercise coverage is one value wide.** Only TEC Exercise 1 is
+   independently verified. All other chapters are normative-definition or
+   regression coverage.
+2. **`test_live_equivalence` (3 skips) cannot run** — the `chess-manager`
+   reference implementation is not available. This is the only remaining
+   third-party cross-check.
+3. **Team criteria are not ruleset-scoped.** `calculate_team_strict` /
+   `rank_teams_strict` take no `ruleset`, so the Article-8 check applies
+   regardless of ruleset. Under `fide-2024` (which has no Article 8 note)
+   a team round-robin would still be refused. This is a **design gap, not
+   a resolved item** — it needs a `ruleset` parameter on the team
+   conformance entry points.
+4. **R2 changes published `fide-2026` behaviour.** Documented and
+   intentional, but anyone relying on v1.2.0's REP value for
+   forfeit-losing players in round-robins sees a different number.
+5. **CI per-job stdout unreadable** in this environment (EOF); only job
+   conclusions are available.
+
+### Verdict
+
+**NOT READY** for preparing a release candidate.
+
+The blocking item is #1: a release candidate cannot be justified while the
+only independently verified official worked example is a single Buchholz
+value, and the remaining mandatory descriptor families rest on
+normative-definition readings rather than transcription of the official
+exercises. Items #3 and #4 are additional unresolved design/compatibility
+questions. Nothing here is a claim of FIDE approval, certification,
+endorsement or acceptance — no such claim is made or supported.
