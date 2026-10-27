@@ -25,6 +25,14 @@ classifiers = [
 ]
 dependencies = []
 
+[project.optional-dependencies]
+# Test/build tooling.  The library itself has no runtime dependencies;
+# CI installs this group so ``pytest`` is present for the test jobs.
+dev = [
+    "pytest>=7",
+    "build>=1",
+]
+
 [project.urls]
 Homepage = "https://github.com/20kevit/tiebreak-core"
 Repository = "https://github.com/20kevit/tiebreak-core"
