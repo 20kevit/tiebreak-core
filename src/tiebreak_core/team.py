@@ -767,6 +767,44 @@ def canonical_team_id(spec: ModifierSpec) -> str:
 
 _GROUP_STAGES = ("EDE", "EDEBT", "EDEBB", "EDET", "EDEB")
 
+# --- Article 8 round-robin scope (C.07 eff. 1 Mar 2026) -------------------
+# Article 8 covers BH (8.1), AOB (8.2) and FB (8.3) and opens with the
+# note "These tie-breaks must not be used in round-robins."  Article 13
+# lets Articles 6-10 criteria (or variations of them) be applied to
+# teams, so the same restriction reaches the team forms of those
+# criteria.  SSSC is included because §13.4.2 defines its schedule
+# strength as "Buchholz of the team".  ESB is a Sonneborn-Berger
+# variation (§13.2, i.e. Article 9) and is NOT restricted; EDE and its
+# chains are Article 6; KS is Article 9.
+RR_FORBIDDEN_TEAM_BASES = frozenset({"BH", "AOB", "FB", "SSSC"})
+
+
+def check_team_rr_eligibility(descriptor: str, mode: str) -> None:
+    """Reject an Article-8 team criterion in round-robin mode.
+
+    Eligibility, not arithmetic: ``calculate_team`` stays callable, so
+    custom and non-FIDE rulesets keep the computation.  Enforcement sits
+    in the ruleset-aware conformance layer (``strict``), which is the
+    only place that knows a format has been declared.
+
+    ``mode=None`` means the caller has NOT declared a format.  The
+    restriction is then not evaluated — that is deliberately not the same
+    as assuming Swiss, and it is documented rather than silent.
+    """
+    from tiebreak_core.errors import (
+        InvalidPlayerDataError, NotPermittedForFormatError)
+    if mode not in ("swiss", "round_robin"):
+        raise InvalidPlayerDataError(
+            f"unknown tournament mode {mode!r}; expected 'swiss' or "
+            f"'round_robin'")
+    if mode == "round_robin":
+        spec = parse_descriptor(descriptor)
+        if spec.base in RR_FORBIDDEN_TEAM_BASES:
+            raise NotPermittedForFormatError(
+                spec.base, "fide-2026", mode,
+                "Article C.07.8 (eff. 1 Mar 2026: these tie-breaks must "
+                "not be used in round-robins)")
+
 
 def _check_team_spec(spec: ModifierSpec, raw: str) -> None:
     if spec.base in ("BC", "TBR", "BBE", "MPVGP"):

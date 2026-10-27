@@ -593,12 +593,22 @@ def calculate_team_strict(
     total_rounds: int,
     fmt=None,
     primary: str = "MP",
+    mode: str | None = None,
 ) -> float:
-    """Validated team descriptor calculation (C.07 §§11–13)."""
+    """Validated team descriptor calculation (C.07 §§11–13).
+
+    ``mode`` declares the tournament format.  ``None`` (the default)
+    means the format has not been declared: the Article-8 round-robin
+    restriction is then not evaluated, which is not the same as
+    assuming Swiss.  ``"round_robin"`` enables that validation.
+    """
     from tiebreak_core.team import calculate_team as _calc_team
+    from tiebreak_core.team import check_team_rr_eligibility
     from tiebreak_core.team import validate_teams as _validate_teams
 
     _require_total_rounds(total_rounds)
+    if mode is not None:
+        check_team_rr_eligibility(descriptor, mode)
     checked = _validate_teams(all_teams)
     if team.team_id not in checked:
         raise InvalidPlayerDataError(
@@ -614,12 +624,21 @@ def rank_teams_strict(
     fmt=None,
     primary: str = "MP",
     deterministic_keys: Mapping[int, int] | None = None,
+    mode: str | None = None,
 ):
-    """Validated team ranking (C.07 §§11–13 stages)."""
+    """Validated team ranking (C.07 §§11–13 stages).
+
+    ``mode`` declares the tournament format; see
+    :func:`calculate_team_strict` for the ``None`` semantics.
+    """
+    from tiebreak_core.team import check_team_rr_eligibility
     from tiebreak_core.team import rank_team_standings as _rank_teams
     from tiebreak_core.team import validate_teams as _validate_teams
 
     _require_total_rounds(total_rounds)
+    if mode is not None:
+        for descriptor in descriptors:
+            check_team_rr_eligibility(descriptor, mode)
     checked = _validate_teams(teams)
     _validate_keys(deterministic_keys)
     return _rank_teams(checked, list(descriptors), total_rounds, fmt,

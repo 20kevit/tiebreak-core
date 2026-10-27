@@ -2,7 +2,9 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    # `main` plus the release-candidate branch, so the exact candidate
+    # HEAD gets the same test/packaging evidence as a main push.
+    branches: [main, arena/0a162545-tiebreak-core]
   pull_request:
     branches: [main]
 

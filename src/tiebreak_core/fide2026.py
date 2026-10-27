@@ -143,7 +143,12 @@ def check_rr_eligibility(criterion: str, ruleset: str, mode: str) -> None:
     rulesets keep working.  Only the ruleset-aware conformance interface
     (``strict`` and the fide-2026 descriptor dispatch) enforces it.
     """
-    from tiebreak_core.errors import NotPermittedForFormatError
+    from tiebreak_core.errors import (
+        InvalidPlayerDataError, NotPermittedForFormatError)
+    if mode not in ("swiss", "round_robin"):
+        raise InvalidPlayerDataError(
+            f"unknown tournament mode {mode!r}; expected 'swiss' or "
+            f"'round_robin'")
     if (ruleset == "fide-2026" and mode == "round_robin"
             and criterion in RR_FORBIDDEN_CRITERIA):
         raise NotPermittedForFormatError(
