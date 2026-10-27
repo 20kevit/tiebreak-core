@@ -44,7 +44,7 @@ ids from `FIDE_CRITERIA_CATALOG.md`. `Status` is per §15 of the mission
 | R-MED1/2 | C.07 §§14.3–14.4 | Least(+most) cuts in order | median_* | all | IMPLEMENTED |
 | R-LIMIT | C.07 §14.5 | Koya limit ±½ steps | koya variants | all | IMPLEMENTED (koya_limit halves + /L descriptors, individual + team) |
 | R-RR-FORFEIT | C.07 §15.2 (2024) | Pre-determined: forfeits = regular games | RR mode | 2024 | DEFERRED (no RR mode) |
-| R-RR-FORFEIT26 | C.07 §15.2 (2026) | …except forfeits in §10, forfeit losses in Type B | RR mode | 2026 | SPECIFIED (RR mode rule) |
+| R-RR-FORFEIT26 | C.07 §15.2 (2026) | …except forfeits in §10, forfeit losses in Type B | RR mode | 2026 | IMPLEMENTED (RR mode; REP forfeit-loss exclusion corrected in 1.3.0 R2) |
 | R-VUR | C.07 §16.1.2 | VUR = requested bye or forfeit loss | all cuts | 2023→ | IMPLEMENTED |
 | R-CAT | C.07 §16.2.1–16.2.5 | Five unplayed categories (positional early/late split) | art16 | 2023→ | IMPLEMENTED |
 | R-ADJ | C.07 §16.3 | Opponent-side: .1–.4 face value, .5 as draws | bh/sb/ko | 2023→ | IMPLEMENTED |

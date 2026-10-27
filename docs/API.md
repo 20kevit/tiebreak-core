@@ -62,6 +62,14 @@ named ids (equivalence-pinned); FIDE-undefined combos raise
 `InvalidDescriptorError`. Strict wrappers:
 `calculate_descriptor_strict` / `rank_descriptors_strict`.
 
+`calculate_descriptor(..., ruleset="fide-2024")` evaluates through the
+frozen 2024 engine and accepts its named combos only; the 2026-only ids
+(SB-C2, ARO-C2/M1/M2, FB-C1/C2/M1/M2), the generic `n >= 3` machine,
+`/P` and `AOB/F` raise `UnsupportedCriterionError` rather than silently
+reusing 2026 arithmetic (the 2024 ruleset has no §16.4 dummy caps).
+`ruleset="fide-2026"` (the default) runs the generic machine. Added in
+1.3.0 (correction R1).
+
 ## Team domain (1.1.0, C.07 §§11–13)
 
 ```python

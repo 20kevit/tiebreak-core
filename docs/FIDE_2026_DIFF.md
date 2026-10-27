@@ -151,6 +151,12 @@ module is ever built (names are then normative ids).
   longer a "game played with Black"). The `fide-2024` engine targets
   Swiss play and implements Article 16, not Article 15 — no change to
   existing behavior; a future round-robin mode must implement D12.
+- Implementation note (1.3.0, correction R2): `fide2026`'s RR mode
+  implements D12. `BPG`/`BWG`/`WON` already excluded forfeit losses
+  (`_rr_typeb_games`); `REP` did not until 1.3.0 — `rounds_played_elected`
+  excluded only requested byes, so forfeit losses counted as elected
+  rounds, contradicting §7.6 ("reduced by … forfeit losses"). Fixed by
+  adding §16.2.4 to the RR exclusion set; forfeit wins stay elected.
 
 ## D13. §16.4 — dummy caps (SEMANTIC, the main 2026 change)
 

@@ -252,4 +252,4 @@ MIT — see `LICENSE`.
 
 ## Status
 
-Current release: **1.2.0** (`docs/VERSIONING.md`, `CHANGELOG.md`). Stable public API; additive extensions only — output-changing corrections to published rulesets require new ruleset ids (sole pre-publication exception: the F4 DE mini-table correction, documented in `CHANGELOG.md`).
+Current release: **1.3.0** (`docs/VERSIONING.md`, `CHANGELOG.md`). Stable public API; additive extensions only — output-changing corrections to published rulesets require new ruleset ids. 1.3.0 ships two documented bug-fix corrections to paths that contradicted their own documented contract (R1 descriptor ruleset dispatch, R2 round-robin REP §7.6/§15.2); both carry before/after values in `CHANGELOG.md`, and neither edits a frozen engine.

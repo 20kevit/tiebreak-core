@@ -480,7 +480,8 @@ def calculate_descriptor_strict(
     """Validated MTB26 descriptor calculation (individual scope).
 
     ``ruleset`` accepts ``fide-2026`` (generic machine) and
-    ``fide-2024`` (named combos only — generic ``n >= 3`` raises
+    ``fide-2024`` (the frozen 2024 engine's named combos only —
+    generic ``n >= 3`` and the 2026-only ids raise
     ``UnsupportedCriterionError``). Team descriptors raise
     ``UnsupportedCriterionError`` (use ``calculate_team_strict``).
     """
@@ -503,15 +504,13 @@ def calculate_descriptor_strict(
     if ruleset == "fide-2024" and (
             (spec.cut is not None and spec.cut > 2)
             or (spec.median is not None and spec.median > 2)):
-        from tiebreak_core import fide2024 as _fide
-
-        _fide.validate_inputs(players, total_rounds)
         raise UnsupportedCriterionError(descriptor, ruleset)
     if ruleset == "fide-2024":
         from tiebreak_core import fide2024 as _fide
 
         _fide.validate_inputs(players, total_rounds)
-        return _calc_desc(player, players, descriptor, total_rounds)
+        return _calc_desc(player, players, descriptor, total_rounds,
+                          ruleset="fide-2024")
     from tiebreak_core import fide2026 as _fide26
 
     _fide26.validate_inputs(players, total_rounds)

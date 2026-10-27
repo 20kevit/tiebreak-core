@@ -46,6 +46,19 @@ Rules:
   (c) no PyPI publication and no adopted consumer of 1.x outputs
   existed yet. After PyPI publication this exception path is closed:
   the freeze is absolute.
+- 1.3.0 corrections R1/R2 (2026-10-27): two bug fixes to code paths
+  that contradicted their own documented contract, both reproduced
+  against the authoritative C.07 text. R1 (descriptor ruleset dispatch)
+  edited no engine — the `fide-2024` descriptor path was misrouting to
+  the `fide-2026` modifier machine and now returns the value the
+  `fide-2024` named id always returned, so no ruleset output moves. R2
+  (round-robin REP, §7.6/§15.2) does move `fide-2026` RR-mode output,
+  but only for events that combine `mode="round_robin"` with a forfeit
+  loss, and only toward the regulations the module already documented
+  (`docs/FIDE_2026_DIFF.md` D12). Both are recorded with before/after
+  values in `CHANGELOG.md`. A maintainer who treats the published
+  `fide-2026` freeze as absolute may instead cut a new ruleset id or a
+  MAJOR release for R2; the correction is re-derivable either way.
 - `CALCULATION_RULES_VERSION` is the default ruleset the library
   calculates under when no explicit selection is made.
 - New rulesets are MINOR package changes (additive). Removing a

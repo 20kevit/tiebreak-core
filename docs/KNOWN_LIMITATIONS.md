@@ -91,3 +91,33 @@ Each item: CURRENT BEHAVIOR → KNOWN LIMITATION → NOT FIXED IN v0.1.0.
 19. `Article16Policy` overrides (§16.6) are recorded and validated
     but only the FIDE-default policies drive the engines; exotic
     event tables must still cross the boundary as explicit inputs.
+
+## 1.3.0 corrections (bug fixes, not new scope)
+
+Both items were reproduced against the authoritative C.07 text
+(retrieved in full) and fixed with regression coverage. Neither edits a
+frozen engine.
+
+20. Descriptor ruleset dispatch (R1) — CURRENT (<= 1.2.0):
+    `calculate_descriptor_strict(..., ruleset="fide-2024")` validated
+    under the 2024 ruleset but evaluated with the `fide-2026` generic
+    modifier machine, so scalar descriptors with unplayed rounds
+    returned 2026 values (§16.4 caps) while the equivalent named id
+    returned the 2024 value. FIXED (1.3.0): `modifiers.calculate_descriptor`
+    takes a `ruleset` argument; `fide-2024` dispatches to the frozen
+    2024 engine (named combos only) and the 2026-only ids / generic
+    `n >= 3` raise `UnsupportedCriterionError`. Before/after values and
+    the reproduction are in `CHANGELOG.md` and
+    `tests/test_descriptor_ruleset_dispatch.py`.
+21. Round-robin REP (R2) — CURRENT (<= 1.2.0):
+    `fide2026.rounds_played_elected` excluded only requested byes in
+    `round_robin` mode, so forfeit losses counted as elected rounds,
+    contradicting §7.6 ("reduced by … forfeit losses") and §15.2
+    ("forfeit losses in Type B … remain unplayed rounds") — and the
+    module's own `FIDE_2026_DIFF.md` D12. FIXED (1.3.0): §16.2.4
+    forfeit-loss rounds are excluded from RR REP; forfeit wins stay
+    elected. RR-mode `BPG`/`BWG` were already correct. This moves
+    `fide-2026` RR-mode output for events that combine
+    `mode="round_robin"` with a forfeit loss; see `CHANGELOG.md` for
+    before/after values and `docs/VERSIONING.md` for the freeze
+    discussion. Regression: `tests/test_fide2026.py::TestRoundRobinMode`.

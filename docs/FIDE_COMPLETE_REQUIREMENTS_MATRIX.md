@@ -35,7 +35,7 @@ UNVERIFIED / DEFERRED / CONSUMER_OWNED / OUT_OF_SCOPE.
 | Q-DE | §6.1–6.3 | DE (+/P) | 2024 + 2026 | Swiss/RR | mutual games | mini-table | catalog+ADR-008 | TEC DE | VERIFIED (2024) + VERIFIED (2026 minitable) + order-invariance (F4) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (same §§6.1–6.3; /P flag; RR forfeit scope; F4 pair-iteration correction in 1.2.0, no pinned value changed) | core | P1 |
 | Q-ART16 | §§15.3/16 | categories/adj/dummy/cuts | 2024 + 2026 | Swiss | kinds | classify | data-sem §3 | Manual 01–06 | VERIFIED (2024 + 2026) | 2024: IMPLEMENTED · 2026: IMPLEMENTED (caps, F26-1) | core | P0 |
 | Q-DUMMY26 | §16.4.1–2 | dummy caps | 2026 | Swiss | sched-opp adj | Q-ART16 | diff D13 | Manual NEW | VERIFIED ×5 (BH 55/49.5/63/69, C1 50/11.5, SB 37.25) | IMPLEMENTED (F26-1) | core | P0 |
-| Q-RR152 | §15.2 | RR forfeit scope | 2026 | RR/pre-paired | mode flag | sets | diff D12 | — | unit (RR mode) | IMPLEMENTED (F26-1) | core | P1 |
+| Q-RR152 | §15.2 | RR forfeit scope | 2026 | RR/pre-paired | mode flag | sets | diff D12 | — | unit (RR mode) | IMPLEMENTED (F26-1); REP corrected 1.3.0 (R2 — §16.2.4 forfeit losses excluded; see `CHANGELOG.md`) | core | P1 |
 | Q-RRBAN | Art-8 note | BH RR ban | 2026 | RR | coverage | warn | diff D7 | — | — | CONSUMER_OWNED (enforcement is organizer list duty; core documents, see D7) | core+consumer | P2 |
 | Q-FIRSTR | §10 note | first-rating rule | 2026 | any | snapshot | contract | diff D9 | — | contract | IMPLEMENTED-by-construction | consumer | — |
 | Q-SEQ | §§4.1–4.2 | ordered lists + subgroups → lots | all | any | descriptors | ranking | arch-gap §26 | — | ranking tests | IMPLEMENTED+CONSUMER_OWNED (selection) | shared | — |
@@ -67,6 +67,7 @@ PROJECT_DERIVED, never labelled official).
 | Req | Source/Art | Behavior | Status | Owner |
 |---|---|---|---|---|
 | Q-DESC | MTB26 grammar | descriptor parsing + canonical ids + typed rejection | IMPLEMENTED (`tiebreak_core.modifiers.parse_descriptor`) | core |
+| Q-DESCRS | MTB26 grammar + ruleset dispatch | `calculate_descriptor(..., ruleset=)` evaluates under the SELECTED ruleset | 2024 + 2026 | Swiss | descriptor | named ids | modifiers + fide2024/fide2026 | — | unit (1.3.0 R1) | IMPLEMENTED (1.3.0: `fide-2024` dispatches to the frozen 2024 engine, named combos only — generic `n>=3`, `/P`, `AOB/F` and the 2026-only ids raise `UnsupportedCriterionError`; `fide-2026` unchanged) | core | P1 |
 | Q-PSGEN | MTB26 /Cn on PS | PS/Cn round-exclusion (generalised §14.1.1.c) | IMPLEMENTED | core |
 | Q-REV | MTB26 /R | TPN/R + RTNG/R ranking reversal | IMPLEMENTED (`rank_descriptors`) | core+consumer |
 | Q-A16POL | C.07 §16.6 | `Article16Policy` value object + `resolve_policy` (§16.6 overrides) | IMPLEMENTED (defaults pinned to engine behavior) | core |

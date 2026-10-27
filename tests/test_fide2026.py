@@ -286,6 +286,49 @@ class TestRoundRobinMode:
         # Swiss: forfeit games are unplayed -> excluded.
         assert f26.calculate(pl[1], pl, "koya", 3, "swiss") == 0.0
 
+    def test_rr_rep_excludes_forfeit_losses(self):
+        """§7.6 REP = rounds - (half/zero-point byes + forfeit losses).
+
+        §15.2 keeps forfeit LOSSES unplayed in Type B, so a forfeit loss
+        reduces REP in a round-robin exactly as it does in Swiss — the
+        RR regime must not treat it as an elected game. Forfeit WINS
+        stay elected (§15.2: regular games in Type B).
+        """
+        pl = self.rr_event()
+        # #2 recorded 3 rounds, one of them a forfeit loss (R3).
+        assert f26.calculate(pl[2], pl, "rounds_elected", 3,
+                             "round_robin") == 2.0
+        assert f26.calculate(pl[2], pl, "rounds_elected", 3, "swiss") == 2.0
+        # #1's only forfeit is a WIN -> still elected in both regimes.
+        assert f26.calculate(pl[1], pl, "rounds_elected", 3,
+                             "round_robin") == 3.0
+        assert f26.calculate(pl[1], pl, "rounds_elected", 3, "swiss") == 3.0
+
+    def test_rr_rep_coherent_event(self):
+        """Coherent 4-player 3-round RR: RR REP == Swiss REP."""
+        pl = {
+            1: P(1, 2000, 3.0, [(4, 1.0, "white", 1, "played"),
+                                (3, 1.0, "white", 2, "played"),
+                                (2, 1.0, "white", 3, "played")]),
+            2: P(2, 1900, 1.0, [(3, 0.0, "black", 1, "forfeit_loss"),
+                                (4, 1.0, "white", 2, "played"),
+                                (1, 0.0, "black", 3, "forfeit_loss")]),
+            3: P(3, 1900, 2.0, [(2, 1.0, "white", 1, "forfeit_win"),
+                                (1, 0.0, "black", 2, "played"),
+                                (4, 1.0, "white", 3, "played")]),
+            4: P(4, 1800, 0.0, [(1, 0.0, "black", 1, "played"),
+                                (2, 0.0, "black", 2, "played"),
+                                (3, 0.0, "black", 3, "played")]),
+        }
+        for pid in pl:
+            assert f26.calculate(pl[pid], pl, "rounds_elected", 3,
+                                 "round_robin") == pytest.approx(
+                    f26.calculate(pl[pid], pl, "rounds_elected", 3,
+                                  "swiss"))
+        assert [f26.calculate(pl[pid], pl, "rounds_elected", 3,
+                              "round_robin") for pid in (1, 2, 3, 4)] == \
+            [3.0, 1.0, 3.0, 3.0]
+
     def test_rr_de_includes_forfeits(self):
         pl = self.rr_event()
         res = f26.rank_standings(

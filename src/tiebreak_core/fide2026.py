@@ -104,9 +104,12 @@ TERMINAL_CRITERIA: Tuple[str, ...] = ("tpn", "rtng")
 _FORFEIT_KINDS = (FORFEIT_WIN, FORFEIT_LOSS)
 #: Categories whose dummies are capped by §16.4.1 (forfeits).
 _CAP41_CATEGORIES = (_f24.CAT_FW, _f24.CAT_FL)
-#: Categories excluded from round-robin REP (requested byes only —
-#: forfeits count as elected games under §15.2).
-_RR_REP_EXCLUDED = (_f24.CAT_RB_EARLY, _f24.CAT_RB_LATE)
+#: Categories excluded from round-robin REP (§7.6): half/zero-point
+#: (requested) byes and forfeit losses. Forfeit WINS stay elected —
+#: §15.2 keeps them "regular games" in Type B, and §7.6 only reduces
+#: forfeit losses. (2024 §7.6 reads identically; the pre-2026 acronym
+#: for REP was GE.)
+_RR_REP_EXCLUDED = (_f24.CAT_RB_EARLY, _f24.CAT_RB_LATE, _f24.CAT_FL)
 
 #: Precomputed shared context: (classified rounds, adjusted scores).
 _Precomputed = Tuple[Dict[int, List[_f24.ClassifiedRound]],
@@ -843,11 +846,12 @@ def rounds_played_elected(
         draw_points: float = 0.5,
         forfeits_as_played: bool = False,
         _pre: _Precomputed | None = None) -> float:
-    """REP §7.6.
+    """REP §7.6: rounds reduced by half/zero-point byes and forfeit losses.
 
-    Swiss: recorded non-absent rounds minus half/zero-byes and forfeit
-    losses. RR: forfeits count as elected (§15.2);     only requested byes
-    are excluded.
+    Swiss: recorded non-absent rounds minus §16.1.2 VURs (requested
+    byes + forfeit losses). RR (§15.2): pre-determined pairings treat
+    forfeit WINS as regular games, but forfeit LOSSES remain unplayed
+    rounds — so they reduce REP exactly as the requested byes do.
     """
     _validate_forfeits_flag(forfeits_as_played)
     ctx, _ = _use_pre(all_players, total_rounds, mode, draw_points,

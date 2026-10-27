@@ -32,7 +32,10 @@ FIDE_REFERENCE = (
 
 SUPPORTED_RULESETS: Tuple[str, ...] = ("legacy-0.1.0", "fide-2024", "fide-2026")
 
-ROADMAP_RULESETS: Tuple[str, ...] = ("FIDE_2024", "FIDE_2026")
+#: Reserved ruleset ids that are specified but NOT implemented. Both
+#: historical roadmap names (``FIDE_2024``/``FIDE_2026``) shipped as
+#: ``fide-2024``/``fide-2026``; nothing is pending, so this is empty.
+ROADMAP_RULESETS: Tuple[str, ...] = ()
 
 
 def is_supported(rules_version: str) -> bool:
@@ -87,18 +90,19 @@ _RULESETS: Dict[str, RulesetInfo] = {
         id="fide-2026",
         status="implemented",
         description=(
-            "FIDE C.07 edition effective 1 Mar 2026 for individual "
-            "tournaments: the full fide-2024 Swiss engine plus the "
-            "§16.4 dummy caps (16.4.1 scheduled-opponent cap for "
-            "forfeits; 16.4.2 draw-points x rounds cap otherwise), an "
-            "explicit swiss/round_robin mode flag (round_robin "
-            "implements the §15.2 forfeit carve-out), and terminal "
-            "ranking stages tpn (§7.8) / rtng (§10.6). "
-            "Out of scope: Standard Points §7.7 (needs "
-            "scheduled-opponent round scores, Phase F26-2), team "
-            "systems §§11–13, Art.16.6 overrides, Koya-limit §14.5. "
-            "Buchholz-family use in round-robins is documented, not "
-            "enforced (Art. 8 note)."
+        "FIDE C.07 edition effective 1 Mar 2026 for individual "
+        "tournaments: the full fide-2024 Swiss engine plus the "
+        "§16.4 dummy caps (16.4.1 scheduled-opponent cap for "
+        "forfeits; 16.4.2 draw-points x rounds cap otherwise), an "
+        "explicit swiss/round_robin mode flag (round_robin "
+        "implements the §15.2 forfeit carve-out), Standard Points "
+        "§7.7 (explicit per-round opponent scores required for exotic "
+        "scoring tables), Koya-limit §14.5 (/L±n half-point steps), "
+        "and terminal ranking stages tpn (§7.8) / rtng (§10.6). "
+        "Team systems §§11–13 resolve through ``tiebreak_core.team``. "
+        "Out of scope: Art.16.6 competition-specific overrides beyond "
+        "the Article16Policy value object. Buchholz-family use in "
+        "round-robins is documented, not enforced (Art. 8 note)."
         ),
         fide_reference=(
             "FIDE Handbook C.07 Play-Off and Tie-Break Regulations "

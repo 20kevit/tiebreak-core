@@ -11,9 +11,9 @@ An :class:`Article16Policy` is a value object describing HOW unplayed
 rounds are managed; the engines document which policy their defaults
 reproduce. New code paths (modifiers, team fore-variants) resolve
 their behavior through :func:`resolve_policy`. Existing engine
-defaults are unchanged — :func:`default_policy` is pinned by
-conformance tests to reproduce ``fide-2024`` / ``fide-2026`` outputs
-exactly.
+defaults are unchanged — the module-level ``FIDE_2024_POLICY`` /
+``FIDE_2026_SWISS_POLICY`` / ``FIDE_2026_RR_POLICY`` constants are
+pinned by ``tests/test_policy_scoring.py`` to the engines' outputs.
 """
 from __future__ import annotations
 

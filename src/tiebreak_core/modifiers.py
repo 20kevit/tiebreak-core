@@ -28,7 +28,10 @@ Articles 13–14). PS/Cn (n >= 2) generalizes §14.1.1.c round-exclusion
 §14.1.1.d + §16.5.1 victim rule per §16.5.2 (documented).
 
 Frozen rulesets are untouched: ``fide-2024`` keeps its named ids
-(generic ``n >= 3`` descriptors resolve under ``fide-2026`` only).
+(generic ``n >= 3`` descriptors resolve under ``fide-2026`` only), and
+``calculate_descriptor(..., ruleset="fide-2024")`` evaluates through
+the frozen 2024 engine instead of the 2026 one (the 2024 ruleset has no
+§16.4.1/§16.4.2 dummy caps, so the two must not be mixed).
 """
 from __future__ import annotations
 
@@ -317,6 +320,11 @@ _BASE_IDS: Dict[str, str] = {
     "KS": "koya",
 }
 
+#: Descriptor bases with at least one named id under ``fide-2024``
+#: (``fide2024.FIDE2024_IDS``). Everything else (including the 2026
+#: generic ``n >= 3`` machine and ``AOB/F``) is unsupported there.
+_FIDE2024_NAMED_BASES = ("BH", "SB", "PS", "ARO", "FB", "AOB", "KS")
+
 
 def canonical_id(spec: ModifierSpec) -> str:
     """Map ``spec`` to the criterion id used in ``values`` dicts.
@@ -357,10 +365,50 @@ def canonical_id(spec: ModifierSpec) -> str:
 # Generic individual calculation (fide-2026)
 # ------------------------------------------------------------------
 
+def _calculate_descriptor_fide2024(player, players: Mapping,
+                                   spec: ModifierSpec, total_rounds: int,
+                                   descriptor: str) -> float:
+    """Evaluate a descriptor with the frozen ``fide-2024`` engine.
+
+    ``fide-2024`` publishes a closed set of named ids (see
+    ``fide2024.FIDE2024_IDS``). Modifiers the 2024 ruleset does not
+    define — generic ``n >= 3`` cuts/medians, ``/P``, ``AOB/F`` and the
+    2026-only ids (SB-C2, ARO-C2/M1/M2, FB-C1/C2/M1/M2) — raise
+    :class:`UnsupportedCriterionError` instead of silently reusing the
+    2026 arithmetic, which would otherwise apply the §16.4.1/§16.4.2
+    dummy caps that do not exist in 2024.
+    """
+    from tiebreak_core import fide2024 as _f24
+
+    base = spec.base
+    if base == "KS":
+        return _f24.koya(player, players, total_rounds,
+                         spec.limit_halves * 0.5)
+    if base not in _FIDE2024_NAMED_BASES:
+        raise UnsupportedCriterionError(descriptor, "fide-2024")
+    if spec.fore:
+        if base == "BH":
+            base = "FB"
+        else:
+            raise UnsupportedCriterionError(descriptor, "fide-2024")
+    if spec.limit_halves:
+        raise InvalidDescriptorError(descriptor, "unreachable")
+    if spec.cut is not None:
+        named = _NAMED_IDS.get((base, f"C{spec.cut}"))
+    elif spec.median is not None:
+        named = _NAMED_IDS.get((base, f"M{spec.median}"))
+    else:
+        named = _BASE_IDS.get(base)
+    if named is None or named not in _f24.FIDE2024_REGISTRY:
+        raise UnsupportedCriterionError(descriptor, "fide-2024")
+    return _f24.FIDE2024_REGISTRY[named](player, players, total_rounds)
+
+
 def calculate_descriptor(player, all_players: Mapping,
                          descriptor: str, total_rounds: int,
                          mode: str = "swiss",
-                         draw_points: float = 0.5) -> float:
+                         draw_points: float = 0.5,
+                         ruleset: str = "fide-2026") -> float:
     """Calculate one MTB26 descriptor value (individual scope).
 
     ``/P`` maps to the fide-2026 ``forfeits_as_played`` opt-in;
@@ -368,6 +416,13 @@ def calculate_descriptor(player, all_players: Mapping,
     Team descriptors raise :class:`UnsupportedCriterionError`
     (use ``tiebreak_core.team``). Non-scalar stages (DE/TPN/RTNG)
     raise :class:`UnsupportedCriterionError` (use ranking).
+
+    ``ruleset`` selects the arithmetic: ``"fide-2026"`` (default) runs
+    the generic 2026 machine; ``"fide-2024"`` delegates to the frozen
+    2024 engine and accepts its named combos only (see
+    ``_calculate_descriptor_fide2024``). ``/P`` is a no-op under
+    ``fide-2024`` (2024 §15.2 already treats forfeits as regular
+    games).
     """
     from tiebreak_core import fide2026 as _f26
 
@@ -376,6 +431,9 @@ def calculate_descriptor(player, all_players: Mapping,
         raise UnsupportedCriterionError(
             f"{descriptor!r} (team descriptor; use tiebreak_core.team)",
             "fide-2026")
+    if ruleset == "fide-2024":
+        return _calculate_descriptor_fide2024(
+            player, dict(all_players), spec, total_rounds, descriptor)
     if spec.base in ("DE", "TPN", "RTNG"):
         raise UnsupportedCriterionError(
             f"{descriptor!r} (ranking stage under fide-2026; "

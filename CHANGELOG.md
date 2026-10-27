@@ -9,6 +9,68 @@ Ruleset versions (e.g. `legacy-0.1.0`, `fide-2026`) are independent of
 package versions — see `docs/VERSIONING.md`. A frozen ruleset's outputs
 never change across package releases.
 
+## [1.3.0] — 2026-10-27
+
+Correctness release: two audit findings, both reproduced against the
+authoritative FIDE C.07 text (retrieved in full, see
+`docs/FIDE_SOURCES.md`), both fixed with regression coverage. No
+criteria were added or removed and no frozen ruleset's engine was
+edited.
+
+Correction R1 (descriptor ruleset dispatch). `strict.calculate_descriptor_strict(...,
+ruleset="fide-2024")` validated under the 2024 ruleset but then ran the
+*generic MTB26 modifier machine*, which is a `fide-2026` construct. The
+2024 ruleset has no §16.4.1/§16.4.2 dummy caps, so every scalar
+descriptor with an unplayed round silently returned 2026 values while
+the named id for the same criterion returned the correct 2024 value —
+two answers for one ruleset. Reproduced on a coherent 10-round fixture
+(player 1: nine played wins plus one pairing bye, 10 points):
+`calculate_descriptor_strict(pl[1], pl, "BH/C1", 10, ruleset="fide-2024")`
+returned **5.0** (the 2026 §16.4.2 cap `draw_points × rounds`) while
+`calculate_all_strict(pl[1], pl, ["buchholz_cut1"], 10, ruleset="fide-2024")`
+returned **10.0** (the 2024 uncapped dummy = own points). Fix:
+`modifiers.calculate_descriptor` takes a `ruleset` argument; `fide-2024`
+now dispatches to the frozen 2024 engine and accepts its named combos
+only — generic `n >= 3` cuts/medians, `/P`, `AOB/F` and the 2026-only
+ids (SB-C2, ARO-C2/M1/M2, FB-C1/C2/M1/M2) raise
+`UnsupportedCriterionError` instead of silently reusing 2026 arithmetic.
+The fide-2024 engine itself is untouched: its named outputs are
+byte-identical before/after (the descriptor path now agrees with the
+named-id path it was supposed to mirror). `/P` is a documented no-op
+under `fide-2024` (2024 §15.2 already treats forfeits as regular games).
+
+Correction R2 (round-robin REP, §7.6/§15.2). `fide2026.rounds_played_elected`
+excluded only requested byes from round-robin REP, so forfeit losses
+counted as elected rounds. §7.6 defines REP as "the number of rounds
+reduced by the number of half-point-byes, zero-point-byes or forfeit
+losses", and §15.2 keeps forfeit losses unplayed in Type B tie-breaks —
+the module's own `FIDE_2026_DIFF.md` D12 states the intended effect
+("forfeit losses do not count in Type-B counts"). Reproduced on a
+coherent 4-player 3-round RR (players 2 and 3 each had a forfeit loss):
+`rounds_played_elected` returned `{1: 3, 2: 3, 3: 3, 4: 3}` in
+`round_robin` mode versus `{1: 3, 2: 2, 3: 2, 4: 3}` in `swiss` mode for
+the same event. Fix: forfeit-loss rounds (§16.2.4) are excluded from
+round-robin REP exactly as requested byes are; forfeit *wins* stay
+elected (§15.2 keeps them regular games in Type B, and §7.6 reduces only
+forfeit losses). RR-mode `BPG`/`BWG` were already correct (forfeit
+losses were excluded there); this correction makes REP consistent with
+them. Before/after: only events that combine `mode="round_robin"` with a
+forfeit loss change, and only in the direction the regulations
+require.
+
+Both corrections are bug fixes to paths that contradicted their own
+documented contract; neither is a change to a ruleset's arithmetic. Per
+`docs/VERSIONING.md` a maintainer who treats the published `fide-2026`
+freeze as absolute may instead cut a new ruleset id or a MAJOR release
+for R2 — the correction is recorded here with before/after values so it
+can be re-derived either way.
+
+Additive: regression suite `tests/test_descriptor_ruleset_dispatch.py`
+(R1) and two round-robin REP tests in `tests/test_fide2026.py` (R2).
+
+Suite: 723 passed, 69 documented differential skips, 0 failed. No FIDE
+approval/acceptance claimed.
+
 ## [1.2.0] — 2026-10-04
 
 Correctness release (additive API + one documented correction).
