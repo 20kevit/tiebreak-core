@@ -358,16 +358,24 @@ class TestForfeitInclusionFlag:
         assert swiss_p == rr == 3.0
 
     def test_p_flag_leaves_type_b_untouched(self):
+        """``/P`` is not a WIN/WON base — the flag must be refused.
+
+        The descriptor grammar already refuses ``WIN/P``/``WON/P``; the
+        named-criterion path must not be broader than the specification
+        (TEC Mandatory Tie-Breaks, Table 1).
+        """
         pl = TestRoundRobinMode().rr_event()
-        assert f26.calculate(pl[1], pl, "wins_black", 3, "swiss", 0.5,
-                             True) == 0.0  # still OTB-only
-        assert f26.calculate(pl[2], pl, "games_black", 3, "swiss", 0.5,
-                             True) == 1.0
+        with pytest.raises(InvalidPlayerDataError):
+            f26.calculate(pl[1], pl, "wins_black", 3, "swiss", 0.5, True)
+        with pytest.raises(InvalidPlayerDataError):
+            f26.calculate(pl[2], pl, "games_black", 3, "swiss", 0.5, True)
 
     def test_p_flag_leaves_ratings_untouched(self):
+        """ARO is not a /P base — the flag must be refused, not ignored."""
         pl = TestRoundRobinMode().rr_event()
-        assert f26.calculate(pl[1], pl, "aro", 3, "swiss", 0.5,
-                             True) == 1800
+        assert f26.calculate(pl[1], pl, "aro", 3, "swiss", 0.5) == 1800
+        with pytest.raises(InvalidPlayerDataError):
+            f26.calculate(pl[1], pl, "aro", 3, "swiss", 0.5, True)
 
     def test_p_flag_rejects_non_bool(self):
         pl = TestRoundRobinMode().rr_event()
@@ -838,8 +846,10 @@ class TestStandardPoints:
             3: P(3, 1500, 1.0, []),
         }
         assert f26.calculate(mk()[1], mk(), "std", 2) == 1.0
-        assert f26.calculate(mk(0.0)[1], mk(0.0), "std", 2, "swiss",
-                             0.5, True) == 1.5
+        # 'std' is not a /P base (TEC Mandatory Tie-Breaks, Table 1), so
+        # the flag is refused instead of silently ignored.
+        with pytest.raises(InvalidPlayerDataError):
+            f26.calculate(mk(0.0)[1], mk(0.0), "std", 2, "swiss", 0.5, True)
 
     def test_absent_rounds_skipped(self):
         pl = {1: PlayerTiebreakData(

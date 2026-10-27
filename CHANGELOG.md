@@ -11,6 +11,35 @@ never change across package releases.
 
 ## [1.3.0] — 2026-10-27
 
+Correctness release: three audit findings, each reproduced against the
+authoritative FIDE C.07 / TEC *Mandatory Tie-Breaks* texts (retrieved in
+full, see `docs/FIDE_SOURCES.md`), each fixed with regression coverage.
+No criteria were added or removed.
+
+Correction R4 (`/P` scope, descriptor ↔ named-criterion ↔ ranking).
+`/P` — "forfeited games, either wins or losses, are considered as played
+games against the scheduled opponent" (TEC *Mandatory Tie-Breaks*) — is
+marked in the official tables only on DE, BH, SB and FB (individuals)
+and on EMMSB/EMGSB/EGMSB/EGGSB, the EDE chains and SSSC (teams). It is
+**not** marked on AOB, KS, PS, WIN, WON, ARO, TPR, PTP, APRO, APPO,
+REP, BC, TBR, BBE or MPvGP. The descriptor grammar already refused
+`AOB/P` and `KS/P`, but the named-criterion path was broader than the
+specification: `fide2024._FORFEITS_AS_PLAYED_CRITERIA` advertised
+`aob` and `koya`, and `fide2026.average_opponents_buchholz` /
+`fide2026.koya` applied `forfeits_as_played` to their Buchholz
+valuation, so `calculate_all_strict(..., forfeits_as_played=True)`
+changed a result the specification does not permit — while the
+descriptor path rejected the same combination. Fixed by restricting
+`_FORFEITS_AS_PLAYED_CRITERIA` to the official `/P` rows in both
+engines, making `aob` and `koya` refuse the flag outright, and adding
+`fide2026._FORFEITS_AS_PLAYED_CRITERIA` plus a guard in
+`fide2026.calculate`. Three tests that encoded the old, over-broad
+contract (`/P` silently ignored for `std`, `aro`, `wins_black`,
+`games_black`) are rewritten to assert the typed rejection, and
+`tests/test_p_flag_scope.py` audits the scope descriptor-by-descriptor
+against Tables 1–3. No `/P`-bearing criterion changed behaviour.
+
+
 Correctness release: two audit findings, both reproduced against the
 authoritative FIDE C.07 text (retrieved in full, see
 `docs/FIDE_SOURCES.md`), both fixed with regression coverage. No
@@ -36,8 +65,7 @@ ids (SB-C2, ARO-C2/M1/M2, FB-C1/C2/M1/M2) raise
 `UnsupportedCriterionError` instead of silently reusing 2026 arithmetic.
 The fide-2024 engine itself is untouched: its named outputs are
 byte-identical before/after (the descriptor path now agrees with the
-named-id path it was supposed to mirror). `/P` is a documented no-op
-under `fide-2024` (2024 §15.2 already treats forfeits as regular games).
+named-id path it was supposed to mirror).
 
 Correction R2 (round-robin REP, §7.6/§15.2). `fide2026.rounds_played_elected`
 excluded only requested byes from round-robin REP, so forfeit losses

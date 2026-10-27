@@ -107,7 +107,7 @@ Methodology
 ```bash
 python -m venv .venv && . .venv/bin/activate
 pip install -e .
-python -m pytest -q                 # 743 passed, 69 documented skips, 0 failed
+python -m pytest -q                 # 811 passed, 69 documented skips, 0 failed
 python -m pytest tests/test_examples.py -q   # examples A–G
 python -m build                     # sdist + wheel
 ```

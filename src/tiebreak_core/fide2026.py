@@ -111,6 +111,22 @@ _CAP41_CATEGORIES = (_f24.CAT_FW, _f24.CAT_FL)
 #: for REP was GE.)
 _RR_REP_EXCLUDED = (_f24.CAT_RB_EARLY, _f24.CAT_RB_LATE, _f24.CAT_FL)
 
+
+# --- /P (forfeits as played) scope -------------------------------------------
+# The TEC Mandatory Tie-Breaks table marks /P with a filled circle only on
+# DE, BH, SB and FB (individuals) and on EMMSB/EMGSB/EGMSB/EGGSB, the EDE
+# chains and SSSC (teams).  AOB, KS, PS, WIN, WON, ARO/APRO/APPO/TPR/PTP,
+# REP, BC, TBR, BBE and MPvGP are NOT /P bases, so the flag must not change
+# their result on any path.  ``_check_combination`` enforces this for
+# descriptors; this set enforces it for the named-criterion path.
+_FORFEITS_AS_PLAYED_CRITERIA = frozenset({
+    "buchholz", "buchholz_cut1", "buchholz_cut2",
+    "median_buchholz", "median_buchholz_2",
+    "sonneborn_berger", "sonneborn_berger_cut1", "sonneborn_berger_cut2",
+    "fore_buchholz", "fore_buchholz_cut1", "fore_buchholz_cut2",
+    "fore_median1", "fore_median2",
+})
+
 #: Precomputed shared context: (classified rounds, adjusted scores).
 _Precomputed = Tuple[Dict[int, List[_f24.ClassifiedRound]],
                      Dict[int, float]]
@@ -737,7 +753,14 @@ def average_opponents_buchholz(
                if r.kind == PLAYED and r.opponent_id in shared]
     if not opp_ids:
         return 0.0
-    eff = _regular_mode(mode, forfeits_as_played)
+    if forfeits_as_played:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            "criterion 'aob' does not accept forfeits_as_played (/P): the "
+            "TEC Mandatory Tie-Breaks table lists /P only for DE, BH, SB "
+            "and FB (individuals) and the ESB/EDE/SSSC team chains; AOB "
+            "is not a /P base")
+    eff = _regular_mode(mode, False)
     bhs = [_buchholz_core(shared[oid], ctx, adj, eff, draw_points,
                            total_rounds) for oid in opp_ids]
     return sum(bhs) / len(bhs)
@@ -926,7 +949,14 @@ def koya(player: PlayerTiebreakData,
     validated half-step by ``fide2024._validate_koya_limit``).
     """
     _use_pre(all_players, total_rounds, mode, draw_points, _pre)
-    eff = _regular_mode(mode, forfeits_as_played)
+    if forfeits_as_played:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            "criterion 'koya' does not accept forfeits_as_played (/P): the "
+            "TEC Mandatory Tie-Breaks table lists /P only for DE, BH, SB "
+            "and FB (individuals) and the ESB/EDE/SSSC team chains; KS "
+            "is not a /P base")
+    eff = _regular_mode(mode, False)
     threshold = total_rounds / 2 + _f24._validate_koya_limit(koya_limit)
     total = 0.0
     for g in player.games:
@@ -1366,6 +1396,13 @@ def calculate(player: PlayerTiebreakData,
     """Single fide-2026 calculation (validated upstream by strict)."""
     require_supported(criterion)
     _validate_forfeits_flag(forfeits_as_played)
+    if forfeits_as_played and criterion not in _FORFEITS_AS_PLAYED_CRITERIA:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            f"criterion {criterion!r} does not accept forfeits_as_played "
+            f"(the TEC Mandatory Tie-Breaks table lists /P only for "
+            f"DE, BH, SB, FB, EMMSB/EMGSB/EGMSB/EGGSB, the EDE chains "
+            f"and SSSC; {criterion!r} is not a /P base)")
     if criterion == "koya":
         return koya(player, dict(all_players), total_rounds, mode,
                     draw_points, forfeits_as_played, koya_limit)

@@ -37,7 +37,7 @@ own definition is unambiguous and governs: *"forfeited games, either
 wins or losses, are considered as played games against the scheduled
 opponent"*. That is §15.2's pre-determined treatment plus §16.6's
 competition-specified alternative to the §16.4 dummy, and is what both
-`fide-2024` and `fide-2026` implement for the BH/SB/FB/Koya/AOB
+`fide-2024` and `fide-2026` implement for the BH/SB/FB
 families (see the status column).
 `x` in the code table = "any reasonable value must be implemented"
 (generic-Cn/Mn/Lx/Kx machine).
@@ -71,7 +71,7 @@ Codes `SB/P`, `SB/C1/P`, `SB/C2/P`, `ARO/C1…`, `ARO/M1…` are listed
 | PS[:MP/:GP] + /C1 /C2 | 7.5 | MP GP | C1 C2 | IMPLEMENTED (PS, PS-C1 + generic PS/Cn round-exclusion; team refs via team module) |
 | TPN, TPN/R | 7.8 | — | R | IMPLEMENTED (ascending terminal under fide-2026; /R consumer-side) |
 | BH[:MP/:GP] + /C1 /C2 /M1 /M2 /P /F | 8.1 | MP GP | C1 C2 M1 M2 P F | IMPLEMENTED (individual named + generic /Cn /Mn; /P under fide-2024 and fide-2026; BH/F routed to the FB family; team refs via team module) |
-| AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base + AOB/FB id `aob_fb` under fide-2026; `/P` is not in the official table and the MTB26 grammar rejects `AOB/P` — §8.2 averages opponents "played over the board"; the flag still reaches the *valuation* of those opponents' own Buchholz, mirroring `fide-2026`) |
+| AOB[:MP/:GP] + /F | 8.2 | MP GP | F | IMPLEMENTED (base + AOB/FB id `aob_fb` under fide-2026; `/P` is not in the official table and the MTB26 grammar rejects `AOB/P` — §8.2 averages opponents "played over the board". **Correction (1.3.0, R4):** the flag no longer reaches the *valuation* of those opponents' Buchholz either; `aob` and `koya` are not `/P` bases, so the named-criterion path now refuses the flag with `InvalidPlayerDataError` exactly as the grammar refuses `AOB/P`/`KS/P`) |
 | FB[:MP/:GP] + /C1 /C2 /M1 /M2 /P | 8.3 | MP GP | C1 C2 M1 M2 P | IMPLEMENTED (base FB + C1/C2/M1/M2 + /P under fide-2024 and fide-2026) |
 | KS[:MP/:GP] + /Lx | 9.2 | MP GP | Lx | IMPLEMENTED (base + /L±n half-point limits individual + team; `/P` is not in the official table and the MTB26 grammar rejects `KS/P`) |
 

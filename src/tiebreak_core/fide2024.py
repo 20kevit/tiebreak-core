@@ -666,8 +666,15 @@ def average_opponents_buchholz(player: PlayerTiebreakData,
                if r.kind == PLAYED and r.opponent_id in all_players]
     if not opp_ids:
         return 0.0
+    if forfeits_as_played:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            "criterion 'aob' does not accept forfeits_as_played (/P): the "
+            "TEC Mandatory Tie-Breaks table lists /P only for DE, BH, SB "
+            "and FB (individuals) and the ESB/EDE/SSSC team chains; AOB "
+            "is not a /P base")
     bhs = [sum(c.value for c in _buchholz_contribs(
-        all_players[oid].points, ctx[oid], adj, forfeits_as_played)
+        all_players[oid].points, ctx[oid], adj, False)
     ) for oid in opp_ids]
     return sum(bhs) / len(bhs)
 
@@ -751,6 +758,13 @@ def koya(player: PlayerTiebreakData,
     ``koya_limit`` (§14.5, MTB26 ``/L``): threshold offset in
     half-points (positive = fewer contributors, negative = more).
     """
+    if forfeits_as_played:
+        from tiebreak_core.errors import InvalidPlayerDataError
+        raise InvalidPlayerDataError(
+            "criterion 'koya' does not accept forfeits_as_played (/P): the "
+            "TEC Mandatory Tie-Breaks table lists /P only for DE, BH, SB "
+            "and FB (individuals) and the ESB/EDE/SSSC team chains; KS "
+            "is not a /P base")
     ctx, _ = _use_pre(all_players, total_rounds, _pre)
     _validate_koya_limit(koya_limit)
     threshold = total_rounds / 2 + koya_limit
@@ -758,7 +772,7 @@ def koya(player: PlayerTiebreakData,
     for g in player.games:
         kind = normalize_kind(g)
         sched = g.opponent_id != -1 and g.opponent_id in all_players
-        if not _as_played(kind, forfeits_as_played, sched):
+        if not _as_played(kind, False, sched):
             continue
         if all_players[g.opponent_id].points >= threshold:
             total += g.score
@@ -1001,10 +1015,14 @@ _PD_RANGES: Tuple[Tuple[int, int, float, float], ...] = (
 #: 2024 regulations keep forfeits unplayed in ratings-based and Type-B
 #: counts — so ``forfeits_as_played=True`` for them fails fast instead
 #: of being silently ignored.
+# The TEC Mandatory Tie-Breaks table marks /P with a filled circle only on
+# DE, BH, SB and FB (individuals) and on EMMSB/EMGSB/EGMSB/EGGSB, the EDE
+# chains and SSSC (teams).  AOB and KS are not /P bases, so the flag must
+# not change their result anywhere.
 _FORFEITS_AS_PLAYED_CRITERIA = frozenset({
     "buchholz", "buchholz_cut1", "buchholz_cut2", "median_buchholz",
     "median_buchholz_2", "sonneborn_berger", "sonneborn_berger_cut1",
-    "aob", "fore_buchholz", "koya",
+    "fore_buchholz",
 })
 
 
@@ -1101,8 +1119,8 @@ def calculate(player: PlayerTiebreakData,
     if forfeits_as_played and criterion not in _FORFEITS_AS_PLAYED_CRITERIA:
         from tiebreak_core.errors import InvalidPlayerDataError
         raise InvalidPlayerDataError(
-            f"forfeits_as_played (MTB26 /P) applies to the BH/SB/FB/Koya/"
-            f"AOB families under fide-2024; criterion {criterion!r} is "
+            f"forfeits_as_played (MTB26 /P) applies to the BH/SB/FB "
+            f"families under fide-2024; criterion {criterion!r} is "
             f"unaffected (§15.2 keeps forfeits unplayed in ratings-based "
             f"and Type-B counts)")
     if criterion == "koya":
