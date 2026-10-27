@@ -50,6 +50,22 @@ class UnsupportedCriterionError(TiebreakError):
             f"{ruleset!r}")
 
 
+class NotPermittedForFormatError(TiebreakError):
+    """Raised when a criterion is implemented but the regulations bar it
+    from a given tournament format (e.g. Article 8 of C.07 eff. 1 Mar
+    2026: the Buchholz family must not be used in round-robins)."""
+
+    def __init__(self, criterion: object, ruleset: object, mode: object,
+                 article: str) -> None:
+        self.criterion = criterion
+        self.ruleset = ruleset
+        self.mode = mode
+        self.article = article
+        super().__init__(
+            f"criterion {criterion!r} is not permitted for format "
+            f"{mode!r} under {article} (ruleset {ruleset!r})")
+
+
 class InvalidPlayerDataError(TiebreakError):
     """Raised when a PlayerTiebreakData (or players mapping) is malformed."""
 

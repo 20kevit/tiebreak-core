@@ -163,3 +163,43 @@ via alternate official path (doc.fide.com PDF + local text extraction).
   superseded.
 - 02/02/2026 approving instrument number/URL (UNVERIFIED; dates RETRIEVED).
 - WRBC 2025 regulation PDF fine print (MEDIUM confidence via snippets; no core impact).
+
+## 21. Descriptor-specification source status (audited 2026-10-27)
+
+The TEC *Mandatory Tie-Breaks* document used in earlier revisions of this
+repository states *"The FIDE Handbook will be updated in 2025"*, so it
+cannot be assumed to be the latest applicable descriptor specification
+in October 2026. The current TEC specification is the **TRF-2026**
+release.
+
+| # | Title | Official URL | Published / revised | Effective | Class | Superseded? | Implementation requirements |
+|---|---|---|---|---|---|---|---|
+| 21.1 | **Mandatory Tie-Breaks (TRF-2026)** — `MandatoryTieBreaks_Rev.01_-2.doc`, part of the TRF-2026 specification | `https://tec.fide.com/wp-content/uploads/2025/04/MandatoryTieBreaks-TRF26.pdf` (landing page `https://tec.fide.com/trf-2026/`) | April 2025 (Rev.01) | not stated | **Mandatory implementation specification** for FIDE-approved programs (THPs) | **Current.** Supersedes item 15 below | Defines the `Rank Order Descriptor` grammar, the `:MP`/`:GP` team-score prefixes, the modifiers `/Cn /Mn /L±n /Kx`, the options `/P` and `/F`, the three mandatory tables (individuals / both / teams) and the flat TIE-BREAK CODE list (records 202/212 of the TRF file). Lists the exact descriptor strings an endorsed program must implement. |
+| 21.2 | **TRF-2026** specification (Tournament Report File, extensions for tie-breaks, team pairing and In-Tournament Data eXchange) | `https://tec.fide.com/trf-2026/` → `https://tec.fide.com/wp-content/uploads/2025/04/TRF-2026.pdf` | April 2025 (annexes re-issued October 2025) | not stated | Mandatory implementation specification (file format) | Current | Hosts items 21.1 and 21.3; records 202/212 carry the descriptor codes. |
+| 21.3 | **Tournament Type Code Table (192), TRF-2026** | `https://tec.fide.com/wp-content/uploads/2025/04/TournamentTypeCodeTable192-TRF26.pdf` | April 2025 | not stated | Mandatory implementation specification (code table) | Current | Code table for tournament types; not a tie-break-arithmetic source. |
+| 21.4 | **Mandatory Tie-Breaks** (Rev. 01, previously cited) | `https://tec.fide.com/wp-content/uploads/2024/09/MandatoryTieBreaks-1.pdf` (page `https://tec.fide.com/2024/04/30/mandatory-tie-breaks/`) | 2024-09-01 | not stated | Mandatory implementation specification | **Superseded by 21.1** | Same grammar and same three tables; kept only for diffing. |
+| 21.5 | **TRF25 Final Draft** | `https://tec.fide.com/2025/01/09/trf25-final-draft/` → `https://tec.fide.com/wp-content/uploads/2025/01/TRF25-FinalDraft.pdf` | 2025-01-09 | not stated | Draft specification | Superseded by 21.2 | Draft predecessor; its Annex-2 is the earlier form of 21.1. |
+
+**Cross-check result (21.1 vs 21.4).** The three mandatory tables and the
+flat TIE-BREAK CODE list are the same in both revisions. The material
+differences are presentational: TRF-2026 splits the individuals table
+(DE, BPG, BWG, REP, SB, ARO, TPR, PTP, APRO, APPO) from the
+individuals-and-teams table (WIN, WON, PS, BH, AOB, FB, KS), and marks
+the options per row. Both revisions agree that **AOB carries `/F` but
+not `/P`**, and that **KS carries `/Lx` but not `/P`** — which is what
+correction R4 (see `CHANGELOG.md`) enforces.
+
+**Search result, not proof of absence.** A search of the TEC site, the
+FIDE Handbook C.07 (all four editions) and the FIDE news pages on
+2026-10-27 found no descriptor specification newer than TRF-2026. That
+is a search result; it does not prove no newer document exists.
+
+**Open question for the Technical Commission.** TRF-2026's
+`MandatoryTieBreaks-TRF26.pdf` still carries the note *"The FIDE Handbook
+will be updated in 2025"* and still lists the knockout tie-breaks EDEBT,
+EDEBB, EDET and EDEB as described *"only in this document"*. C.07
+effective 1 March 2026 has **no** Article 12.4/13.5 text describing
+those chains. Question for `secretary.tec@fide.com` (Hendrik du Toit):
+has the Handbook been updated to cover the EDE+BC/TBR/BBE chains, and
+if so in which article — or do TRF-2026's tables remain the authoritative
+definition of those four descriptors?

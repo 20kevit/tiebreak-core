@@ -413,17 +413,34 @@ class TestForfeitInclusionFlag:
                              forfeits_as_played=True)
 
     def test_p_flag_strict_roundtrip(self):
-        from tiebreak_core import rank_standings_strict
+        """Swiss + ``/P`` reproduces the round-robin arithmetic.
+
+        Article 8 (C.07 eff. 1 Mar 2026) bars the Buchholz family from
+        round-robins, so the fide-2026 conformance interface refuses the
+        RR call outright; the equivalence is checked at the engine level
+        instead, which is where ``/P``'s semantics live.
+        """
+        from tiebreak_core import fide2026, rank_standings_strict
+        from tiebreak_core.errors import NotPermittedForFormatError
         pl = TestRoundRobinMode().rr_event()
         res = rank_standings_strict(pl, ["buchholz"], 3,
                                     ruleset="fide-2026",
                                     forfeits_as_played=True)
         assert res.rules_version == "fide-2026"
-        res_rr = rank_standings_strict(pl, ["buchholz"], 3,
-                                       ruleset="fide-2026",
-                                       mode="round_robin")
-        assert ([p.player_id for p in res.players]
-                == [p.player_id for p in res_rr.players])
+
+        with pytest.raises(NotPermittedForFormatError):
+            rank_standings_strict(pl, ["buchholz"], 3,
+                                  ruleset="fide-2026",
+                                  mode="round_robin")
+
+        shared = dict(pl)
+        pre = fide2026._precompute(shared, 3, "round_robin", 0.5)
+        for pid in shared:
+            assert (fide2026.buchholz(shared[pid], shared, 3, "swiss",
+                                      0.5, True)
+                    == fide2026.buchholz(shared[pid], shared, 3,
+                                         "round_robin", 0.5,
+                                         _pre=pre))
 
 
 class TestSbCutIdentification:

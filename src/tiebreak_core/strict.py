@@ -293,6 +293,18 @@ def _require_koya_limit_scope(ruleset: str, koya_limit: float) -> None:
             f"got {koya_limit!r} under ruleset {ruleset!r}")
 
 
+def _check_format_eligibility(criteria, ruleset: str, mode: str) -> None:
+    """Reject Article-8 Buchholz-family criteria in round-robins.
+
+    C.07 (eff. 1 Mar 2026) Article 8: "These tie-breaks must not be used
+    in round-robins."  The raw engines remain callable — this is the
+    ruleset-aware conformance layer that enforces eligibility.
+    """
+    from tiebreak_core import fide2026 as _f26
+    for criterion in criteria:
+        _f26.check_rr_eligibility(criterion, ruleset, mode)
+
+
 def calculate_strict(
     player: PlayerTiebreakData,
     all_players: Mapping[int, PlayerTiebreakData],
@@ -339,6 +351,7 @@ def calculate_strict(
         players = validate_players(all_players)
         _fide26.validate_inputs(players, total_rounds)
         _require_koya_limit_scope(ruleset, koya_limit)
+        _check_format_eligibility([criterion], ruleset, mode)
         return _fide26.calculate(player, players, criterion,
                                  total_rounds, mode, draw_points,
                                  forfeits_as_played, koya_limit)
@@ -385,6 +398,7 @@ def calculate_all_strict(
         _fide26.validate_inputs(players, total_rounds)
         for criterion in criteria:
             _fide26.require_supported(criterion)
+        _check_format_eligibility(list(criteria), ruleset, mode)
         _require_koya_limit_scope(ruleset, koya_limit)
         return _fide26.calculate_all(player, players, list(criteria),
                                      total_rounds, mode, draw_points,
@@ -431,6 +445,7 @@ def rank_standings_strict(
         checked_players = validate_players(players)
         _fide26.validate_inputs(checked_players, total_rounds)
         _fide26.check_ranking_criteria(criteria)
+        _check_format_eligibility(list(criteria), ruleset, mode)
         _validate_keys(deterministic_keys)
         _require_koya_limit_scope(ruleset, koya_limit)
         return _fide26.rank_standings(checked_players, list(criteria),

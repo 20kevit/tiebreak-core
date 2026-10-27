@@ -119,6 +119,37 @@ _RR_REP_EXCLUDED = (_f24.CAT_RB_EARLY, _f24.CAT_RB_LATE, _f24.CAT_FL)
 # REP, BC, TBR, BBE and MPvGP are NOT /P bases, so the flag must not change
 # their result on any path.  ``_check_combination`` enforces this for
 # descriptors; this set enforces it for the named-criterion path.
+# --- Article 8 round-robin scope (C.07 eff. 1 Mar 2026) -------------------
+# Article 8 opens with the note "These tie-breaks must not be used in
+# round-robins."  Article 8 covers BH (8.1), AOB (8.2) and FB (8.3).
+# SB (9.1) and KS (9.2) sit in Article 9 and are NOT restricted; KS is
+# explicitly titled "for Round Robin".  The 1 Aug 2024 edition of C.07
+# carries no such note, so this restriction is fide-2026-scoped only.
+RR_FORBIDDEN_BASES = frozenset({"BH", "AOB", "FB"})
+RR_FORBIDDEN_CRITERIA = frozenset({
+    "buchholz", "buchholz_cut1", "buchholz_cut2",
+    "median_buchholz", "median_buchholz_2",
+    "aob", "aob_fb",
+    "fore_buchholz", "fore_buchholz_cut1", "fore_buchholz_cut2",
+    "fore_median1", "fore_median2",
+})
+
+
+def check_rr_eligibility(criterion: str, ruleset: str, mode: str) -> None:
+    """Reject a criterion the current regulations bar from round-robins.
+
+    This is an *eligibility* rule, not an arithmetic rule: the engines
+    still compute the value when called directly, so non-FIDE and custom
+    rulesets keep working.  Only the ruleset-aware conformance interface
+    (``strict`` and the fide-2026 descriptor dispatch) enforces it.
+    """
+    from tiebreak_core.errors import NotPermittedForFormatError
+    if (ruleset == "fide-2026" and mode == "round_robin"
+            and criterion in RR_FORBIDDEN_CRITERIA):
+        raise NotPermittedForFormatError(
+            criterion, ruleset, mode, "Article C.07.8 (eff. 1 Mar 2026)")
+
+
 _FORFEITS_AS_PLAYED_CRITERIA = frozenset({
     "buchholz", "buchholz_cut1", "buchholz_cut2",
     "median_buchholz", "median_buchholz_2",

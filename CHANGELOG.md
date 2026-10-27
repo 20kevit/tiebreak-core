@@ -11,6 +11,39 @@ never change across package releases.
 
 ## [1.3.0] — 2026-10-27
 
+Correctness release: four audit findings, each reproduced against the
+authoritative FIDE C.07 / TEC *Mandatory Tie-Breaks* texts (retrieved in
+full, see `docs/FIDE_SOURCES.md`), each fixed with regression coverage.
+No criteria were added or removed.
+
+Correction R5 (Article 8 round-robin scope). C.07 *Play-Off and Tie-Break
+Regulations* effective 1 March 2026, Article 8 (*"Buchholz and other
+Tie-Breaks related to Buchholz"*) opens with the note *"These tie-breaks
+must not be used in round-robins."* Article 8 covers §8.1 BH, §8.2 AOB and
+§8.3 FB. The 1 August 2024 edition carries the same Article 8 text but
+**no such note**, so this is fide-2026-scoped. The library previously
+computed BH/AOB/FB in round-robin mode without any indication that the
+current regulations bar it. Fixed by adding
+`NotPermittedForFormatError` and enforcing it at the ruleset-aware
+conformance interface (`strict.calculate_strict`, `calculate_all_strict`,
+`rank_standings_strict`, and the fide-2026 descriptor dispatch in
+`modifiers`). The raw engines stay callable, so non-FIDE and custom
+rulesets keep the arithmetic — eligibility is a conformance rule, not an
+arithmetic one. `tests/test_article8_rr_scope.py` (87 tests) covers valid
+(Article 9: KS, SB, DE) and invalid (Article 8: BH/AOB/FB families)
+format/criterion combinations, the Swiss-mode exemption, the
+fide-2024 absence of the note, and engine-level continuity.
+`examples/b_individual_round_robin.py` now demonstrates the rule.
+
+Also: the descriptor specification source was refreshed. The TEC
+*Mandatory Tie-Breaks* document previously cited (Rev. 01, 2024-09-01)
+states *"The FIDE Handbook will be updated in 2025"*; the current TEC
+specification is the **TRF-2026** release, whose
+`MandatoryTieBreaks-TRF26.pdf` (Rev.01, April 2025) carries the same
+three mandatory tables and the same `Rank Order Descriptor` grammar. See
+`docs/FIDE_SOURCES.md` for the source-status record.
+
+
 Correctness release: three audit findings, each reproduced against the
 authoritative FIDE C.07 / TEC *Mandatory Tie-Breaks* texts (retrieved in
 full, see `docs/FIDE_SOURCES.md`), each fixed with regression coverage.

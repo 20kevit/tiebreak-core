@@ -453,6 +453,13 @@ def calculate_descriptor(player, all_players: Mapping,
     if ruleset == "fide-2024":
         return _calculate_descriptor_fide2024(
             player, dict(all_players), spec, total_rounds, descriptor)
+    if (mode == "round_robin"
+            and spec.base in _f26.RR_FORBIDDEN_BASES):
+        from tiebreak_core.errors import NotPermittedForFormatError
+        raise NotPermittedForFormatError(
+            spec.base, "fide-2026", mode,
+            "Article C.07.8 (eff. 1 Mar 2026: these tie-breaks must not "
+            "be used in round-robins)")
     if spec.base in ("DE", "TPN", "RTNG"):
         raise UnsupportedCriterionError(
             f"{descriptor!r} (ranking stage under fide-2026; "
@@ -662,6 +669,14 @@ def rank_descriptors(players: Mapping, descriptors: Sequence[str],
             raise UnsupportedCriterionError(
                 f"{raw!r} (team descriptor; use tiebreak_core.team)",
                 "fide-2026")
+    for spec in specs:
+        if (mode == "round_robin"
+                and spec.base in _f26.RR_FORBIDDEN_BASES):
+            from tiebreak_core.errors import NotPermittedForFormatError
+            raise NotPermittedForFormatError(
+                spec.base, "fide-2026", mode,
+                "Article C.07.8 (eff. 1 Mar 2026: these tie-breaks must "
+                "not be used in round-robins)")
     shared = dict(players)
     _f26._precompute(shared, total_rounds, mode, draw_points)
     keys = deterministic_keys or {}

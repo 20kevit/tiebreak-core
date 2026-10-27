@@ -1,9 +1,15 @@
 """Example B — individual round robin (fide-2026 round_robin mode).
 
 Koya is the round-robin home criterion (§9.2): points scored against
-opponents finishing on >= 50% of the maximum possible score. In
-round-robin mode, forfeit results count as regular games for
-opposition sets (D12 carve-out: rating sets still exclude forfeits).
+opponents finishing on >= 50% of the maximum possible score.
+
+Article 8 of C.07 (eff. 1 Mar 2026) states that the Buchholz family
+(§8.1 BH, §8.2 AOB, §8.3 FB) *must not be used in round-robins*. The
+ranking below therefore uses Koya and Sonneborn-Berger (§9.1), both
+permitted, and then shows the typed rejection the conformance interface
+raises for a Buchholz criterion in this format. The raw engine still
+computes the value, which keeps the arithmetic available to custom and
+non-FIDE rulesets.
 """
 from tiebreak_core import (
     GameRecord,
@@ -50,9 +56,30 @@ def main() -> None:
     assert (koya_1, koya_4) == (0.0, 1.0)
 
     standings = rank_descriptors_strict(
-        PLAYERS, ["KS", "BH/C1"], total_rounds=3, ruleset="fide-2026",
+        PLAYERS, ["KS", "SB"], total_rounds=3, ruleset="fide-2026",
         mode="round_robin")
     print("ranking:", [p.player_id for p in standings.players])
+
+    # Article 8 bars the Buchholz family from round-robins, so the
+    # conformance interface refuses it rather than returning a value.
+    from tiebreak_core.errors import NotPermittedForFormatError
+
+    for bad in ("BH", "BH/C1", "AOB", "FB"):
+        try:
+            calculate_descriptor_strict(
+                PLAYERS[1], PLAYERS, bad, total_rounds=3,
+                ruleset="fide-2026", mode="round_robin")
+        except NotPermittedForFormatError as exc:
+            print(f"{bad}: rejected -> {exc}")
+        else:
+            raise AssertionError(f"{bad} should be rejected in round-robin")
+
+    # The engine itself still computes the value, so custom rulesets keep
+    # working; only the ruleset-aware conformance layer enforces Article 8.
+    from tiebreak_core import fide2026
+
+    print("engine BH (round_robin):",
+          fide2026.buchholz(PLAYERS[1], dict(PLAYERS), 3, "round_robin"))
 
 
 if __name__ == "__main__":
